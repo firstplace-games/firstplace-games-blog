@@ -187,7 +187,7 @@ canvas{display:block;width:100%;height:auto;touch-action:none}
 
 <script>
 /* ══════════ idioma ══════════ */
-var LANG = 'es';
+var LANG = (function(){try{var g=localStorage.getItem('fp-lang');if(g==='es'||g==='en')return g;}catch(e){} var n=((navigator.languages&&navigator.languages[0])||navigator.language||'').toLowerCase(); return n.indexOf('es')===0?'es':'en';})();
 try { var g0 = localStorage.getItem('fp-lang'); if (g0 === 'es' || g0 === 'en') LANG = g0; } catch(e){}
 
 var T = {
@@ -625,4 +625,24 @@ $('bOtra').addEventListener('click', arrancar);
 pintarTextos();
 nuevaBajada();
 corriendo = false;
+</script>
+
+<!-- about:v1 -->
+<style>
+.fp-about{max-width:760px;margin:0 auto;padding:56px 20px 64px;font-family:"IBM Plex Sans","Archivo",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:16px;line-height:1.65;color:#141A1F;background:#F2EFE9;border-top:2px solid #141A1F}
+.fp-about-wrap{background:#F2EFE9}
+.fp-about h2{font-size:clamp(22px,4vw,30px);line-height:1.2;margin:0 0 18px;font-weight:800}
+.fp-about h3{font-size:18px;margin:28px 0 8px}
+.fp-about p,.fp-about ul{margin:0 0 12px}
+.fp-about a{color:#C2410C}
+.fp-about .fp-more{margin-top:32px;padding-top:16px;border-top:1px solid rgba(20,26,31,.15);font-size:15px}
+</style>
+<div class="fp-about-wrap"><section class="fp-about" lang="en" aria-labelledby="fpAboutH">
+<h2 id="fpAboutH">El Queso: chasing the cheese down Cooper's Hill</h2>
+<h3>The real race</h3><p>Every year, at the end of May, people throw themselves down Cooper's Hill, near Gloucester in England, chasing a wheel of Double Gloucester cheese. The slope is so steep that almost nobody manages to run it: most competitors tumble and roll most of the way down. The cheese can reach speeds of around 110 km/h, and nobody ever catches it. The winner is simply the first person across the line at the bottom, and the prize is the cheese.</p><p>The event, the Cooper's Hill Cheese-Rolling and Wake, has been held for at least two centuries.</p><h3>How to play this version</h3><p>You race three rivals down the hill with a single button. Hold it and you roll; let go and you run. Running is faster, but any bump in the slope sends you flying. Rolling is slower and safe. The bumps are marked in red so you can see them coming, and the whole game is choosing the moment to throw yourself to the ground and the moment to get back on your feet.</p><p>Run all the way and you finish last. Roll all the way and you finish last too. Roll right before each bump and you can win in about eleven seconds.</p>
+<p class="fp-more"><strong>More free games on FirstPlace.games:</strong> <a href="/juegos/primero">Primero</a> · <a href="/juegos/cancha">La Cancha</a> · <a href="/juegos/ulama">Ulama</a> · <a href="/juegos/fronton">Frontón</a> · <a href="/juegos/ruzzola">Ruzzola</a> · <a href="/juegos/fierljeppen">Fierljeppen</a> · <a href="/juegos/petanca">Pétanque</a> · <a href="/juegos/stack-mexico">Stack</a>. Or read the <a href="/blog/">blog</a> and explore <a href="/">every sport on the world map</a>.</p>
+</section></div>
+<script>
+(function(){var w=document.querySelector('.fp-about-wrap');function f(){if(!w)return;w.style.marginTop='0px';var top=w.getBoundingClientRect().top+scrollY;w.style.marginTop=Math.max(0,innerHeight-top)+'px';}addEventListener('load',f);addEventListener('resize',f);f();})();
+addEventListener('keydown',function(e){var t=e.target&&e.target.tagName;if(t==='INPUT'||t==='TEXTAREA')return;if((e.code==='Space'||e.key===' '||e.key==='ArrowUp'||e.key==='ArrowDown')&&scrollY<innerHeight*0.5)e.preventDefault();},true);
 </script>

@@ -621,3 +621,23 @@ document.addEventListener('click', function(e){
   }
 })();
 </script>
+
+<!-- about:v1 -->
+<style>
+.fp-about{max-width:760px;margin:0 auto;padding:56px 20px 64px;font-family:"IBM Plex Sans","Archivo",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:16px;line-height:1.65;color:#141A1F;background:#F2EFE9;border-top:2px solid #141A1F}
+.fp-about-wrap{background:#F2EFE9}
+.fp-about h2{font-size:clamp(22px,4vw,30px);line-height:1.2;margin:0 0 18px;font-weight:800}
+.fp-about h3{font-size:18px;margin:28px 0 8px}
+.fp-about p,.fp-about ul{margin:0 0 12px}
+.fp-about a{color:#C2410C}
+.fp-about .fp-more{margin-top:32px;padding-top:16px;border-top:1px solid rgba(20,26,31,.15);font-size:15px}
+</style>
+<div class="fp-about-wrap"><section class="fp-about" lang="en" aria-labelledby="fpAboutH">
+<h2 id="fpAboutH">Primero: the daily sports champion guessing game</h2>
+<h3>How it works</h3><p>Every day there is one hidden champion, the same for everyone in the world. You get six guesses. Each guess can be any champion from the sport of the day, and after each one the game gives you five clues:</p><ul><li><strong>Country</strong>: orange if it is the same country, amber if it is the same continent.</li><li><strong>First title</strong> and <strong>last title</strong>: orange for the same decade, amber for the decade next to it, with an arrow pointing up or down.</li><li><strong>Titles</strong>: how many they won.</li><li><strong>Years at the top</strong>: the gap between their first and last title.</li></ul><h3>A new sport every day</h3><p>The format never changes, but the sport does: football, basketball, tennis, Formula 1, cycling, golf and more. A game takes one to two minutes, and when you finish you can share your grid without giving the answer away.</p><h3>Why "years at the top"?</h3><p>It is the clue that teaches you something. It separates the champions who stayed on top for a decade from the ones who shone once, and it is often the column that cracks the puzzle.</p>
+<p class="fp-more"><strong>More free games on FirstPlace.games:</strong> <a href="/juegos/cancha">La Cancha</a> · <a href="/juegos/ulama">Ulama</a> · <a href="/juegos/fronton">Frontón</a> · <a href="/juegos/ruzzola">Ruzzola</a> · <a href="/juegos/queso">El Queso</a> · <a href="/juegos/fierljeppen">Fierljeppen</a> · <a href="/juegos/petanca">Pétanque</a> · <a href="/juegos/stack-mexico">Stack</a>. Or read the <a href="/blog/">blog</a> and explore <a href="/">every sport on the world map</a>.</p>
+</section></div>
+<script>
+(function(){var w=document.querySelector('.fp-about-wrap');function f(){if(!w)return;w.style.marginTop='0px';var top=w.getBoundingClientRect().top+scrollY;w.style.marginTop=Math.max(0,innerHeight-top)+'px';}addEventListener('load',f);addEventListener('resize',f);f();})();
+addEventListener('keydown',function(e){var t=e.target&&e.target.tagName;if(t==='INPUT'||t==='TEXTAREA')return;if((e.code==='Space'||e.key===' '||e.key==='ArrowUp'||e.key==='ArrowDown')&&scrollY<innerHeight*0.5)e.preventDefault();},true);
+</script>

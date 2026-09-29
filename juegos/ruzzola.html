@@ -187,7 +187,7 @@ canvas{display:block;width:100%;height:auto;touch-action:none}
 
 <script>
 /* ══════════ idioma ══════════ */
-var LANG = 'es';
+var LANG = (function(){try{var g=localStorage.getItem('fp-lang');if(g==='es'||g==='en')return g;}catch(e){} var n=((navigator.languages&&navigator.languages[0])||navigator.language||'').toLowerCase(); return n.indexOf('es')===0?'es':'en';})();
 try { var g0 = localStorage.getItem('fp-lang'); if (g0 === 'es' || g0 === 'en') LANG = g0; } catch(e){}
 
 var T = {
@@ -673,4 +673,24 @@ $('bOtra').addEventListener('click', arrancar);
 pintarTextos();
 nuevaVuelta();
 corriendo = false;
+</script>
+
+<!-- about:v1 -->
+<style>
+.fp-about{max-width:760px;margin:0 auto;padding:56px 20px 64px;font-family:"IBM Plex Sans","Archivo",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:16px;line-height:1.65;color:#141A1F;background:#F2EFE9;border-top:2px solid #141A1F}
+.fp-about-wrap{background:#F2EFE9}
+.fp-about h2{font-size:clamp(22px,4vw,30px);line-height:1.2;margin:0 0 18px;font-weight:800}
+.fp-about h3{font-size:18px;margin:28px 0 8px}
+.fp-about p,.fp-about ul{margin:0 0 12px}
+.fp-about a{color:#C2410C}
+.fp-about .fp-more{margin-top:32px;padding-top:16px;border-top:1px solid rgba(20,26,31,.15);font-size:15px}
+</style>
+<div class="fp-about-wrap"><section class="fp-about" lang="en" aria-labelledby="fpAboutH">
+<h2 id="fpAboutH">Ruzzola: rolling a wheel of cheese down a country road</h2>
+<h3>What is ruzzola?</h3><p>Ruzzola is a traditional throwing game from central Italy. Players wrap a cord around a wooden disc, around 13 centimetres across, and fling it so it rolls down a country road. In the bigger version, <em>ruzzolone</em>, the disc weighs several kilos, and in some villages it is a real wheel of aged cheese. The traditional games are looked after by FIGeST, the Italian federation of traditional games and sports.</p><h3>How the real game works</h3><p>The course is called the <em>treppo</em>, a stretch of road with ditches on each side, the <em>grippi</em>. And here is the rule people get wrong: <strong>you do not win by throwing the furthest</strong>. You win by covering the course in the fewest throws, a bit like golf on a country lane.</p><h3>How to play this version</h3><p>Five stretches, par 21. Each throw takes two taps: the first sets the angle as the arrow swings, the second sets the power as the bar rises and falls. It works with the space bar, the button or a tap on the screen. Hills slow the wheel and can roll it back, and stopping in a ditch costs a penalty throw. Fewer throws is better, so this is the one game in the room where a lower record wins.</p>
+<p class="fp-more"><strong>More free games on FirstPlace.games:</strong> <a href="/juegos/primero">Primero</a> · <a href="/juegos/cancha">La Cancha</a> · <a href="/juegos/ulama">Ulama</a> · <a href="/juegos/fronton">Frontón</a> · <a href="/juegos/queso">El Queso</a> · <a href="/juegos/fierljeppen">Fierljeppen</a> · <a href="/juegos/petanca">Pétanque</a> · <a href="/juegos/stack-mexico">Stack</a>. Or read the <a href="/blog/">blog</a> and explore <a href="/">every sport on the world map</a>.</p>
+</section></div>
+<script>
+(function(){var w=document.querySelector('.fp-about-wrap');function f(){if(!w)return;w.style.marginTop='0px';var top=w.getBoundingClientRect().top+scrollY;w.style.marginTop=Math.max(0,innerHeight-top)+'px';}addEventListener('load',f);addEventListener('resize',f);f();})();
+addEventListener('keydown',function(e){var t=e.target&&e.target.tagName;if(t==='INPUT'||t==='TEXTAREA')return;if((e.code==='Space'||e.key===' '||e.key==='ArrowUp'||e.key==='ArrowDown')&&scrollY<innerHeight*0.5)e.preventDefault();},true);
 </script>

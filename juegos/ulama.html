@@ -188,7 +188,7 @@ canvas{display:block;width:100%;height:auto;touch-action:none}
 
 <script>
 /* ══════════ idioma ══════════ */
-var LANG = 'es';
+var LANG = (function(){try{var g=localStorage.getItem('fp-lang');if(g==='es'||g==='en')return g;}catch(e){} var n=((navigator.languages&&navigator.languages[0])||navigator.language||'').toLowerCase(); return n.indexOf('es')===0?'es':'en';})();
 try { var g0 = localStorage.getItem('fp-lang'); if (g0 === 'es' || g0 === 'en') LANG = g0; } catch(e){}
 
 var T = {
@@ -692,4 +692,24 @@ $('bOtra').addEventListener('click', arrancar);
 pintarTextos();
 nuevoPartido();
 corriendo = false;
+</script>
+
+<!-- about:v1 -->
+<style>
+.fp-about{max-width:760px;margin:0 auto;padding:56px 20px 64px;font-family:"IBM Plex Sans","Archivo",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:16px;line-height:1.65;color:#141A1F;background:#F2EFE9;border-top:2px solid #141A1F}
+.fp-about-wrap{background:#F2EFE9}
+.fp-about h2{font-size:clamp(22px,4vw,30px);line-height:1.2;margin:0 0 18px;font-weight:800}
+.fp-about h3{font-size:18px;margin:28px 0 8px}
+.fp-about p,.fp-about ul{margin:0 0 12px}
+.fp-about a{color:#C2410C}
+.fp-about .fp-more{margin-top:32px;padding-top:16px;border-top:1px solid rgba(20,26,31,.15);font-size:15px}
+</style>
+<div class="fp-about-wrap"><section class="fp-about" lang="en" aria-labelledby="fpAboutH">
+<h2 id="fpAboutH">Ulama: the ballgame that survived three thousand years</h2>
+<h3>What is ulama?</h3><p>Ulama is a team ball sport still played in the state of Sinaloa, in northwest Mexico. It is the living descendant of the Mesoamerican ballgame, one of the oldest team sports in the world: stone ball courts in Mexico and Central America date back more than three thousand years, and the game was played by the Olmecs, the Maya and the Aztecs.</p><p>What makes ulama unlike any other sport is the ball. It is made of solid rubber and weighs between one and four kilos, and players may only strike it with the hip and upper thigh. No hands, no feet, no head.</p><h3>How the real game works</h3><p>The court, called the <em>taste</em>, is a long, narrow strip of earth, roughly 50 to 80 metres long and 4 to 6 metres wide, split by a centre line called the <em>analco</em>. Cross lines mark the scoring zones. Teams have between two and five players, and village matches are traditionally played to eight points.</p><h3>How to play this version</h3><p>Our ulama is one against one, seen from the side, first to eight. Move with the arrow keys or A/D and hit with the space bar; on a phone, use the three buttons. The ball may bounce once on your side before you return it. Land it past the last line and it is worth two points. Hit it long without bouncing inside and it is a fault.</p><p>Your record is not the score: it is your <strong>longest rally</strong>. Points stop at eight, but a good player can keep a heavy rubber ball alive for a very long time.</p><h3>What we changed</h3><p>The real game is played by teams on a court far longer than a screen. We kept the heavy ball, the low arc, the hip-only rule and the scoring line, and made it a duel you can play in a couple of minutes.</p>
+<p class="fp-more"><strong>More free games on FirstPlace.games:</strong> <a href="/juegos/primero">Primero</a> · <a href="/juegos/cancha">La Cancha</a> · <a href="/juegos/fronton">Frontón</a> · <a href="/juegos/ruzzola">Ruzzola</a> · <a href="/juegos/queso">El Queso</a> · <a href="/juegos/fierljeppen">Fierljeppen</a> · <a href="/juegos/petanca">Pétanque</a> · <a href="/juegos/stack-mexico">Stack</a>. Or read the <a href="/blog/">blog</a> and explore <a href="/">every sport on the world map</a>.</p>
+</section></div>
+<script>
+(function(){var w=document.querySelector('.fp-about-wrap');function f(){if(!w)return;w.style.marginTop='0px';var top=w.getBoundingClientRect().top+scrollY;w.style.marginTop=Math.max(0,innerHeight-top)+'px';}addEventListener('load',f);addEventListener('resize',f);f();})();
+addEventListener('keydown',function(e){var t=e.target&&e.target.tagName;if(t==='INPUT'||t==='TEXTAREA')return;if((e.code==='Space'||e.key===' '||e.key==='ArrowUp'||e.key==='ArrowDown')&&scrollY<innerHeight*0.5)e.preventDefault();},true);
 </script>
