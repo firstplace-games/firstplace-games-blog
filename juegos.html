@@ -10,7 +10,11 @@
 <meta property="og:title" content="Free Sports Games Online — Daily Puzzles, Arcade &amp; Traditional Games | FirstPlace.games">
 <meta property="og:description" content="Play free sports games in your browser: a daily champion guessing game, sports logic puzzles, kart racing, falling blocks and traditional games from Mexico, Spain, Italy, England, the Netherlands and France.">
 <meta property="og:url" content="https://firstplace.games/juegos">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://firstplace.games/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="FirstPlace.games — every sport, one place">
+<meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "ItemList", "name": "FirstPlace.games — games", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Primero", "url": "https://firstplace.games/juegos/primero"}, {"@type": "ListItem", "position": 2, "name": "La Cancha", "url": "https://firstplace.games/juegos/cancha"}, {"@type": "ListItem", "position": 3, "name": "Vuelta Rápida", "url": "https://firstplace.games/juegos/vuelta-rapida"}, {"@type": "ListItem", "position": 4, "name": "Stack México", "url": "https://firstplace.games/juegos/stack-mexico"}, {"@type": "ListItem", "position": 5, "name": "Stack USA", "url": "https://firstplace.games/juegos/stack-usa"}, {"@type": "ListItem", "position": 6, "name": "Stack France", "url": "https://firstplace.games/juegos/stack-france"}, {"@type": "ListItem", "position": 7, "name": "Ulama", "url": "https://firstplace.games/juegos/ulama"}, {"@type": "ListItem", "position": 8, "name": "Frontón", "url": "https://firstplace.games/juegos/fronton"}, {"@type": "ListItem", "position": 9, "name": "Ruzzola", "url": "https://firstplace.games/juegos/ruzzola"}, {"@type": "ListItem", "position": 10, "name": "El Queso", "url": "https://firstplace.games/juegos/queso"}, {"@type": "ListItem", "position": 11, "name": "Fierljeppen", "url": "https://firstplace.games/juegos/fierljeppen"}, {"@type": "ListItem", "position": 12, "name": "Pétanque", "url": "https://firstplace.games/juegos/petanca"}]}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -228,8 +232,7 @@ h1{margin:12px 0 0;font-size:clamp(38px,6.2vw,60px);font-weight:800;font-stretch
 
 <script>
 /* ═══════ idioma ═══════ */
-var LANG = 'es';
-try { var g = localStorage.getItem('fp-lang'); if (g === 'es' || g === 'en') LANG = g; } catch(e){}
+var LANG = (function(){try{var g=localStorage.getItem('fp-lang');if(g==='es'||g==='en')return g;}catch(e){} var n=((navigator.languages&&navigator.languages[0])||navigator.language||'').toLowerCase(); return n.indexOf('es')===0?'es':'en';})();
 
 var T = {
   es:{

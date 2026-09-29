@@ -8,7 +8,11 @@
 <meta property="og:title" content="FirstPlace.games — Daily Sports Games, Calendars &amp; World Map">
 <meta property="og:description" content="23 sports in one place: live calendars, what is played in every country on a world map, and free daily sports games and puzzles. No sign-up needed.">
 <meta property="og:url" content="https://firstplace.games/">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://firstplace.games/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="FirstPlace.games — every sport, one place">
+<meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "FirstPlace.games", "url": "https://firstplace.games/", "description": "23 sports in one place: live calendars, what is played in every country on a world map, and free daily sports games and puzzles. No sign-up needed."}, {"@type": "Organization", "name": "FirstPlace.games", "url": "https://firstplace.games/"}]}</script>
 <style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found]){display:none!important}</style></head><body>
 <h1 style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0">FirstPlace.games — every sport in one place: daily sports games, live calendars and a world map</h1>
@@ -4245,7 +4249,7 @@ const _NOW=new Date();
 const TODAY = new Date(2026,_NOW.getMonth(),_NOW.getDate());
 const DUEL = new Set(["football","basketball","nfl","rugby","tennis","padel","icehockey","fieldhockey","cricket","baseball","polo","boxing","mma"]);
 const STATE = {
-  lang:"es", sports:["tennis"], tab:"calendar",
+  lang:(function(){try{var g=localStorage.getItem('fp-lang');if(g==='es'||g==='en')return g;}catch(e){} var n=((navigator.languages&&navigator.languages[0])||navigator.language||'').toLowerCase(); return n.indexOf('es')===0?'es':'en';})(), sports:["tennis"], tab:"calendar",
   month:new Date(2026,new Date().getMonth(),1), selDay:null, year:2026,
   filters:{}, tourSel:null, dynSport:"tennis", picks:{},
   sortKey:"year", sortDir:-1, feed:"x", factIdx:0,
@@ -4260,6 +4264,7 @@ function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("on");
 
 /* ---------- i18n ---------- */
 function applyLang(){
+  document.documentElement.lang=STATE.lang;
   $$("[data-t]").forEach(n=>{const v=T(n.dataset.t); if(v) n.textContent=v});
   $$("[data-tph]").forEach(n=>{const v=T(n.dataset.tph); if(v) n.placeholder=v});
   if(typeof BSC!=="undefined" && $("#buscador") && !$("#buscador").hidden) bscPintar();
@@ -11757,8 +11762,8 @@ function wmInit(){
 /* ================= INIT ================= */
 function init(){
   buildRim(); buildTicker(); buildReel(); buildWheel(); buildLegend(); renderBuilder(); setHot(-1);
-  $("#langEs").onclick=()=>{STATE.lang="es";applyLang()};
-  $("#langEn").onclick=()=>{STATE.lang="en";applyLang()};
+  $("#langEs").onclick=()=>{STATE.lang="es";try{localStorage.setItem("fp-lang","es")}catch(e){};applyLang()};
+  $("#langEn").onclick=()=>{STATE.lang="en";try{localStorage.setItem("fp-lang","en")}catch(e){};applyLang()};
   $("#ctaAll").onclick=()=>{STATE.viewMode="all";buildWheel();buildLegend();closeIntro();setHome("map")};
   if($("#ctaCustom")) $("#ctaCustom").onclick=()=>{closeIntro();openBuilder()};
   wmInit(); rlInit(); bscInit();
