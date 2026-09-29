@@ -1,0 +1,633 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pétanque</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --hueso:#F2EFE9; --tinta:#141A1F; --punto:#F4551D; --ambar:#C98A16; --verde:#0E8F63;
+  --papel:#FBFAF7; --linea:#DCD7CD; --apagado:#6B7480; --sombra:rgba(20,26,31,.9);
+  --fd:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --fm:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --hueso:#12171C; --tinta:#F2EFE9; --papel:#1B2229; --linea:#2C343D; --apagado:#98A2AE;
+  --punto:#FF7034; --ambar:#DFA53B; --verde:#28B183; --sombra:rgba(0,0,0,.75);
+}}
+:root[data-theme="dark"]{
+  --hueso:#12171C; --tinta:#F2EFE9; --papel:#1B2229; --linea:#2C343D; --apagado:#98A2AE;
+  --punto:#FF7034; --ambar:#DFA53B; --verde:#28B183; --sombra:rgba(0,0,0,.75);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--hueso);color:var(--tinta);font-family:var(--fd);font-size:16px;
+  line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3{margin:0;line-height:1.05;font-stretch:112%}
+p{margin:0}
+:focus-visible{outline:2px solid var(--punto);outline-offset:3px}
+.wrap{max-width:1000px;margin:0 auto;padding:0 16px 40px}
+
+header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0 14px}
+.marca{font-family:var(--fm);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--apagado)}
+.marca i{font-style:normal;color:var(--punto)}
+.idioma{margin-left:auto;display:flex;border:2px solid var(--tinta)}
+.idioma button{border:0;background:transparent;color:var(--tinta);font-family:var(--fm);
+  font-size:11px;font-weight:600;letter-spacing:.12em;padding:6px 11px;cursor:pointer}
+.idioma button[aria-pressed="true"]{background:var(--tinta);color:var(--hueso)}
+
+.marcador{border:3px solid var(--tinta);border-bottom:0;background:var(--tinta);color:#F2EFE9;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:12px 18px 13px;
+  box-shadow:8px 0 0 var(--sombra)}
+.mk{display:flex;align-items:center;gap:16px}
+.mk .eq{display:flex;align-items:baseline;gap:11px}
+.mk .eq span{font-family:var(--fm);font-size:11px;letter-spacing:.17em;text-transform:uppercase;
+  opacity:.72}
+.mk .eq b{font-weight:800;font-stretch:118%;font-size:clamp(34px,5.6vw,50px);line-height:.82;
+  letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.mk .eq.yo b{color:var(--punto)}
+.mk .gui{font-weight:800;font-size:28px;opacity:.4;line-height:.82}
+.bolas{margin-left:auto;display:flex;align-items:center;gap:14px}
+.bolas div{display:flex;align-items:center;gap:5px}
+.bolas i{width:11px;height:11px;border-radius:50%;display:block;border:2px solid #F2EFE9}
+.bolas i.va{background:#F2EFE9}
+.bolas i.mi{border-color:var(--punto)}
+.bolas i.mi.va{background:var(--punto)}
+.bolas u{font-family:var(--fm);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  text-decoration:none;opacity:.7}
+
+.marco{border:3px solid var(--tinta);box-shadow:8px 8px 0 var(--sombra);background:#CBB795;
+  position:relative;overflow:hidden}
+canvas{display:block;width:100%;height:auto;touch-action:none}
+
+.hud{position:absolute;left:0;right:0;bottom:0;padding:12px;pointer-events:none}
+.aviso{font-family:var(--fm);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  background:var(--tinta);color:#F2EFE9;display:inline-block;padding:6px 11px}
+.aviso.on{background:var(--punto);color:#140B06}
+
+.pant{position:absolute;inset:0;background:rgba(18,23,28,.93);color:#F2EFE9;display:grid;
+  place-items:center;padding:24px;text-align:center}
+/* la clase pone display:grid y le gana a la regla del navegador para [hidden];
+   sin esta línea la pantalla de fin tapa el tablero aunque esté oculta */
+.pant[hidden]{display:none}
+.pant .in{max-width:520px}
+.pant .et{font-family:var(--fm);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--punto);margin-bottom:8px}
+.pant h2{font-size:clamp(28px,5vw,44px);font-weight:800;letter-spacing:-.02em;margin-bottom:10px}
+.pant p{font-size:15px;opacity:.9;margin-bottom:6px}
+.btn{margin-top:18px;border:3px solid #F2EFE9;background:transparent;color:#F2EFE9;
+  font-family:var(--fd);font-weight:800;font-size:17px;letter-spacing:.02em;
+  padding:12px 30px;cursor:pointer;box-shadow:5px 5px 0 rgba(0,0,0,.5)}
+.btn:hover{background:#F2EFE9;color:#141A1F}
+.rec{font-family:var(--fm);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  opacity:.65;margin-top:14px}
+.reglas{display:grid;gap:7px;margin-top:14px;text-align:left}
+.reglas div{display:flex;gap:10px;font-size:14px;opacity:.88}
+.reglas b{color:var(--punto);font-family:var(--fm);font-size:12px;flex:none;padding-top:2px}
+
+.mando{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.gol{flex:1 1 180px;border:3px solid var(--tinta);background:var(--papel);color:var(--tinta);
+  font-family:var(--fd);font-weight:800;font-size:16px;padding:13px 16px;cursor:pointer;
+  box-shadow:5px 5px 0 var(--sombra);text-align:left;line-height:1.2}
+.gol small{display:block;font-family:var(--fm);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--apagado);font-weight:500;margin-top:4px}
+.gol:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--sombra)}
+.gol[disabled]{opacity:.4;cursor:default;transform:none;box-shadow:5px 5px 0 var(--sombra)}
+.gol.sel{background:var(--tinta);color:#F2EFE9}
+.gol.sel small{color:rgba(242,239,233,.7)}
+
+.pie{margin-top:22px;border-top:2px solid var(--linea);padding-top:16px;font-size:14.5px;
+  color:var(--apagado);max-width:720px}
+.pie b{color:var(--tinta)}
+.volver{display:inline-block;margin-top:16px;font-family:var(--fm);font-size:11px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--apagado);text-decoration:none;
+  border-bottom:2px solid var(--linea);padding-bottom:2px}
+.volver:hover{color:var(--punto);border-color:var(--punto)}
+@media(max-width:560px){
+  .marcador{gap:12px;padding:10px 13px}
+  .bolas{margin-left:0;width:100%}
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="marca">FirstPlace<i>.</i>games &nbsp;·&nbsp; <span id="mDelMundo"></span> &nbsp;·&nbsp; France</span>
+    <div class="idioma" role="group">
+      <button id="bEs" aria-pressed="true">ES</button><button id="bEn" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <div class="marcador">
+    <div class="mk">
+      <div class="eq yo"><span id="lYo"></span><b id="pYo">0</b></div>
+      <div class="gui">—</div>
+      <div class="eq"><b id="pRival">0</b><span id="lRival"></span></div>
+    </div>
+    <div class="bolas">
+      <div id="misBolas"></div><u id="lMano"></u><div id="susBolas"></div>
+    </div>
+  </div>
+
+  <div class="marco">
+    <canvas id="cv" width="960" height="470" aria-label="Terreno de pétanque"></canvas>
+    <div class="hud"><div class="aviso" id="aviso"></div></div>
+
+    <section class="pant" id="pInicio"><div class="in">
+      <p class="et" id="iEt"></p>
+      <h2 id="iTit"></h2>
+      <p id="iTxt"></p>
+      <div class="reglas" id="iReglas"></div>
+      <button class="btn" id="bJugar"></button>
+      <p class="rec" id="iRec"></p>
+    </div></section>
+
+    <section class="pant" id="pFin" hidden><div class="in">
+      <p class="et" id="fEt"></p>
+      <h2 id="fTit"></h2>
+      <p id="fTxt"></p>
+      <button class="btn" id="bOtra"></button>
+      <p class="rec" id="fRec"></p>
+    </div></section>
+  </div>
+
+  <div class="mando">
+    <button type="button" class="gol" id="bApuntar" disabled></button>
+    <button type="button" class="gol" id="bTirar" disabled></button>
+  </div>
+
+  <div class="pie" id="pie"></div>
+  <a class="volver" href="../juegos.html" id="lVolver"></a>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   PÉTANQUE · Francia · motor 01 «lanzar y acercarse»
+   Mismo motor que la Ruzzola: apuntar, fuerza, rodar con fricción. Lo que
+   cambia —y es todo el juego— es que acá hay dos maneras de tirar, y elegir
+   mal cuesta la mène.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+var LANG = 'es';
+try { var g0 = localStorage.getItem('fp-lang'); if (g0 === 'es' || g0 === 'en') LANG = g0; } catch(e){}
+
+var T = {
+  es:{
+    delMundo:'Del mundo', yo:'Vos', rival:'Rival', mano:'bolas',
+    et:'Francia · desde 1907',
+    tit:'Pétanque',
+    txt:'Tres bolas cada uno. Gana el que deje la suya más cerca del boliche. Primero a 13.',
+    r1:['APUNTAR','La tirás suave y rueda. Para dejarla pegada al boliche.'],
+    r2:['TIRAR','La tirás fuerte y por el aire. Para sacar la bola del rival.'],
+    r3:['EL CARREAU','Si le pegás a una bola rival y la tuya se queda en su lugar, es la jugada perfecta.'],
+    jugar:'Jugar', otra:'Otra partida',
+    rec:'Tu mejor: ', sinRec:'Todavía sin marca',
+    apuntar:'Apuntar', apuntarSub:'Suave · rueda hasta el boliche',
+    tirar:'Tirar', tirarSub:'Fuerte · saca la del rival',
+    elegi:'Elegí cómo tirás',
+    angulo:'Tocá para fijar la dirección',
+    fuerza:'Tocá para fijar la fuerza',
+    rodando:'…',
+    turnoRival:'Tira el rival',
+    ganasteMene:'Ganás la mène',
+    perdisteMene:'Pierde la mène',
+    puntos:' punto', puntosP:' puntos',
+    carreau:'¡Carreau!',
+    fuera:'Se fue afuera',
+    finGan:'Ganaste', finPer:'Perdiste',
+    finGanT:'13 a ', finPerT:' a 13',
+    volver:'← Todos los juegos',
+    pie:'<b>La pétanque nació en 1907 en La Ciotat, cerca de Marsella.</b> Un jugador de la bola provenzal, Jules Lenoir, tenía reumatismo y ya no podía correr los tres pasos antes de lanzar. Un amigo le propuso jugar con los pies quietos y juntos, y acortar la cancha. En provenzal, pies plantados se dice <i>pèd tanca</i> — y de ahí salió el nombre. Hoy la juegan unos diecisiete millones de personas.'
+  },
+  en:{
+    delMundo:'From the world', yo:'You', rival:'Rival', mano:'boules',
+    et:'France · since 1907',
+    tit:'Pétanque',
+    txt:'Three boules each. Closest to the jack wins the end. First to 13.',
+    r1:['POINT','Roll it gently. To leave it hugging the jack.'],
+    r2:['SHOOT','Fire it through the air. To knock the rival boule away.'],
+    r3:['THE CARREAU','Hit a rival boule and stay in its place — the perfect shot.'],
+    jugar:'Play', otra:'Play again',
+    rec:'Your best: ', sinRec:'No score yet',
+    apuntar:'Point', apuntarSub:'Gentle · rolls to the jack',
+    tirar:'Shoot', tirarSub:'Hard · knocks theirs away',
+    elegi:'Choose how you throw',
+    angulo:'Tap to lock the direction',
+    fuerza:'Tap to lock the power',
+    rodando:'…',
+    turnoRival:'Rival throws',
+    ganasteMene:'You win the end',
+    perdisteMene:'Rival wins the end',
+    puntos:' point', puntosP:' points',
+    carreau:'Carreau!',
+    fuera:'Out of play',
+    finGan:'You won', finPer:'You lost',
+    finGanT:'13 to ', finPerT:' to 13',
+    volver:'← All games',
+    pie:'<b>Pétanque was born in 1907 in La Ciotat, near Marseille.</b> A player of the older Provençal game, Jules Lenoir, had rheumatism and could no longer run the three steps before throwing. A friend suggested playing with both feet planted and a shorter pitch. In Provençal, planted feet is <i>pèd tanca</i> — and that is where the name comes from. Around seventeen million people play it today.'
+  }
+};
+function t(k){ return T[LANG][k]; }
+
+/* ── récords ────────────────────────────────────────────────────────────── */
+var Marcas = (function(){
+  var CLAVE = 'juegos-marcas', d = {};
+  try { d = JSON.parse(localStorage.getItem(CLAVE) || '{}'); } catch(e){ d = {}; }
+  return {
+    mejor:function(j){ return d[j] || 0; },
+    anotar:function(j,p){
+      if (p <= (d[j] || 0)) return false;
+      d[j] = p;
+      try { localStorage.setItem(CLAVE, JSON.stringify(d)); } catch(e){}
+      return true;
+    }
+  };
+})();
+var JUEGO = 'petanca';
+
+/* ── el terreno ─────────────────────────────────────────────────────────── */
+var cv = document.getElementById('cv'), cx = cv.getContext('2d');
+var W = 960, H = 470;
+var LINEA_TIRO = 92;          // el círculo desde donde se lanza
+var R_BOLA = 15, R_BOCHE = 7;
+
+var J = {
+  fase:'inicio',              // inicio · elegir · angulo · fuerza · rodando · fin
+  modo:null,                  // 'apuntar' | 'tirar'
+  bolas:[], boliche:null,
+  misQuedan:3, susQuedan:3,
+  turno:'yo',
+  pYo:0, pRival:0,
+  ang:0, angDir:1, fza:0, fzaDir:1,
+  raf:null, aviso:''
+};
+
+function nuevaMene(){
+  J.bolas = [];
+  /* el boliche se lanza entre 6 y 10 metros: acá, entre el 45% y el 85% */
+  J.boliche = { x: W*0.45 + Math.random()*W*0.40, y: H/2 + (Math.random()-0.5)*H*0.42,
+                vx:0, vy:0, r:R_BOCHE, boliche:true };
+  J.misQuedan = 3; J.susQuedan = 3;
+  J.turno = 'yo';
+  J.fase = 'elegir';
+  J.modo = null;
+  pintarMando(); pintarBolas(); avisar(t('elegi'));
+  dibujar();
+}
+
+function dist(a,b){ return Math.hypot(a.x-b.x, a.y-b.y); }
+
+/* la bola más cercana al boliche de cada lado */
+function masCerca(dueno){
+  var m = null;
+  J.bolas.forEach(function(b){
+    if (b.dueno !== dueno || b.fuera) return;
+    if (!m || dist(b,J.boliche) < dist(m,J.boliche)) m = b;
+  });
+  return m;
+}
+
+/* ── lanzar ─────────────────────────────────────────────────────────────── */
+function lanzar(dueno, ang, fza, modo){
+  var y0 = H/2 + (dueno==='yo' ? 0 : 0);
+  var b = { x:LINEA_TIRO, y:y0, r:R_BOLA, dueno:dueno, modo:modo,
+            vx:Math.cos(ang)*fza, vy:Math.sin(ang)*fza,
+            /* tirar va por el aire: casi no roza hasta que cae */
+            aire: modo==='tirar' ? 26 : 0 };
+  J.bolas.push(b);
+  J.fase = 'rodando';
+  pintarMando();
+  /* El bucle de apuntar y el de rodar comparten J.raf. Al lanzar hay un cuadro
+     de «barrer» ya pedido, así que un «if (!J.raf)» no programaba nunca «paso»
+     —y barrer, al ver que la fase cambió, se iba sin volver a pedir cuadro:
+     la bola quedaba quieta con velocidad. Se cancela y se toma el relevo. */
+  if (J.raf) cancelAnimationFrame(J.raf);
+  J.raf = requestAnimationFrame(paso);
+}
+
+function paso(){
+  J.raf = null;
+  var moviendo = false, huboCarreau = false;
+  var todo = J.bolas.concat([J.boliche]);
+
+  todo.forEach(function(b){
+    if (b.fuera) return;
+    var v = Math.hypot(b.vx, b.vy);
+    if (v < 0.09){ b.vx = 0; b.vy = 0; return; }
+    moviendo = true;
+    if (b.aire > 0){ b.aire--; }            // en el aire no frena
+    else {
+      var fr = b.boliche ? 0.955 : 0.962;   // el boliche es liviano y frena antes
+      b.vx *= fr; b.vy *= fr;
+    }
+    b.x += b.vx; b.y += b.vy;
+    /* los bordes del terreno: si se va, la bola queda muerta */
+    if (b.x < b.r || b.x > W-b.r || b.y < b.r || b.y > H-b.r){
+      if (b.boliche){ b.x = Math.max(b.r, Math.min(W-b.r, b.x));
+                      b.y = Math.max(b.r, Math.min(H-b.r, b.y)); b.vx=b.vy=0; }
+      else { b.fuera = true; b.vx = b.vy = 0; }
+    }
+  });
+
+  /* choques: elástico simple, y sirve igual para el boliche */
+  for (var i=0;i<todo.length;i++) for (var k=i+1;k<todo.length;k++){
+    var a = todo[i], c = todo[k];
+    if (a.fuera || c.fuera) continue;
+    var d = dist(a,c), min = a.r + c.r;
+    if (d === 0 || d >= min) continue;
+    var nx = (c.x-a.x)/d, ny = (c.y-a.y)/d, sol = (min-d)/2;
+    var ma = a.boliche ? 0.35 : 1, mc = c.boliche ? 0.35 : 1;
+    a.x -= nx*sol; a.y -= ny*sol; c.x += nx*sol; c.y += ny*sol;
+    var vr = (c.vx-a.vx)*nx + (c.vy-a.vy)*ny;
+    if (vr > 0) continue;
+    var imp = -1.75*vr / (1/ma + 1/mc);
+    a.vx -= imp*nx/ma; a.vy -= imp*ny/ma;
+    c.vx += imp*nx/mc; c.vy += imp*ny/mc;
+    /* el carreau: la que tiraste choca a una rival y se queda casi en su sitio */
+    if (!a.boliche && !c.boliche && a.dueno !== c.dueno) huboCarreau = true;
+  }
+
+  /* Si «moviendo» se marcara dentro del bucle de choques, dos bolas apoyadas
+     una contra otra —que se separan un píxel y vuelven a tocarse— lo dejarían
+     encendido para siempre y la mène no terminaba nunca. Así que la pregunta
+     se responde al final y solo mirando velocidades. */
+  moviendo = todo.some(function(b){
+    return !b.fuera && Math.hypot(b.vx, b.vy) >= 0.09;
+  });
+
+  dibujar();
+  if (moviendo){ J.raf = requestAnimationFrame(paso); return; }
+
+  var ult = J.bolas[J.bolas.length-1];
+  if (ult && ult.fuera) avisar(t('fuera'));
+  else if (huboCarreau) avisar(t('carreau'), true);
+  seguir();
+}
+
+function seguir(){
+  if (J.turno === 'yo') J.misQuedan--; else J.susQuedan--;
+  pintarBolas();
+
+  if (J.misQuedan === 0 && J.susQuedan === 0){ cerrarMene(); return; }
+
+  /* manda el que NO tiene el punto; si se quedó sin bolas, tira el otro */
+  var mia = masCerca('yo'), suya = masCerca('rival');
+  var mando;
+  if (!mia) mando = 'yo'; else if (!suya) mando = 'rival';
+  else mando = dist(mia,J.boliche) <= dist(suya,J.boliche) ? 'rival' : 'yo';
+  if (mando === 'yo' && J.misQuedan === 0) mando = 'rival';
+  if (mando === 'rival' && J.susQuedan === 0) mando = 'yo';
+  J.turno = mando;
+
+  if (J.turno === 'rival'){ avisar(t('turnoRival')); setTimeout(tiraRival, 700); }
+  else { J.fase = 'elegir'; J.modo = null; pintarMando(); avisar(t('elegi')); }
+}
+
+/* ── el rival ───────────────────────────────────────────────────────────── */
+function tiraRival(){
+  var mia = masCerca('yo'), suya = masCerca('rival');
+  /* decide como un jugador de verdad: si la mía está muy pegada al boliche,
+     conviene tirarla; si no, apuntar */
+  var modo = 'apuntar';
+  if (mia && dist(mia,J.boliche) < 42 && (!suya || dist(suya,J.boliche) > dist(mia,J.boliche)))
+    modo = Math.random() < 0.72 ? 'tirar' : 'apuntar';
+
+  var obj = modo === 'tirar' ? mia : J.boliche;
+  var dx = obj.x - LINEA_TIRO, dy = obj.y - H/2;
+  var ang = Math.atan2(dy, dx);
+  var largo = Math.hypot(dx, dy);
+  /* puntería imperfecta a propósito, si no no se le gana nunca */
+  ang += (Math.random()-0.5) * (modo === 'tirar' ? 0.055 : 0.085);
+  var fza = modo === 'tirar' ? largo*0.135 : largo*0.0595;
+  fza *= 1 + (Math.random()-0.5)*0.11;
+  lanzar('rival', ang, fza, modo);
+}
+
+/* ── fin de la mène ─────────────────────────────────────────────────────── */
+function cerrarMene(){
+  var mia = masCerca('yo'), suya = masCerca('rival');
+  var gana, pts = 0;
+  if (!mia && !suya){ gana = null; }
+  else if (!suya){ gana = 'yo'; }
+  else if (!mia){ gana = 'rival'; }
+  else gana = dist(mia,J.boliche) < dist(suya,J.boliche) ? 'yo' : 'rival';
+
+  if (gana){
+    /* en la pétanque se cuentan TODAS las bolas más cerca que la mejor rival */
+    var ref = gana === 'yo' ? suya : mia;
+    var lim = ref ? dist(ref,J.boliche) : Infinity;
+    J.bolas.forEach(function(b){
+      if (b.dueno === gana && !b.fuera && dist(b,J.boliche) < lim) pts++;
+    });
+    /* la partida es a 13 y ahí se corta: sin el tope el marcador mostraba 15
+       mientras el texto del final decía 13 */
+    if (gana === 'yo') J.pYo = Math.min(13, J.pYo + pts);
+    else J.pRival = Math.min(13, J.pRival + pts);
+  }
+  document.getElementById('pYo').textContent = J.pYo;
+  document.getElementById('pRival').textContent = J.pRival;
+
+  var txt = (gana === 'yo' ? t('ganasteMene') : t('perdisteMene')) +
+            ' · ' + pts + (pts === 1 ? t('puntos') : t('puntosP'));
+  avisar(txt, gana === 'yo');
+  dibujar();
+
+  if (J.pYo >= 13 || J.pRival >= 13){ setTimeout(terminar, 1300); return; }
+  setTimeout(nuevaMene, 1600);
+}
+
+function terminar(){
+  J.fase = 'fin';
+  pintarMando();
+  var gane = J.pYo >= 13;
+  document.getElementById('fEt').textContent = t('et');
+  document.getElementById('fTit').textContent = gane ? t('finGan') : t('finPer');
+  document.getElementById('fTxt').textContent = gane
+    ? t('finGanT') + J.pRival : J.pYo + t('finPerT');
+  var nuevo = gane && Marcas.anotar(JUEGO, 13 - J.pRival);
+  var mejor = Marcas.mejor(JUEGO);
+  document.getElementById('fRec').textContent = mejor
+    ? t('rec') + '+' + mejor + (nuevo ? ' ★' : '') : t('sinRec');
+  document.getElementById('bOtra').textContent = t('otra');
+  document.getElementById('pFin').hidden = false;
+}
+
+/* ── mando: elegir, apuntar, fuerza ─────────────────────────────────────── */
+function elegir(modo){
+  if (J.fase !== 'elegir' || J.turno !== 'yo') return;
+  J.modo = modo;
+  J.fase = 'angulo';
+  J.ang = -0.42; J.angDir = 1;
+  pintarMando(); avisar(t('angulo'));
+  if (J.raf) cancelAnimationFrame(J.raf);
+  J.raf = requestAnimationFrame(barrer);
+}
+
+function barrer(){
+  J.raf = null;
+  if (J.fase === 'angulo'){
+    J.ang += 0.0135 * J.angDir;
+    if (J.ang > 0.42 || J.ang < -0.42) J.angDir *= -1;
+  } else if (J.fase === 'fuerza'){
+    J.fza += 0.016 * J.fzaDir;
+    if (J.fza > 1) { J.fza = 1; J.fzaDir = -1; }
+    if (J.fza < 0) { J.fza = 0; J.fzaDir = 1; }
+  } else { dibujar(); return; }
+  dibujar();
+  J.raf = requestAnimationFrame(barrer);
+}
+
+function fijar(){
+  if (J.fase === 'angulo'){
+    J.fase = 'fuerza'; J.fza = 0; J.fzaDir = 1;
+    avisar(t('fuerza'));
+  } else if (J.fase === 'fuerza'){
+    /* apuntar es suave y largo; tirar es corto, fuerte y por el aire */
+    var base = J.modo === 'tirar' ? 15.5 : 10.2;
+    var fza = (0.30 + J.fza*0.70) * base;
+    lanzar('yo', J.ang, fza, J.modo);
+  }
+}
+
+cv.addEventListener('pointerdown', function(e){
+  e.preventDefault();
+  if (J.fase === 'angulo' || J.fase === 'fuerza') fijar();
+});
+addEventListener('keydown', function(e){
+  if (e.code === 'Space' && (J.fase === 'angulo' || J.fase === 'fuerza')){
+    e.preventDefault(); fijar();
+  }
+});
+
+/* ── dibujo ─────────────────────────────────────────────────────────────── */
+function dibujar(){
+  /* la tierra */
+  cx.fillStyle = '#C6B189'; cx.fillRect(0,0,W,H);
+  cx.fillStyle = 'rgba(120,96,58,.13)';
+  for (var i=0;i<170;i++){
+    var sx = (i*151.3) % W, sy = (i*97.7) % H;
+    cx.fillRect(sx, sy, 3 + (i%4), 2 + (i%3));
+  }
+  /* el círculo de lanzamiento */
+  cx.strokeStyle = 'rgba(30,24,16,.42)'; cx.lineWidth = 3;
+  cx.beginPath(); cx.arc(LINEA_TIRO, H/2, 34, 0, 7); cx.stroke();
+
+  /* la guía, mientras se apunta */
+  if (J.fase === 'angulo' || J.fase === 'fuerza'){
+    var largo = J.fase === 'fuerza' ? 110 + J.fza*470 : 200;
+    cx.strokeStyle = J.modo === 'tirar' ? '#C0392B' : '#1E1810';
+    cx.lineWidth = J.modo === 'tirar' ? 4 : 3;
+    cx.setLineDash(J.modo === 'tirar' ? [14,9] : [7,7]);
+    cx.beginPath(); cx.moveTo(LINEA_TIRO, H/2);
+    cx.lineTo(LINEA_TIRO + Math.cos(J.ang)*largo, H/2 + Math.sin(J.ang)*largo);
+    cx.stroke(); cx.setLineDash([]);
+  }
+
+  /* el boliche */
+  if (J.boliche) bola(J.boliche.x, J.boliche.y, R_BOCHE, '#E0533A', '#7A1F10');
+
+  /* las bolas */
+  J.bolas.forEach(function(b){
+    if (b.fuera) return;
+    if (b.dueno === 'yo') bola(b.x, b.y, b.r, '#E8E4DC', '#6B6558', true);
+    else bola(b.x, b.y, b.r, '#2C333B', '#0B0E12', false);
+  });
+
+  /* la barra de fuerza */
+  if (J.fase === 'fuerza'){
+    var bw = 220, bh = 15, bx = W/2 - bw/2, by = H - 40;
+    cx.fillStyle = 'rgba(20,26,31,.85)'; cx.fillRect(bx-3, by-3, bw+6, bh+6);
+    cx.fillStyle = J.modo === 'tirar' ? '#E0533A' : '#E8C547';
+    cx.fillRect(bx, by, bw*J.fza, bh);
+  }
+}
+
+function bola(x, y, r, cara, borde, brillo){
+  cx.beginPath(); cx.arc(x+3, y+4, r, 0, 7);
+  cx.fillStyle = 'rgba(40,30,16,.30)'; cx.fill();
+  cx.beginPath(); cx.arc(x, y, r, 0, 7);
+  cx.fillStyle = cara; cx.fill();
+  cx.lineWidth = 2; cx.strokeStyle = borde; cx.stroke();
+  if (r > 9){
+    cx.beginPath(); cx.arc(x - r*0.3, y - r*0.32, r*0.26, 0, 7);
+    cx.fillStyle = brillo ? 'rgba(255,255,255,.75)' : 'rgba(255,255,255,.28)';
+    cx.fill();
+  }
+}
+
+/* ── interfaz ───────────────────────────────────────────────────────────── */
+function avisar(txt, bien){
+  var a = document.getElementById('aviso');
+  a.textContent = txt || '';
+  a.className = 'aviso' + (bien ? ' on' : '');
+}
+function pintarBolas(){
+  function fila(n, mias){
+    var s = '';
+    for (var i=0;i<3;i++) s += '<i class="' + (mias?'mi ':'') + (i<n?'va':'') + '"></i>';
+    return s;
+  }
+  document.getElementById('misBolas').innerHTML = fila(J.misQuedan, true);
+  document.getElementById('susBolas').innerHTML = fila(J.susQuedan, false);
+}
+function pintarMando(){
+  var libre = J.fase === 'elegir' && J.turno === 'yo';
+  var a = document.getElementById('bApuntar'), b = document.getElementById('bTirar');
+  a.disabled = !libre; b.disabled = !libre;
+  a.classList.toggle('sel', J.modo === 'apuntar');
+  b.classList.toggle('sel', J.modo === 'tirar');
+}
+
+function textos(){
+  document.getElementById('mDelMundo').textContent = t('delMundo');
+  document.getElementById('lYo').textContent = t('yo');
+  document.getElementById('lRival').textContent = t('rival');
+  document.getElementById('lMano').textContent = t('mano');
+  document.getElementById('iEt').textContent = t('et');
+  document.getElementById('iTit').textContent = t('tit');
+  document.getElementById('iTxt').textContent = t('txt');
+  document.getElementById('iReglas').innerHTML = ['r1','r2','r3'].map(function(k){
+    return '<div><b>' + t(k)[0] + '</b><span>' + t(k)[1] + '</span></div>';
+  }).join('');
+  document.getElementById('bJugar').textContent = t('jugar');
+  var mejor = Marcas.mejor(JUEGO);
+  document.getElementById('iRec').textContent = mejor ? t('rec') + '+' + mejor : t('sinRec');
+  document.getElementById('bApuntar').innerHTML = t('apuntar') + '<small>' + t('apuntarSub') + '</small>';
+  document.getElementById('bTirar').innerHTML = t('tirar') + '<small>' + t('tirarSub') + '</small>';
+  document.getElementById('pie').innerHTML = t('pie');
+  document.getElementById('lVolver').textContent = t('volver');
+  document.getElementById('bEs').setAttribute('aria-pressed', LANG === 'es');
+  document.getElementById('bEn').setAttribute('aria-pressed', LANG === 'en');
+  document.documentElement.lang = LANG;
+}
+function idioma(l){
+  LANG = l;
+  try { localStorage.setItem('fp-lang', l); } catch(e){}
+  textos();
+  if (J.fase === 'elegir') avisar(t('elegi'));
+}
+document.getElementById('bEs').onclick = function(){ idioma('es'); };
+document.getElementById('bEn').onclick = function(){ idioma('en'); };
+document.getElementById('bApuntar').onclick = function(){ elegir('apuntar'); };
+document.getElementById('bTirar').onclick   = function(){ elegir('tirar'); };
+document.getElementById('bJugar').onclick = function(){
+  document.getElementById('pInicio').hidden = true;
+  J.pYo = 0; J.pRival = 0;
+  document.getElementById('pYo').textContent = 0;
+  document.getElementById('pRival').textContent = 0;
+  nuevaMene();
+};
+document.getElementById('bOtra').onclick = function(){
+  document.getElementById('pFin').hidden = true;
+  J.pYo = 0; J.pRival = 0;
+  document.getElementById('pYo').textContent = 0;
+  document.getElementById('pRival').textContent = 0;
+  nuevaMene();
+};
+
+textos();
+J.boliche = { x: W*0.68, y: H/2, r:R_BOCHE, vx:0, vy:0, boliche:true };
+pintarBolas();
+dibujar();
+</script>

@@ -1,0 +1,722 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Frontón</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --hueso:#F2EFE9; --tinta:#141A1F; --punto:#F4551D; --ambar:#C98A16; --verde:#0E8F63;
+  --papel:#FBFAF7; --linea:#DCD7CD; --apagado:#6B7480; --sombra:rgba(20,26,31,.9);
+  --fd:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --fm:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --hueso:#12171C; --tinta:#F2EFE9; --papel:#1B2229; --linea:#2C343D; --apagado:#98A2AE;
+  --punto:#FF7034; --ambar:#DFA53B; --verde:#28B183; --sombra:rgba(0,0,0,.75);
+}}
+:root[data-theme="dark"]{
+  --hueso:#12171C; --tinta:#F2EFE9; --papel:#1B2229; --linea:#2C343D; --apagado:#98A2AE;
+  --punto:#FF7034; --ambar:#DFA53B; --verde:#28B183; --sombra:rgba(0,0,0,.75);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--hueso);color:var(--tinta);font-family:var(--fd);font-size:16px;
+  line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3{margin:0;line-height:1.05;font-stretch:112%}
+p{margin:0}
+:focus-visible{outline:2px solid var(--punto);outline-offset:3px}
+.wrap{max-width:1000px;margin:0 auto;padding:0 16px 40px}
+
+/* cabecera */
+header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0 14px}
+.marca{font-family:var(--fm);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--apagado)}
+.marca i{font-style:normal;color:var(--punto)}
+.idioma{margin-left:auto;display:flex;border:2px solid var(--tinta)}
+.idioma button{border:0;background:transparent;color:var(--tinta);font-family:var(--fm);
+  font-size:11px;font-weight:600;letter-spacing:.12em;padding:6px 11px;cursor:pointer}
+.idioma button[aria-pressed="true"]{background:var(--tinta);color:var(--hueso)}
+
+/* tablero */
+.marco{border:3px solid var(--tinta);box-shadow:8px 8px 0 var(--sombra);background:#E8E2D6;
+  position:relative;overflow:hidden}
+canvas{display:block;width:100%;height:auto;touch-action:none}
+
+/* marcador */
+.marcador{border:3px solid var(--tinta);border-bottom:0;background:var(--tinta);color:#F2EFE9;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:12px 18px 13px;
+  box-shadow:8px 0 0 var(--sombra)}
+.mk{display:flex;align-items:center;gap:16px}
+.mk .eq{display:flex;align-items:baseline;gap:11px}
+.mk .eq.rv{flex-direction:row}
+.mk .eq span{font-family:var(--fm);font-size:11px;letter-spacing:.17em;text-transform:uppercase;
+  opacity:.72}
+.mk .eq b{font-family:var(--fd);font-weight:800;font-stretch:118%;
+  font-size:clamp(38px,6.4vw,56px);line-height:.82;letter-spacing:-.04em;
+  font-variant-numeric:tabular-nums;display:inline-block}
+.mk .eq.yo b{color:var(--punto)}
+.mk .gui{font-family:var(--fd);font-weight:800;font-size:30px;opacity:.4;line-height:.82}
+.mk b.sube{animation:sube .42s ease-out}
+@keyframes sube{0%{transform:scale(1)}32%{transform:scale(1.42)}100%{transform:scale(1)}}
+.extra{margin-left:auto;display:flex;gap:20px;font-family:var(--fm);font-size:10.5px;
+  letter-spacing:.14em;text-transform:uppercase;opacity:.78}
+.extra div{display:flex;align-items:baseline;gap:8px}
+.extra b{font-family:var(--fd);font-size:19px;font-weight:800;letter-spacing:0;
+  font-variant-numeric:tabular-nums}
+
+/* HUD */
+.hud{position:absolute;inset:0;pointer-events:none;font-family:var(--fm)}
+.aviso{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%) rotate(-2deg);
+  background:var(--punto);color:#fff;border:3px solid var(--tinta);padding:9px 18px 11px;
+  font-family:var(--fd);font-weight:800;font-size:clamp(15px,2.6vw,22px);letter-spacing:.06em;
+  text-transform:uppercase;box-shadow:5px 5px 0 rgba(0,0,0,.35);opacity:0;visibility:hidden;transition:opacity .18s}
+.aviso.on{opacity:1;visibility:visible}
+
+/* pantallas */
+.pant{position:absolute;inset:0;background:rgba(20,26,31,.94);color:#F2EFE9;
+  display:flex;align-items:center;justify-content:center;padding:22px;text-align:center}
+.pant[hidden]{display:none}
+.pant .in{max-width:44ch}
+.pant .et{font-family:var(--fm);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--punto);font-weight:600}
+.pant h2{font-size:clamp(34px,6.5vw,58px);font-weight:800;font-stretch:120%;letter-spacing:-.03em;
+  text-transform:uppercase;margin:9px 0 0}
+.pant p{margin:12px 0 0;font-size:14.5px;opacity:.92}
+.pant .reglas{margin:16px auto 0;text-align:left;font-size:13.5px;opacity:.9;max-width:38ch;
+  display:flex;flex-direction:column;gap:5px}
+.pant .reglas span{padding-left:16px;position:relative}
+.pant .reglas span::before{content:"";position:absolute;left:0;top:.62em;width:8px;height:2px;
+  background:var(--punto)}
+.btn{margin-top:20px;border:3px solid #F2EFE9;background:var(--punto);color:#fff;
+  font-family:var(--fd);font-weight:800;font-size:14px;letter-spacing:.12em;text-transform:uppercase;
+  padding:13px 26px;cursor:pointer}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 rgba(0,0,0,.4)}
+.btn.sec{background:transparent;margin-left:8px}
+.rec{margin-top:13px;font-family:var(--fm);font-size:11px;letter-spacing:.13em;
+  text-transform:uppercase;opacity:.72}
+
+/* mandos táctiles */
+.mandos{display:none;gap:9px;margin-top:12px}
+.mandos button{flex:1;border:3px solid var(--tinta);background:var(--papel);color:var(--tinta);
+  font-family:var(--fd);font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase;
+  padding:16px 8px;cursor:pointer;box-shadow:4px 4px 0 var(--sombra);touch-action:manipulation}
+.mandos button.gol{background:var(--punto);color:#fff;flex:1.5}
+@media (hover:none) and (pointer:coarse){ .mandos{display:flex} }
+/* En el teléfono el marco mide ~250 px de alto: la pantalla de inicio no entra
+   adentro. Pasa a cubrir toda la ventana, que además es la regla de «un juego,
+   una sola pantalla». */
+@media (max-width:700px){
+  .pant{position:fixed;z-index:50;overflow-y:auto;align-items:flex-start;padding:26px 20px 40px}
+  .pant .in{margin:auto}
+}
+
+/* pie */
+.pie{margin-top:22px;display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  border-top:1px solid var(--linea);padding-top:18px}
+.pie h4{font-family:var(--fm);font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--punto);font-weight:600;margin-bottom:7px}
+.pie p{font-size:13px;color:var(--apagado);line-height:1.6}
+.pie a{color:var(--apagado)}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="marca">FirstPlace<i>.</i>games &nbsp;·&nbsp; <span id="mDelMundo"></span> &nbsp;·&nbsp; España</span>
+    <div class="idioma" role="group">
+      <button type="button" data-l="es">ES</button><button type="button" data-l="en">EN</button>
+    </div>
+  </header>
+
+  <div class="marcador">
+    <div class="mk">
+      <div class="eq yo"><span id="lYo"></span><b id="pYo">0</b></div>
+      <span class="gui">–</span>
+      <div class="eq rv"><b id="pRival">0</b><span id="lRival"></span></div>
+    </div>
+    <div class="extra">
+      <div><span id="lRally"></span><b id="pRally">0</b></div>
+      <div><span id="lMejor"></span><b id="pMejor">—</b></div>
+    </div>
+  </div>
+
+  <div class="marco">
+    <canvas id="cv" width="960" height="382" aria-label="Frontón"></canvas>
+    <div class="hud"><div class="aviso" id="aviso"></div></div>
+
+    <section class="pant" id="pInicio"><div class="in">
+      <p class="et" id="iEt"></p>
+      <h2>Frontón</h2>
+      <p id="iTxt"></p>
+      <div class="reglas" id="iReglas"></div>
+      <button class="btn" id="bJugar"></button>
+      <p class="rec" id="iRec"></p>
+    </div></section>
+
+    <section class="pant" id="pFin" hidden><div class="in">
+      <p class="et" id="fEt"></p>
+      <h2 id="fTit"></h2>
+      <p id="fTxt"></p>
+      <button class="btn" id="bOtra"></button>
+      <p class="rec" id="fRec"></p>
+    </div></section>
+  </div>
+
+  <div class="mandos">
+    <button type="button" id="mIzq" aria-label="Izquierda">◀</button>
+    <button type="button" class="gol" id="mGol"></button>
+    <button type="button" id="mDer" aria-label="Derecha">▶</button>
+  </div>
+
+  <div class="pie" id="pie"></div>
+</div>
+
+<script>
+/* ══════════ idioma ══════════ */
+var LANG = 'es';
+try { var g0 = localStorage.getItem('fp-lang'); if (g0 === 'es' || g0 === 'en') LANG = g0; } catch(e){}
+
+var T = {
+ es:{
+  mundo:'Del mundo',
+  yo:'Vos', rival:'Rival', rally:'Peloteo', mejor:'Récord',
+  et:'País Vasco, España · pelota a mano',
+  txt:'Pelota contra el frontis, por turnos. Abajo del muro hay una chapa: si le pegás ahí, perdés el tanto. Cuanto más baja tomes la pelota, más plana y más profunda va — y más cerca de la chapa pasa.',
+  reglas:['Flechas o A y D para moverte · espacio para pegarle',
+          'Tenés que darle vos: se turnan, y si pica dos veces es tanto del otro',
+          'La pelota tiene que llegar al frontis sin picar antes',
+          'Si pega en la chapa, arriba de la franja, o se va del fondo, es falta',
+          'Se juega a veintidós'],
+  jugar:'Jugar', golpear:'Pegarle', otra:'Otra vez',
+  rec:function(n){ return n ? 'Tu peloteo más largo: ' + n + ' golpes' : 'Todavía no jugaste'; },
+  rallyTxt:function(n){ return 'Tu peloteo más largo del partido: ' + n + ' golpes.'; },
+  ganaste:'Ganaste', perdiste:'Perdiste',
+  finEt:'Fin del partido',
+  finTxt:function(a,b){ return a + ' a ' + b + '.'; },
+  avChapa:'¡Chapa!', avCorta:'Corta · picó antes del frontis', avAlta:'Alta · pasó la franja',
+  avFuera:'Fuera del fondo', avDoble:'Dos picadas',
+  avTanto:'Tanto', avTantoR:'Tanto del rival',
+  avSaque:'Sacás vos', avSaqueR:'Saca el rival', avTurno:'Te toca',
+  pie:[['Qué es de verdad','La pelota a mano se juega en un frontón: un muro de frente (el <i>frontis</i>) y una cancha. Abajo del frontis hay una <i>chapa</i> de metal: darle ahí es falta. Se permite <b>una sola picada</b> antes de devolver; dos, y el tanto es del otro. El individual se juega <b>a 22 tantos</b> en cancha de 30 metros.'],
+       ['Qué cambiamos para que entre en una pantalla','Está de perfil y el saque es automático: no hay falta de saque. Lo que sí respetamos: la chapa, la franja de arriba, la picada única, que la pelota tenga que llegar al frontis sin picar, y el 22.'],
+       ['Fuentes','Reglas básicas contrastadas con <a href="https://deporteka.com/pelota-mano-fronton/reglas/reglas-basicas/" target="_blank" rel="noopener">Deporteka</a> y con el <a href="https://fepelota.com/wp-content/uploads/2020/07/REGLAMENTO_GENERAL_aprobado_CSD_2012.pdf" target="_blank" rel="noopener">reglamento de la Federación Española de Pelota</a>.']]
+ },
+ en:{
+  mundo:'Around the world',
+  yo:'You', rival:'Rival', rally:'Rally', mejor:'Record',
+  et:'Basque Country, Spain · pelota a mano',
+  txt:'Ball against the front wall, taking turns. There is a metal strip along the bottom — the chapa. Hit it and you lose the point. The lower you take the ball, the flatter and deeper it goes, and the closer it passes to the chapa.',
+  reglas:['Arrows or A and D to move · space to strike',
+          'You must take your turn: two bounces and the point is theirs',
+          'The ball has to reach the front wall without bouncing first',
+          'Hitting the chapa, going above the top band, or past the back line is a fault',
+          'The match is played to twenty-two'],
+  jugar:'Play', golpear:'Strike', otra:'Again',
+  rec:function(n){ return n ? 'Your longest rally: ' + n + ' strikes' : 'You have not played yet'; },
+  rallyTxt:function(n){ return 'Longest rally this match: ' + n + ' strikes.'; },
+  ganaste:'You won', perdiste:'You lost',
+  finEt:'Match over',
+  finTxt:function(a,b){ return a + ' to ' + b + '.'; },
+  avChapa:'Chapa!', avCorta:'Short · bounced before the wall', avAlta:'High · above the band',
+  avFuera:'Past the back line', avDoble:'Two bounces',
+  avTanto:'Point', avTantoR:'Their point',
+  avSaque:'You serve', avSaqueR:'They serve', avTurno:'Your turn',
+  pie:[['What is real','Pelota a mano is played in a frontón: a front wall (the <i>frontis</i>) and a court. A metal strip along the bottom of the wall — the <i>chapa</i> — is a fault if you hit it. <b>One bounce</b> is allowed before returning; two, and the point is theirs. Singles is played <b>to 22 points</b> on a 30-metre court.'],
+       ['What we changed to fit a screen','It is shown from the side and the serve is automatic: no serve faults. What we kept: the chapa, the top band, the single bounce, the ball having to reach the wall without bouncing, and the 22.'],
+       ['Sources','Rules checked against <a href="https://deporteka.com/pelota-mano-fronton/reglas/reglas-basicas/" target="_blank" rel="noopener">Deporteka</a> and the <a href="https://fepelota.com/wp-content/uploads/2020/07/REGLAMENTO_GENERAL_aprobado_CSD_2012.pdf" target="_blank" rel="noopener">Spanish Pelota Federation rulebook</a>.']]
+ }
+};
+
+/* ══════════ marcas ══════════ */
+var Marcas = (function(){
+  var CLAVE = 'fp-marcas';
+  var d = {};
+  try { d = JSON.parse(localStorage.getItem(CLAVE) || '{}'); } catch(e){ d = {}; }
+  return {
+    mejor:function(j){ return d[j] || 0; },
+    anotar:function(j,p){
+      if (p <= (d[j] || 0)) return false;
+      d[j] = p;
+      try { localStorage.setItem(CLAVE, JSON.stringify(d)); } catch(e){}
+      return true;
+    }
+  };
+})();
+
+/* ══════════ cancha ══════════ */
+/* Igual que en el Ulama: en pantalla angosta la cancha se acorta y TODA la
+   física se escala con ella. */
+var ANGOSTO = (typeof matchMedia === 'function') && matchMedia('(max-width:700px)').matches;
+var W = ANGOSTO ? 620 : 960;
+var H = ANGOSTO ? 392 : 382;
+var K = W / 960;
+var SUELO = H - 70;
+var PARED = 104 * K;              // cara interna del frontis
+var CHAPA = 34 * K;              // alto de la chapa, desde el piso
+var TOPE  = 42 * K;              // franja de arriba: más alto que esto es falta
+var FONDO = W - 34 * K;          // línea de fondo
+var CU0 = PARED + (FONDO - PARED) * 0.42;   // cuadros marcados en el piso
+var CU1 = PARED + (FONDO - PARED) * 0.64;
+var G = 950 * K;
+var R = 10 * K;
+var META = 22;
+
+var cv = document.getElementById('cv'), cx = cv.getContext('2d');
+cv.width = W; cv.height = H;
+var $ = function(id){ return document.getElementById(id); };
+
+var S = null;
+function nuevoPartido(){
+  S = {
+    fase:'saque', t:0, pYo:0, pRival:0, saque:'yo',
+    turno:'yo',
+    yo:  { x: PARED + (FONDO-PARED)*0.62, gol:0 },
+    riv: { x: PARED + (FONDO-PARED)*0.80, gol:0, reac:0, decidio:false, exito:true, qObj:.6, lento:1 },
+    b:   { x:0, y:0, vx:0, vy:0, picadas:0, tocoPared:false },
+    aviso:0, sacudon:0, fin:null, rally:0, rallyMax:0, golpes:0
+  };
+  ponerSaque();
+}
+function ponerSaque(){
+  var yo = S.saque === 'yo';
+  var p = yo ? S.yo : S.riv;
+  S.turno = yo ? 'yo' : 'riv';
+  S.b.x = p.x - 20*K;
+  S.b.y = SUELO - 70*K;
+  S.b.vx = 0; S.b.vy = 0;
+  S.b.picadas = 0; S.b.tocoPared = false;
+  S.fase = 'saque'; S.t = 0; S.rally = 0;
+  S.riv.decidio = false;
+  msg(yo ? T[LANG].avSaque : T[LANG].avSaqueR);
+  if (!yo) S.riv.reac = 0.6 + Math.random()*0.4;
+}
+
+/* ══════════ mandos ══════════ */
+var tecla = {};
+addEventListener('keydown', function(e){
+  if (['ArrowLeft','ArrowRight','a','d','A','D',' '].indexOf(e.key) !== -1) e.preventDefault();
+  tecla[e.key] = true;
+  if (e.key === ' ') pedirGolpe();
+});
+addEventListener('keyup', function(e){ tecla[e.key] = false; });
+
+var tIzq = false, tDer = false;
+function mando(el, on, off){
+  el.addEventListener('pointerdown', function(e){ e.preventDefault(); on(); });
+  ['pointerup','pointercancel','pointerleave'].forEach(function(ev){
+    el.addEventListener(ev, function(){ off(); });
+  });
+}
+mando($('mIzq'), function(){ tIzq = true; }, function(){ tIzq = false; });
+mando($('mDer'), function(){ tDer = true; }, function(){ tDer = false; });
+$('mGol').addEventListener('pointerdown', function(e){ e.preventDefault(); pedirGolpe(); });
+
+function pedirGolpe(){
+  if (!S || S.fin) return;
+  if (S.fase === 'saque' && S.saque === 'yo'){ sacar(S.yo, 'yo'); return; }
+  if (S.fase !== 'juego' || S.turno !== 'yo') return;
+  golpear(S.yo, 'yo');
+}
+
+/* A qué altura del frontis llega un tiro, o null si pica antes.
+   Con esto el rival elige una altura que le sirva desde donde está, y el
+   jugador ve el tiro antes de pegarlo. */
+function predecir(x0, y0, q, alt){
+  var vx = (430 + 300 * q) * K;
+  var vy = -(230 + 260 * alt) * K;
+  var d  = x0 - (PARED + R);
+  if (d <= 0) return { y: y0, corta:false };
+  var t  = d / vx;
+  var y  = y0 + vy * t + 0.5 * G * t * t;
+  // ¿toca el piso antes de llegar?
+  var tPiso = tiempoHastaAltura(y0, vy, SUELO - R);
+  if (tPiso > 0 && tPiso < t) return { y: SUELO, corta:true };
+  return { y: y, corta:false };
+}
+/* Franja de alturas de tiro que son legales desde acá */
+function alturasLegales(x0, y0, q){
+  var lo = null, hi = null;
+  for (var a = 0; a <= 1.0001; a += 0.04){
+    var p = predecir(x0, y0, q, a);
+    var ok = !p.corta && p.y < SUELO - CHAPA && p.y > TOPE;
+    if (ok){ if (lo === null) lo = a; hi = a; }
+  }
+  return { lo: lo, hi: hi };
+}
+
+function sacar(p, quien){
+  /* El saque también tiene que llegar al frontis. Sin calcular la altura desde
+     la posición del sacador, los dos sacaban corto y TODOS los tantos eran
+     falta de saque: 17-17 sin un solo peloteo. */
+  var q = 0.72 + Math.random() * 0.12;
+  var x0 = p.x - 20*K, y0 = SUELO - 70*K;
+  var f = alturasLegales(x0, y0, q);
+  var alt = (f.lo === null) ? 0.9 : f.lo + (f.hi - f.lo) * (0.35 + Math.random()*0.3);
+  S.b.x = x0; S.b.y = y0;
+  S.b.vx = -(430 + 300 * q) * K;
+  S.b.vy = -(230 + 260 * alt) * K;
+  S.b.picadas = 0;
+  S.b.tocoPared = false;
+  S.b.esSaque = true;
+  S.fase = 'juego';
+  S.turno = quien === 'yo' ? 'riv' : 'yo';
+  p.gol = 0.16;
+  S.riv.decidio = false;
+  msg('');
+}
+
+/* alcance: ventana horizontal alrededor del jugador, a cualquier altura de brazo */
+function alcance(p){
+  var dx = Math.abs(S.b.x - p.x);
+  if (dx > 52*K) return -1;
+  if (S.b.y > SUELO - 2*K || S.b.y < SUELO - 152*K) return -1;
+  return 1 - dx / (52*K);                         // calidad por el momento del golpe
+}
+/* altura de contacto: 0 al ras del piso, 1 arriba de todo */
+function altura(){
+  return Math.max(0, Math.min(1, (SUELO - S.b.y) / (146*K)));
+}
+
+function pegar(p, quien, q, alt){
+  S.b.esSaque = false;
+  S.b.vx = -(430 + 300 * q) * K;
+  S.b.vy = -(230 + 260 * alt) * K;
+  S.b.picadas = 0;
+  S.b.tocoPared = false;
+  S.turno = quien === 'yo' ? 'riv' : 'yo';
+  p.gol = 0.18;
+  S.riv.decidio = false;
+  S.golpes++;
+  S.rally++; if (S.rally > S.rallyMax) S.rallyMax = S.rally;
+  return true;
+}
+function golpear(p, quien){
+  var q = alcance(p);
+  if (q < 0){ p.gol = 0.13; return false; }
+  S.sacudon = 0.10 + 0.10 * q;
+  return pegar(p, quien, q, altura());
+}
+
+function msg(txt){
+  var a = $('aviso');
+  a.textContent = txt;
+  a.classList.toggle('on', !!txt);
+  S.aviso = txt ? 1.1 : 0;
+}
+
+function punto(quien, texto){
+  if (quien === 'yo') S.pYo++; else S.pRival++;
+  var caja = $(quien === 'yo' ? 'pYo' : 'pRival');
+  $('pYo').textContent = S.pYo;
+  $('pRival').textContent = S.pRival;
+  caja.classList.remove('sube'); void caja.offsetWidth; caja.classList.add('sube');
+  msg(texto);
+  S.fase = 'pausa'; S.t = 0; S.rally = 0;
+  S.saque = quien;                                  // saca el que ganó el tanto
+  if (S.pYo >= META || S.pRival >= META) terminar();
+}
+
+function terminar(){
+  S.fin = S.pYo >= META ? 'gano' : 'perdio';
+  var t = T[LANG];
+  var nuevo = Marcas.anotar('fronton', S.rallyMax);
+  $('fEt').textContent   = t.finEt;
+  $('fTit').textContent  = S.fin === 'gano' ? t.ganaste : t.perdiste;
+  $('fTxt').textContent  = t.finTxt(S.pYo, S.pRival) + ' ' + t.rallyTxt(S.rallyMax);
+  $('bOtra').textContent = t.otra;
+  $('fRec').textContent  = (nuevo ? '★ ' : '') + t.rec(Marcas.mejor('fronton'));
+  $('pMejor').textContent = Marcas.mejor('fronton') || '—';
+  $('pFin').hidden = false;
+}
+
+/* ══════════ el rival ══════════ */
+/* Misma lección que en el Ulama: decide UNA vez por turno. Preguntarle en cada
+   cuadro equivale a que devuelva siempre y el peloteo no termina nunca. */
+function pensarRival(dt){
+  var r = S.riv;
+  if (S.fase === 'saque'){
+    if (S.saque === 'riv'){ r.reac -= dt; if (r.reac <= 0) sacar(r, 'riv'); }
+    return;
+  }
+  if (S.fase !== 'juego') return;
+
+  if (S.turno === 'riv' && !r.decidio){
+    r.decidio = true;
+    var fuerza = Math.max(0, (Math.abs(S.b.vx)/K - 430) / 300);
+    var maña = 0.87 + Math.min(0.05, (S.pRival + S.pYo) * 0.003);
+    var prob = maña - 0.22 * fuerza + (S.b.esSaque ? 0.10 : 0);   // el saque no es un tanto gratis
+    r.exito = Math.random() < Math.max(0.26, Math.min(0.94, prob));
+    r.qObj  = 0.45 + Math.random() * (r.exito ? 0.52 : 0.18);
+    r.lento = r.exito ? 1 : 0.6;
+    r.altObj = null;                                 // se decide al pegar
+  }
+
+  // se acomoda donde va a picar
+  var destino = r.x;
+  if (S.b.vx > 0){
+    var t1 = tiempoHastaAltura(S.b.y, S.b.vy, SUELO - 60*K);
+    destino = S.b.x + S.b.vx * Math.max(t1, 0.05) + 26*K;
+    if (!r.exito) destino += (70 + Math.random()*60) * K;
+  }
+  destino = Math.max(PARED + 120*K, Math.min(FONDO - 18*K, destino));
+  var vel = 265 * K * (r.lento || 1);
+  var dx = destino - r.x;
+  r.x += Math.max(-vel*dt, Math.min(vel*dt, dx));
+  r.x = Math.max(PARED + 120*K, Math.min(FONDO - 18*K, r.x));
+
+  if (S.turno === 'riv' && r.exito && alcance(r) >= 0 && S.b.tocoPared){
+    // elige la altura mirando a qué distancia del frontis está: desde el fondo
+    // hay que levantarla más. Sin esto fallaba uno de cada dos tiros.
+    var f = alturasLegales(S.b.x, S.b.y, r.qObj);
+    var alt;
+    if (f.lo === null) alt = 0.85;                   // no hay tiro bueno: la levanta
+    else {
+      /* Alterna profunda y corta a propósito: es así como se gana un tanto.
+         Devolver siempre a media cancha hace peloteos de ochenta golpes en los
+         que nadie falla nunca. */
+      r.larga = (Math.random() < 0.72) ? !r.larga : r.larga;
+      var p0 = r.larga ? 0.02 + Math.random()*0.18 : 0.74 + Math.random()*0.24;
+      alt = f.lo + (f.hi - f.lo) * p0;
+    }
+    pegar(r, 'riv', r.qObj, alt);
+  }
+}
+function tiempoHastaAltura(y, vy, objetivo){
+  var a = G/2, b = vy, c = y - objetivo;
+  var disc = b*b - 4*a*c;
+  if (disc < 0) return 0.25;
+  return (-b + Math.sqrt(disc)) / (2*a);
+}
+
+/* ══════════ física ══════════ */
+function paso(dt){
+  if (!S || S.fin) return;
+  S.t += dt;
+  if (S.aviso > 0){ S.aviso -= dt; if (S.aviso <= 0) msg(''); }
+  if (S.sacudon > 0) S.sacudon -= dt;
+  S.yo.gol = Math.max(0, S.yo.gol - dt);
+  S.riv.gol = Math.max(0, S.riv.gol - dt);
+  var er = $('pRally'); if (er) er.textContent = S.rally;
+
+  var iz = tecla['ArrowLeft'] || tecla['a'] || tecla['A'] || tIzq;
+  var de = tecla['ArrowRight'] || tecla['d'] || tecla['D'] || tDer;
+  S.yo.x += 250 * K * ((iz?-1:0) + (de?1:0)) * dt;
+  S.yo.x = Math.max(PARED + 100*K, Math.min(FONDO - 18*K, S.yo.x));
+
+  pensarRival(dt);
+
+  if (S.fase === 'pausa'){ if (S.t > 1.0) ponerSaque(); return; }
+  if (S.fase === 'saque'){
+    var p = S.saque === 'yo' ? S.yo : S.riv;
+    S.b.x = p.x - 20*K; S.b.y = SUELO - 70*K;
+    return;
+  }
+
+  var b = S.b, t = T[LANG];
+  var dueño = S.turno;                  // el que tiene que devolverla
+  var otro  = dueño === 'yo' ? 'riv' : 'yo';
+
+  b.vy += G * dt;
+  b.x  += b.vx * dt;
+  b.y  += b.vy * dt;
+
+  // frontis
+  if (b.x <= PARED + R && b.vx < 0){
+    if (b.y > SUELO - CHAPA){ punto(dueño, dueño === 'yo' ? t.avTanto : t.avTantoR); return; }  // chapa
+    if (b.y < TOPE){ punto(dueño, dueño === 'yo' ? t.avTanto : t.avTantoR); return; }           // franja
+    b.x = PARED + R;
+    b.vx = -b.vx * 0.9;
+    b.tocoPared = true;
+    b.picadas = 0;
+  }
+
+  // piso
+  if (b.y > SUELO - R){
+    b.y = SUELO - R;
+    b.vy = -b.vy * 0.62;
+    b.vx *= 0.96;
+    if (Math.abs(b.vy) < 70*K) b.vy = -70*K;
+    if (!b.tocoPared){
+      // picó antes de llegar al frontis: falta del que la pegó
+      punto(dueño, dueño === 'yo' ? t.avTanto : t.avTantoR);
+      return;
+    }
+    b.picadas++;
+    if (b.picadas >= 2){ punto(otro, otro === 'yo' ? t.avTanto : t.avTantoR); return; }
+  }
+
+  // fondo
+  if (b.x > FONDO + 26*K){ punto(dueño, dueño === 'yo' ? t.avTanto : t.avTantoR); return; }
+  if (b.y < R){ b.y = R; b.vy = Math.abs(b.vy)*0.5; }
+}
+
+/* ══════════ dibujo ══════════ */
+function jugador(p, color, activo){
+  cx.save();
+  cx.translate(p.x, SUELO);
+  cx.globalAlpha = activo ? 1 : 0.5;
+  cx.fillStyle = 'rgba(20,26,31,.15)';
+  cx.beginPath(); cx.ellipse(0, 3, 22*K, 5*K, 0, 0, 6.3); cx.fill();
+  cx.scale((activo ? 1.2 : 1.0) * K, (activo ? 1.2 : 1.0) * K);
+  var br = p.gol > 0 ? (p.gol / 0.18) : 0;
+  cx.strokeStyle = '#141A1F'; cx.lineWidth = 6; cx.lineCap = 'round';
+  cx.beginPath(); cx.moveTo(-9, 0); cx.lineTo(-2, -34); cx.stroke();
+  cx.beginPath(); cx.moveTo(9, 0);  cx.lineTo(2, -34); cx.stroke();
+  cx.fillStyle = color;
+  cx.beginPath(); cx.roundRect(-11, -62, 24, 30, 4); cx.fill();
+  cx.lineWidth = 3; cx.strokeStyle = '#141A1F';
+  cx.beginPath(); cx.roundRect(-11, -62, 24, 30, 4); cx.stroke();
+  // brazo que pega: se estira hacia el frontis
+  cx.lineWidth = 5;
+  cx.beginPath(); cx.moveTo(-2, -58); cx.lineTo(-16 - 18*br, -50 + 14*br); cx.stroke();
+  cx.beginPath(); cx.moveTo(6, -58);  cx.lineTo(16, -42); cx.stroke();
+  cx.fillStyle = '#141A1F';
+  cx.beginPath(); cx.arc(1, -74, 10, 0, 6.3); cx.fill();
+  cx.restore();
+}
+
+function dibujar(){
+  var sac = S && S.sacudon > 0 ? (Math.random()-0.5) * 8 * S.sacudon : 0;
+  cx.save(); cx.translate(sac, 0);
+
+  cx.fillStyle = '#E8E2D6'; cx.fillRect(-20, 0, W+40, H);
+  // pared del fondo: hiladas tenues, para que se lea como un frontón cerrado
+  cx.strokeStyle = 'rgba(20,26,31,.055)'; cx.lineWidth = 1;
+  for (var yy = 26*K; yy < SUELO; yy += 30*K){
+    cx.beginPath(); cx.moveTo(PARED, yy); cx.lineTo(W+20, yy); cx.stroke();
+  }
+
+  // frontis
+  cx.fillStyle = '#CFC6B4';
+  cx.fillRect(-20, 0, PARED + 20, SUELO);
+  cx.strokeStyle = 'rgba(20,26,31,.18)'; cx.lineWidth = 1;
+  for (var y = 28*K; y < SUELO; y += 30*K){
+    cx.beginPath(); cx.moveTo(-20, y); cx.lineTo(PARED, y); cx.stroke();
+  }
+  cx.strokeStyle = '#141A1F'; cx.lineWidth = 4;
+  cx.beginPath(); cx.moveTo(PARED, 0); cx.lineTo(PARED, SUELO); cx.stroke();
+
+  // chapa
+  cx.fillStyle = '#7C8894';
+  cx.fillRect(-20, SUELO - CHAPA, PARED + 20, CHAPA);
+  cx.strokeStyle = '#141A1F'; cx.lineWidth = 3;
+  cx.beginPath(); cx.moveTo(-20, SUELO - CHAPA); cx.lineTo(PARED, SUELO - CHAPA); cx.stroke();
+  // franja de arriba
+  cx.strokeStyle = '#F4551D'; cx.lineWidth = 3;
+  cx.beginPath(); cx.moveTo(-20, TOPE); cx.lineTo(PARED, TOPE); cx.stroke();
+
+  // piso
+  cx.fillStyle = '#D6C9AE'; cx.fillRect(-20, SUELO, W+40, H - SUELO);
+  cx.strokeStyle = '#141A1F'; cx.lineWidth = 4;
+  cx.beginPath(); cx.moveTo(-20, SUELO); cx.lineTo(W+20, SUELO); cx.stroke();
+  // cuadros
+  // cuadros numerados en el piso, como en un frontón de verdad
+  cx.lineWidth = 2; cx.strokeStyle = 'rgba(20,26,31,.42)';
+  cx.font = (11*K|0) + 'px "IBM Plex Mono", monospace';
+  cx.fillStyle = 'rgba(20,26,31,.5)';
+  cx.textAlign = 'center';
+  for (var c = 1; c <= 7; c++){
+    var xc = PARED + (FONDO - PARED) * (c / 7.6);
+    cx.lineWidth = (xc === CU0 || xc === CU1) ? 3 : 1.6;
+    cx.beginPath(); cx.moveTo(xc, SUELO); cx.lineTo(xc, H - 16*K); cx.stroke();
+    cx.fillText(String(c * 2), xc, H - 5*K);
+  }
+  cx.textAlign = 'start';
+  cx.lineWidth = 3; cx.strokeStyle = 'rgba(244,85,29,.75)';
+  [CU0, CU1].forEach(function(x){
+    cx.beginPath(); cx.moveTo(x, SUELO); cx.lineTo(x, H); cx.stroke();
+  });
+  cx.lineWidth = 3; cx.strokeStyle = '#141A1F';
+  cx.beginPath(); cx.moveTo(FONDO, SUELO - 10*K); cx.lineTo(FONDO, H); cx.stroke();
+
+  if (S){
+    var miTurno = S.turno === 'yo';
+    jugador(S.riv, '#2B4C6F', !miTurno);
+    jugador(S.yo,  '#F4551D', miTurno);
+
+    var b = S.b;
+    cx.fillStyle = 'rgba(20,26,31,.13)';
+    cx.beginPath(); cx.ellipse(b.x, SUELO + 3, R, 4*K, 0, 0, 6.3); cx.fill();
+    cx.fillStyle = '#F2EFE9';
+    cx.beginPath(); cx.arc(b.x, b.y, R, 0, 6.3); cx.fill();
+    cx.strokeStyle = '#141A1F'; cx.lineWidth = 3;
+    cx.beginPath(); cx.arc(b.x, b.y, R, 0, 6.3); cx.stroke();
+
+    if (S.fase === 'juego' && miTurno){
+      var qv = alcance(S.yo);
+      cx.strokeStyle = qv >= 0 ? 'rgba(244,85,29,.9)' : 'rgba(244,85,29,.28)';
+      cx.lineWidth = 3; cx.setLineDash([5,5]);
+      cx.beginPath(); cx.moveTo(S.yo.x - 52*K, SUELO - 2); cx.lineTo(S.yo.x + 52*K, SUELO - 2); cx.stroke();
+      cx.setLineDash([]);
+      // dónde pegaría el tiro en el frontis, ahora mismo
+      if (qv >= 0 && b.tocoPared){
+        var pr = predecir(b.x, b.y, qv, altura());
+        var bien = !pr.corta && pr.y < SUELO - CHAPA && pr.y > TOPE;
+        cx.fillStyle = bien ? '#0E8F63' : '#C0392B';
+        var yy = pr.corta ? SUELO - CHAPA/2 : Math.max(TOPE/2, Math.min(SUELO - 6, pr.y));
+        cx.beginPath();
+        cx.moveTo(PARED + 4, yy); cx.lineTo(PARED + 18*K, yy - 7*K); cx.lineTo(PARED + 18*K, yy + 7*K);
+        cx.closePath(); cx.fill();
+      }
+    }
+  }
+  cx.restore();
+}
+
+/* ══════════ bucle ══════════ */
+var ant = 0, corriendo = false;
+function bucle(ms){
+  if (!ant) ant = ms;
+  var dt = Math.min(0.033, (ms - ant) / 1000);
+  ant = ms;
+  if (corriendo) paso(dt);
+  dibujar();
+  requestAnimationFrame(bucle);
+}
+requestAnimationFrame(bucle);
+
+/* ══════════ interfaz ══════════ */
+function pintarTextos(){
+  var t = T[LANG];
+  document.documentElement.lang = LANG;
+  $('mDelMundo').textContent = t.mundo;
+  $('lYo').textContent = t.yo;
+  $('lRival').textContent = t.rival;
+  $('lRally').textContent = t.rally;
+  $('lMejor').textContent = t.mejor;
+  $('pMejor').textContent = Marcas.mejor('fronton') || '—';
+  $('iEt').textContent = t.et;
+  $('iTxt').textContent = t.txt;
+  $('iReglas').innerHTML = t.reglas.map(function(r){ return '<span>'+r+'</span>'; }).join('');
+  $('bJugar').textContent = t.jugar;
+  $('iRec').textContent = t.rec(Marcas.mejor('fronton'));
+  $('mGol').textContent = t.golpear;
+  $('pie').innerHTML = t.pie.map(function(p){
+    return '<div><h4>'+p[0]+'</h4><p>'+p[1]+'</p></div>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('.idioma button'), function(b){
+    b.setAttribute('aria-pressed', b.getAttribute('data-l') === LANG ? 'true' : 'false');
+  });
+}
+document.querySelector('.idioma').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if (!b) return;
+  LANG = b.getAttribute('data-l');
+  try { localStorage.setItem('fp-lang', LANG); } catch(err){}
+  pintarTextos();
+});
+
+function arrancar(){
+  nuevoPartido();
+  $('pInicio').hidden = true;
+  $('pFin').hidden = true;
+  $('pYo').textContent = 0; $('pRival').textContent = 0;
+  corriendo = true;
+}
+$('bJugar').addEventListener('click', arrancar);
+$('bOtra').addEventListener('click', arrancar);
+
+pintarTextos();
+nuevoPartido();
+corriendo = false;
+</script>

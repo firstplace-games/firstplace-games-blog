@@ -1,0 +1,609 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Primero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --hueso:#F2EFE9; --tinta:#141A1F; --punto:#F4551D; --ambar:#C98A16;
+  --gris:#B9B2A6; --papel:#FBFAF7; --linea:#DCD7CD; --apagado:#6B7480;
+  --fd:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --fm:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --hueso:#12171C; --tinta:#F2EFE9; --papel:#1A2129; --linea:#2C343D;
+  --gris:#4A535E; --apagado:#98A2AE; --punto:#FF7034; --ambar:#DFA53B;
+}}
+:root[data-theme="dark"]{
+  --hueso:#12171C; --tinta:#F2EFE9; --papel:#1A2129; --linea:#2C343D;
+  --gris:#4A535E; --apagado:#98A2AE; --punto:#FF7034; --ambar:#DFA53B;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--hueso);color:var(--tinta);font-family:var(--fd);
+  font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+:focus-visible{outline:2px solid var(--punto);outline-offset:2px}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px 56px}
+
+/* ── cabecera ── */
+header{padding:26px 0 18px;text-align:center}
+.marca{display:inline-flex;align-items:baseline;gap:3px;font-weight:800;font-stretch:118%;
+  font-size:19px;letter-spacing:-.02em;text-transform:uppercase}
+.marca i{font-style:normal;color:var(--punto)}
+h1{margin:14px 0 0;font-size:clamp(34px,10vw,46px);font-weight:800;font-stretch:120%;
+  letter-spacing:-.03em;text-transform:uppercase;line-height:1}
+.hoy{margin:9px 0 0;font-family:var(--fm);font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--apagado)}
+.hoy b{color:var(--punto);font-weight:600}
+.consigna{margin:16px auto 0;max-width:42ch;font-size:15px;color:var(--apagado)}
+.consigna strong{color:var(--tinta);font-weight:700}
+
+/* ── tablero ── */
+.cabec{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:22px 0 7px}
+.cabec span{font-family:var(--fm);font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--apagado);text-align:center;line-height:1.25}
+.tablero{display:flex;flex-direction:column;gap:9px}
+.fila{border:1px solid var(--linea);background:var(--papel);padding:6px 6px 7px}
+.fila.vacia{background:transparent;border-style:dashed;opacity:.5}
+.quien{font-size:12px;font-weight:700;letter-spacing:-.01em;margin:0 0 5px;padding:0 2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.celdas{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.c{height:40px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:var(--fm);font-size:13px;font-weight:600;border:1px solid transparent;
+  background:var(--gris);color:var(--papel);line-height:1.1}
+.c.ok{background:var(--punto);color:#fff}
+.c.cerca{background:var(--ambar);color:#fff}
+.c .fl{font-size:10px;opacity:.85;margin-top:1px}
+.fila.vacia .c{background:transparent;border:1px dashed var(--linea);height:40px}
+
+/* ── entrada ── */
+.zona{margin-top:20px;position:relative}
+input[type=text]{width:100%;height:50px;padding:0 14px;border:2px solid var(--tinta);
+  background:var(--papel);color:var(--tinta);font-family:var(--fd);font-size:16px;font-weight:600;
+  border-radius:0}
+input[type=text]::placeholder{color:var(--apagado);font-weight:400}
+.sug{position:absolute;left:0;right:0;top:52px;z-index:9;background:var(--papel);
+  border:2px solid var(--tinta);border-top:0;max-height:212px;overflow:auto}
+.sug button{display:block;width:100%;text-align:left;padding:10px 14px;border:0;
+  border-bottom:1px solid var(--linea);background:transparent;color:var(--tinta);
+  font-family:var(--fd);font-size:15px;font-weight:600;cursor:pointer}
+.sug button:last-child{border-bottom:0}
+.sug button:hover,.sug button.sel{background:var(--punto);color:#fff}
+.restan{margin-top:9px;font-family:var(--fm);font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--apagado);text-align:center}
+
+/* ── final ── */
+.final{margin-top:24px;border:2px solid var(--tinta);background:var(--papel);padding:20px 18px;
+  position:relative}
+.final .veredicto{font-family:var(--fm);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--punto);font-weight:600}
+.final h2{margin:8px 0 0;font-size:27px;font-weight:800;font-stretch:112%;letter-spacing:-.02em}
+.final .quien2{margin:3px 0 0;font-size:14px;color:var(--apagado)}
+.gr{margin:18px 0 0;font-family:var(--fm);font-size:15px;line-height:1.35;letter-spacing:.06em;
+  white-space:pre;text-align:center}
+.acciones{display:flex;gap:9px;margin-top:18px;flex-wrap:wrap}
+.btn{flex:1 1 150px;height:46px;border:2px solid var(--tinta);background:var(--tinta);color:var(--hueso);
+  font-family:var(--fd);font-size:13px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  cursor:pointer;border-radius:0}
+.btn.sec{background:transparent;color:var(--tinta)}
+.sello{position:absolute;right:-6px;top:-14px;transform:rotate(-9deg);
+  border:3px solid var(--tinta);background:var(--hueso);color:var(--tinta);
+  font-family:var(--fd);font-weight:800;font-size:11px;letter-spacing:.13em;text-transform:uppercase;
+  padding:5px 11px 6px;box-shadow:3px 3px 0 rgba(0,0,0,.28)}
+.nota{margin-top:26px;border-top:1px solid var(--linea);padding-top:14px;
+  font-size:12px;color:var(--apagado);line-height:1.6}
+.nota b{color:var(--tinta)}
+.prueba{position:fixed;left:10px;top:10px;z-index:20;font-family:var(--fm);font-size:10px;
+  letter-spacing:.1em;text-transform:uppercase;background:var(--punto);color:#fff;padding:6px 10px;
+  display:flex;gap:9px;align-items:center}
+.prueba button{border:1px solid rgba(255,255,255,.6);background:transparent;color:#fff;
+  font-family:var(--fm);font-size:10px;cursor:pointer;padding:2px 7px}
+@media (max-width:420px){
+  .c{height:37px;font-size:12px}
+  .cabec span{font-size:8px}
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="marca">FirstPlace<i>.</i>games</div>
+    <h1>Primero</h1>
+    <p class="hoy" id="hoy">—</p>
+    <p class="consigna" id="consigna">—</p>
+  </header>
+
+  <div class="cabec">
+    <span>País</span><span>1.<sup>er</sup> título</span><span>Último</span>
+    <span>Títulos</span><span>Años arriba</span>
+  </div>
+  <div class="tablero" id="tablero"></div>
+
+  <div class="zona" id="zona">
+    <input type="text" id="campo" autocomplete="off" spellcheck="false" placeholder="Escribí un nombre…">
+    <div class="sug" id="sug" hidden></div>
+    <p class="restan" id="restan">6 intentos</p>
+  </div>
+
+  <div id="finalSlot"></div>
+
+  <p class="nota">
+    <b>Prototipo.</b> Los campeones de esta versión están cargados a mano, solo para poder jugar:
+    seis deportes. Cada pozo pasa el validador de las cinco columnas antes de entrar,
+    y el deporte del día rota entre todos. <b>Una partida por día</b>, guardada en este navegador.
+  </p>
+</div>
+<script>
+/* ─────────────────────────────────────────────────────────────────────────
+   PRIMERO · dataset semilla
+   Formato: [nombre, país, año del primer título, año del último, títulos]
+   «Títulos» = títulos ganados en ESA competición, no la carrera entera.
+   Hecho a mano para poder jugar. Se reemplaza por los campeones verificados
+   del producto (los marcados con ✓). No incluye deportistas en actividad
+   cuyo número de títulos puede haber cambiado en la última temporada.
+   ───────────────────────────────────────────────────────────────────────── */
+
+const PAIS = {
+  'Argentina':'ARG','Australia':'AUS','Austria':'AUT','Bélgica':'BEL','Brasil':'BRA',
+  'Canadá':'CAN','Colombia':'COL','Dinamarca':'DIN','Alemania':'ALE','España':'ESP',
+  'Estados Unidos':'EEUU','Eslovenia':'ESL','Etiopía':'ETI','Fiyi':'FIY','Finlandia':'FIN',
+  'Francia':'FRA','Grecia':'GRE','India':'IND','Inglaterra':'ING','Irlanda':'IRL',
+  'Irlanda del Norte':'IRN','Italia':'ITA','Jamaica':'JAM','Japón':'JAP','Luxemburgo':'LUX',
+  'Nigeria':'NGA','Noruega':'NOR','Nueva Zelanda':'NZL','Países Bajos':'NED','Portugal':'POR',
+  'Reino Unido':'GBR','Rusia':'RUS','Serbia':'SER','Sudáfrica':'SUD','Suecia':'SUE',
+  'Suiza':'SUI','Checoslovaquia':'CHE','Uruguay':'URU','Kenia':'KEN','México':'MEX',
+  'Bulgaria':'BUL','Liberia':'LBR','República Checa':'CZE','Ucrania':'UCR','Croacia':'CRO',
+  'Escocia':'ESC','Unión Soviética':'URSS','Rumania':'RUM','Yugoslavia':'YUG'
+};
+
+const CONTINENTE = {
+  'Argentina':'América','Brasil':'América','Uruguay':'América','Colombia':'América',
+  'Estados Unidos':'América','Canadá':'América','México':'América',
+  'Australia':'Oceanía','Nueva Zelanda':'Oceanía','Fiyi':'Oceanía',
+  'Austria':'Europa','Bélgica':'Europa','Dinamarca':'Europa','Alemania':'Europa',
+  'España':'Europa','Eslovenia':'Europa','Finlandia':'Europa','Francia':'Europa',
+  'Grecia':'Europa','Inglaterra':'Europa','Irlanda':'Europa','Irlanda del Norte':'Europa',
+  'Italia':'Europa','Luxemburgo':'Europa','Países Bajos':'Europa','Portugal':'Europa',
+  'Reino Unido':'Europa','Rusia':'Europa','Serbia':'Europa','Suecia':'Europa',
+  'Suiza':'Europa','Checoslovaquia':'Europa','Noruega':'Europa','Bulgaria':'Europa',
+  'República Checa':'Europa','Ucrania':'Europa','Croacia':'Europa','Escocia':'Europa',
+  'Unión Soviética':'Europa','Rumania':'Europa','Yugoslavia':'Europa',
+  'India':'Asia','Japón':'Asia',
+  'Nigeria':'África','Sudáfrica':'África','Etiopía':'África','Kenia':'África','Liberia':'África',
+  'Jamaica':'América'
+};
+
+const DEPORTES = [
+  {
+    id:'futbol', nombre:'Fútbol', comp:'la Copa de Europa',
+    pista:'Clubes campeones de la Copa de Europa y la Champions League, de 1956 a hoy. Dato para el que no lo sabe: el Real Madrid ganó las cinco primeras seguidas, y nadie volvió a ganar tres seguidas hasta el Ajax de 1971.',
+    lista:[
+      ['Real Madrid','España',1956,2024,15],
+      ['Milan','Italia',1963,2007,7],
+      ['Liverpool','Inglaterra',1977,2019,6],
+      ['Bayern de Múnich','Alemania',1974,2020,6],
+      ['Barcelona','España',1992,2015,5],
+      ['Ajax','Países Bajos',1971,1995,4],
+      ['Inter','Italia',1964,2010,3],
+      ['Manchester United','Inglaterra',1968,2008,3],
+      ['Juventus','Italia',1985,1996,2],
+      ['Benfica','Portugal',1961,1962,2],
+      ['Porto','Portugal',1987,2004,2],
+      ['Nottingham Forest','Inglaterra',1979,1980,2],
+      ['Chelsea','Inglaterra',2012,2021,2],
+      ['Paris Saint-Germain','Francia',2025,2026,2],
+      ['Celtic','Escocia',1967,1967,1],
+      ['Feyenoord','Países Bajos',1970,1970,1],
+      ['Aston Villa','Inglaterra',1982,1982,1],
+      ['Hamburgo','Alemania',1983,1983,1],
+      ['Steaua de Bucarest','Rumania',1986,1986,1],
+      ['PSV Eindhoven','Países Bajos',1988,1988,1],
+      ['Estrella Roja','Yugoslavia',1991,1991,1],
+      ['Marsella','Francia',1993,1993,1],
+      ['Borussia Dortmund','Alemania',1997,1997,1],
+      ['Manchester City','Inglaterra',2023,2023,1]
+    ]
+  },
+  {
+    id:'basquet', nombre:'Básquetbol', comp:'la liga de Estados Unidos',
+    pista:'Campeones de la liga norteamericana. Ojo: acá el país sí es una pista.',
+    lista:[
+      ['Bill Russell','Estados Unidos',1957,1969,11],
+      ['Michael Jordan','Estados Unidos',1991,1998,6],
+      ['Kareem Abdul-Jabbar','Estados Unidos',1971,1988,6],
+      ['Magic Johnson','Estados Unidos',1980,1988,5],
+      ['Kobe Bryant','Estados Unidos',2000,2010,5],
+      ['Tim Duncan','Estados Unidos',1999,2014,5],
+      ['Shaquille O’Neal','Estados Unidos',2000,2006,4],
+      ['LeBron James','Estados Unidos',2012,2020,4],
+      ['Stephen Curry','Estados Unidos',2015,2022,4],
+      ['Larry Bird','Estados Unidos',1981,1986,3],
+      ['Hakeem Olajuwon','Nigeria',1994,1995,2],
+      ['Pau Gasol','España',2009,2010,2],
+      ['Tony Parker','Francia',2003,2014,4],
+      ['Manu Ginóbili','Argentina',2003,2014,4],
+      ['Dirk Nowitzki','Alemania',2011,2011,1],
+      ['Giannis Antetokounmpo','Grecia',2021,2021,1],
+      ['Nikola Jokić','Serbia',2023,2023,1]
+    ]
+  },
+  {
+    id:'tenis', nombre:'Tenis', comp:'los torneos de Grand Slam',
+    pista:'Individuales de Grand Slam. Cuadro masculino y femenino juntos.',
+    lista:[
+      ['Novak Djokovic','Serbia',2008,2023,24],
+      ['Margaret Court','Australia',1960,1973,24],
+      ['Serena Williams','Estados Unidos',1999,2017,23],
+      ['Rafael Nadal','España',2005,2022,22],
+      ['Steffi Graf','Alemania',1987,1999,22],
+      ['Roger Federer','Suiza',2003,2018,20],
+      ['Helen Wills','Estados Unidos',1923,1938,19],
+      ['Chris Evert','Estados Unidos',1974,1986,18],
+      ['Martina Navratilova','Estados Unidos',1978,1990,18],
+      ['Pete Sampras','Estados Unidos',1990,2002,14],
+      ['Billie Jean King','Estados Unidos',1966,1975,12],
+      ['Roy Emerson','Australia',1961,1967,12],
+      ['Björn Borg','Suecia',1974,1981,11],
+      ['Rod Laver','Australia',1960,1969,11],
+      ['Andre Agassi','Estados Unidos',1992,2003,8],
+      ['Ivan Lendl','Checoslovaquia',1984,1990,8],
+      ['Justine Henin','Bélgica',2003,2007,7],
+      ['Maria Sharapova','Rusia',2004,2014,5],
+      ['Naomi Osaka','Japón',2018,2021,4],
+      ['Ashleigh Barty','Australia',2019,2022,3]
+    ]
+  },
+  {
+    id:'f1', nombre:'Fórmula 1', comp:'el campeonato de pilotos',
+    pista:'Campeones de pilotos. El número es cuántos campeonatos ganó.',
+    lista:[
+      ['Lewis Hamilton','Reino Unido',2008,2020,7],
+      ['Michael Schumacher','Alemania',1994,2004,7],
+      ['Juan Manuel Fangio','Argentina',1951,1957,5],
+      ['Alain Prost','Francia',1985,1993,4],
+      ['Sebastian Vettel','Alemania',2010,2013,4],
+      ['Ayrton Senna','Brasil',1988,1991,3],
+      ['Jackie Stewart','Reino Unido',1969,1973,3],
+      ['Niki Lauda','Austria',1975,1984,3],
+      ['Nelson Piquet','Brasil',1981,1987,3],
+      ['Jack Brabham','Australia',1959,1966,3],
+      ['Fernando Alonso','España',2005,2006,2],
+      ['Mika Häkkinen','Finlandia',1998,1999,2],
+      ['Emerson Fittipaldi','Brasil',1972,1974,2],
+      ['Graham Hill','Reino Unido',1962,1968,2],
+      ['Jim Clark','Reino Unido',1963,1965,2],
+      ['Alberto Ascari','Italia',1952,1953,2],
+      ['Nico Rosberg','Alemania',2016,2016,1],
+      ['Jenson Button','Reino Unido',2009,2009,1],
+      ['Kimi Räikkönen','Finlandia',2007,2007,1],
+      ['Damon Hill','Reino Unido',1996,1996,1],
+      ['Jacques Villeneuve','Canadá',1997,1997,1]
+    ]
+  },
+  {
+    id:'ciclismo', nombre:'Ciclismo', comp:'el Tour de Francia',
+    pista:'Ganadores del Tour. El número es cuántos Tours ganó.',
+    lista:[
+      ['Eddy Merckx','Bélgica',1969,1974,5],
+      ['Bernard Hinault','Francia',1978,1985,5],
+      ['Jacques Anquetil','Francia',1957,1964,5],
+      ['Miguel Indurain','España',1991,1995,5],
+      ['Chris Froome','Reino Unido',2013,2017,4],
+      ['Greg LeMond','Estados Unidos',1986,1990,3],
+      ['Louison Bobet','Francia',1953,1955,3],
+      ['Philippe Thys','Bélgica',1913,1920,3],
+      ['Alberto Contador','España',2007,2009,2],
+      ['Laurent Fignon','Francia',1983,1984,2],
+      ['Fausto Coppi','Italia',1949,1952,2],
+      ['Gino Bartali','Italia',1938,1948,2],
+      ['Marco Pantani','Italia',1998,1998,1],
+      ['Jan Ullrich','Alemania',1997,1997,1],
+      ['Carlos Sastre','España',2008,2008,1],
+      ['Federico Bahamontes','España',1959,1959,1],
+      ['Luis Ocaña','España',1973,1973,1],
+      ['Cadel Evans','Australia',2011,2011,1],
+      ['Egan Bernal','Colombia',2019,2019,1],
+      ['Andy Schleck','Luxemburgo',2010,2010,1],
+      ['Geraint Thomas','Reino Unido',2018,2018,1]
+    ]
+  },
+  {
+    id:'golf', nombre:'Golf', comp:'los majors',
+    pista:'Ganadores de majors. Acá casi todos son del mismo país: la pista está en los años.',
+    lista:[
+      ['Jack Nicklaus','Estados Unidos',1962,1986,18],
+      ['Tiger Woods','Estados Unidos',1997,2019,15],
+      ['Walter Hagen','Estados Unidos',1914,1929,11],
+      ['Ben Hogan','Estados Unidos',1946,1953,9],
+      ['Gary Player','Sudáfrica',1959,1978,9],
+      ['Tom Watson','Estados Unidos',1975,1983,8],
+      ['Arnold Palmer','Estados Unidos',1958,1964,7],
+      ['Bobby Jones','Estados Unidos',1923,1930,7],
+      ['Sam Snead','Estados Unidos',1942,1954,7],
+      ['Harry Vardon','Reino Unido',1896,1914,7],
+      ['Nick Faldo','Reino Unido',1987,1996,6],
+      ['Lee Trevino','Estados Unidos',1968,1984,6],
+      ['Phil Mickelson','Estados Unidos',2004,2021,6],
+      ['Seve Ballesteros','España',1979,1988,5],
+      ['Ernie Els','Sudáfrica',1994,2012,4],
+      ['Jordan Spieth','Estados Unidos',2015,2017,3],
+      ['Pádraig Harrington','Irlanda',2007,2008,3],
+      ['Vijay Singh','Fiyi',1998,2004,3],
+      ['Ángel Cabrera','Argentina',2007,2009,2]
+    ]
+  }
+];
+
+
+/* ───────── día ───────── */
+var URLQ = new URLSearchParams(location.search);
+var PRUEBA = URLQ.get('prueba') === '1';
+var SALTO = parseInt(URLQ.get('dia') || '0', 10) || 0;
+
+function fechaDeHoy(){
+  var d = new Date(Date.now() - 3*3600*1000 + SALTO*86400000);   // UTC−3, huso del sitio
+  return d.toISOString().slice(0,10);
+}
+function numeroDeDia(){
+  return Math.floor(Date.parse(fechaDeHoy()+'T00:00:00Z') / 86400000);
+}
+function restoDelDia(){
+  var a = new Date(Date.now() - 3*3600*1000);
+  var min = (23 - a.getUTCHours())*60 + (60 - a.getUTCMinutes());
+  var h = Math.floor(min/60), m = min%60;
+  return (h ? h+' h ' : '') + m + ' min';
+}
+function azarFijo(semilla){                       // mulberry32
+  var s = semilla >>> 0;
+  return function(){
+    s = (s + 0x6D2B79F5) >>> 0;
+    var t = s;
+    t = Math.imul(t ^ (t>>>15), t | 1);
+    t ^= t + Math.imul(t ^ (t>>>7), t | 61);
+    return ((t ^ (t>>>14)) >>> 0) / 4294967296;
+  };
+}
+
+/* Un solo orden barajado una vez. El deporte rota solo, porque cada
+   entrada del orden trae el suyo, y no se repite nadie hasta agotar la lista. */
+var ORDEN = null;
+function ordenGlobal(){
+  if (ORDEN) return ORDEN;
+  var todos = [];
+  DEPORTES.forEach(function(d){
+    d.lista.forEach(function(f){ todos.push({ dep:d, f:f }); });
+  });
+  var azar = azarFijo(20260926);                  // semilla fija, no se cambia nunca
+  for (var i = todos.length-1; i > 0; i--){
+    var j = Math.floor(azar()*(i+1));
+    var t = todos[i]; todos[i] = todos[j]; todos[j] = t;
+  }
+  /* Separar los deportes: barajar solo no alcanza — deja tres días de Fórmula 1
+     en cinco. Se recorre el orden y se elige el primero cuyo deporte no haya
+     salido en los últimos tres días. Es determinista: no agrega azar. */
+  var sep = [], ult = [];
+  while (todos.length){
+    var k = 0;
+    for (var q = 0; q < todos.length; q++){
+      if (ult.indexOf(todos[q].dep.id) === -1){ k = q; break; }
+    }
+    var el = todos.splice(k, 1)[0];
+    sep.push(el);
+    ult.push(el.dep.id);
+    if (ult.length > 3) ult.shift();
+  }
+  return (ORDEN = sep);
+}
+function delDia(){
+  var o = ordenGlobal(), n = numeroDeDia();
+  return o[((n % o.length) + o.length) % o.length];
+}
+
+/* ───────── estado guardado ───────── */
+var CLAVE = 'fp-primero';
+function leerEstado(){
+  if (PRUEBA) return null;
+  try {
+    var d = JSON.parse(localStorage.getItem(CLAVE) || '{}');
+    return d.fecha === fechaDeHoy() ? d : null;
+  } catch(e){ return null; }
+}
+function guardarEstado(){
+  if (PRUEBA) return;
+  try {
+    localStorage.setItem(CLAVE, JSON.stringify({
+      fecha: fechaDeHoy(), intentos: S.intentos.map(function(x){ return x[0]; }), fin: S.fin
+    }));
+  } catch(e){}
+}
+
+/* ───────── comparación ───────── */
+var MAX = 6;
+var HOY = delDia();
+var DEP = HOY.dep, OBJ = HOY.f;
+var POOL = DEP.lista.slice().sort(function(a,b){ return a[0].localeCompare(b[0],'es'); });
+var S = { intentos: [], fin: null };
+
+function decada(y){ return Math.floor(y/10)*10; }
+function span(f){ return f[3] - f[2]; }
+function flecha(dif){ return dif > 0 ? '↑' : dif < 0 ? '↓' : ''; }
+
+function comparar(f){
+  var out = [];
+  // 1 · país
+  out.push(f[1] === OBJ[1] ? {t:PAIS[f[1]]||f[1], e:'ok'}
+        : CONTINENTE[f[1]] === CONTINENTE[OBJ[1]] ? {t:PAIS[f[1]]||f[1], e:'cerca'}
+        : {t:PAIS[f[1]]||f[1], e:''});
+  // 2 · primer título   3 · último título
+  [2,3].forEach(function(i){
+    var dA = decada(f[i]), dB = decada(OBJ[i]), dif = OBJ[i]-f[i];
+    out.push({ t: dA, e: dA===dB ? 'ok' : Math.abs(dA-dB)<=10 ? 'cerca' : '',
+               fl: dA===dB ? '' : flecha(dif) });
+  });
+  // 4 · títulos
+  var dt = OBJ[4]-f[4];
+  out.push({ t:f[4], e: dt===0 ? 'ok' : Math.abs(dt)<=2 ? 'cerca' : '', fl: flecha(dt) });
+  // 5 · años arriba
+  var ds = span(OBJ)-span(f);
+  out.push({ t:span(f), e: ds===0 ? 'ok' : Math.abs(ds)<=3 ? 'cerca' : '', fl: flecha(ds) });
+  return out;
+}
+
+/* ───────── pintado ───────── */
+var $ = function(id){ return document.getElementById(id); };
+
+function pintarTablero(){
+  var h = '';
+  for (var i = 0; i < MAX; i++){
+    var it = S.intentos[i];
+    if (!it){
+      h += '<div class="fila vacia"><p class="quien">&nbsp;</p><div class="celdas">'
+         + '<div class="c"></div><div class="c"></div><div class="c"></div>'
+         + '<div class="c"></div><div class="c"></div></div></div>';
+      continue;
+    }
+    var cs = comparar(it);
+    h += '<div class="fila"><p class="quien">' + it[0] + '</p><div class="celdas">';
+    cs.forEach(function(c){
+      h += '<div class="c ' + c.e + '">' + c.t
+         + (c.fl ? '<span class="fl">' + c.fl + '</span>' : '') + '</div>';
+    });
+    h += '</div></div>';
+  }
+  $('tablero').innerHTML = h;
+}
+
+function emoji(e){ return e === 'ok' ? '🟧' : e === 'cerca' ? '🟨' : '⬜'; }
+
+function grilla(){
+  return S.intentos.map(function(it){
+    return comparar(it).map(function(c){ return emoji(c.e); }).join('');
+  }).join('\n');
+}
+function textoCompartible(){
+  var n = numeroDeDia() - 20300;                 // numeración interna del juego
+  return 'Primero · #' + n + ' · ' + DEP.nombre + '\n'
+       + (S.fin === 'gano' ? S.intentos.length + '/' + MAX : 'X/' + MAX) + '\n'
+       + grilla() + '\nfirstplace.games';
+}
+
+function pintarFinal(){
+  if (!S.fin){ $('finalSlot').innerHTML = ''; return; }
+  var gano = S.fin === 'gano';
+  $('zona').style.display = 'none';
+  $('finalSlot').innerHTML =
+    '<div class="final"><div class="sello">✓ Jugado hoy</div>'
+    + '<p class="veredicto">' + (gano ? 'Lo encontraste en ' + S.intentos.length
+        + (S.intentos.length === 1 ? ' intento' : ' intentos') : 'Se te escapó') + '</p>'
+    + '<h2>' + OBJ[0] + '</h2>'
+    + '<p class="quien2">' + OBJ[1] + ' · ' + OBJ[4] + ' '
+        + (OBJ[4] === 1 ? 'título' : 'títulos') + ' en ' + DEP.comp
+        + ' · ' + OBJ[2] + '–' + OBJ[3] + '</p>'
+    + '<div class="gr">' + grilla() + '</div>'
+    + '<div class="acciones">'
+    + '<button class="btn" id="bCopiar">Copiar resultado</button>'
+    + '<button class="btn sec" id="bManana">Volvé mañana</button>'
+    + '</div></div>';
+  $('bCopiar').onclick = function(){
+    var t = textoCompartible();
+    if (navigator.clipboard) navigator.clipboard.writeText(t).catch(function(){});
+    $('bCopiar').textContent = 'Copiado';
+    setTimeout(function(){ $('bCopiar').textContent = 'Copiar resultado'; }, 1600);
+  };
+  $('bManana').disabled = true;
+}
+
+function pintarCabecera(){
+  $('hoy').innerHTML = 'Deporte de hoy: <b>' + DEP.nombre + '</b><br>Se renueva a medianoche · faltan '
+                     + restoDelDia();
+  $('consigna').innerHTML = '<strong>Alguien que fue primero.</strong> ' + DEP.pista
+    + ' Seis intentos; cada uno te devuelve cinco pistas.';
+}
+
+/* ───────── jugar ───────── */
+function intentar(nombre){
+  if (S.fin) return;
+  var f = null;
+  for (var i = 0; i < POOL.length; i++) if (POOL[i][0] === nombre) f = POOL[i];
+  if (!f) return;
+  for (var j = 0; j < S.intentos.length; j++) if (S.intentos[j][0] === nombre) return;
+  S.intentos.push(f);
+  if (f[0] === OBJ[0]) S.fin = 'gano';
+  else if (S.intentos.length >= MAX) S.fin = 'perdio';
+  guardarEstado();
+  pintarTablero();
+  $('restan').textContent = (MAX - S.intentos.length) + ' intentos';
+  pintarFinal();
+}
+
+/* buscador */
+var sel = -1, visibles = [];
+function normal(s){
+  return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+}
+function pintarSug(){
+  var q = normal($('campo').value.trim());
+  var usados = S.intentos.map(function(x){ return x[0]; });
+  visibles = !q ? [] : POOL.filter(function(f){
+    return usados.indexOf(f[0]) === -1 && normal(f[0]).indexOf(q) !== -1;
+  }).slice(0, 6);
+  sel = visibles.length ? 0 : -1;
+  if (!visibles.length){ $('sug').hidden = true; $('sug').innerHTML = ''; return; }
+  $('sug').innerHTML = visibles.map(function(f, i){
+    return '<button type="button" data-n="' + f[0] + '"' + (i === sel ? ' class="sel"' : '') + '>'
+         + f[0] + '</button>';
+  }).join('');
+  $('sug').hidden = false;
+}
+function cerrarSug(){ $('sug').hidden = true; $('sug').innerHTML = ''; visibles = []; sel = -1; }
+
+$('campo').addEventListener('input', pintarSug);
+$('campo').addEventListener('keydown', function(e){
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){
+    if (!visibles.length) return;
+    e.preventDefault();
+    sel = (sel + (e.key === 'ArrowDown' ? 1 : visibles.length - 1)) % visibles.length;
+    Array.prototype.forEach.call($('sug').children, function(b, i){
+      b.className = i === sel ? 'sel' : '';
+    });
+  } else if (e.key === 'Enter'){
+    e.preventDefault();
+    if (sel >= 0 && visibles[sel]){ intentar(visibles[sel][0]); $('campo').value = ''; cerrarSug(); }
+  } else if (e.key === 'Escape'){ cerrarSug(); }
+});
+$('sug').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if (!b) return;
+  intentar(b.getAttribute('data-n')); $('campo').value = ''; cerrarSug();
+});
+document.addEventListener('click', function(e){
+  if (!e.target.closest('#zona')) cerrarSug();
+});
+
+/* ───────── arranque ───────── */
+(function(){
+  var g = leerEstado();
+  if (g && Array.isArray(g.intentos)){
+    g.intentos.forEach(function(n){
+      for (var i = 0; i < POOL.length; i++) if (POOL[i][0] === n) S.intentos.push(POOL[i]);
+    });
+    S.fin = g.fin || null;
+  }
+  pintarCabecera();
+  pintarTablero();
+  $('restan').textContent = (MAX - S.intentos.length) + ' intentos';
+  pintarFinal();
+  setInterval(pintarCabecera, 60000);
+
+  if (PRUEBA){
+    var d = document.createElement('div');
+    d.className = 'prueba';
+    d.innerHTML = 'Modo prueba · no se guarda · día ' + SALTO
+                + ' <button data-s="-1">←</button><button data-s="1">→</button>';
+    d.addEventListener('click', function(e){
+      var b = e.target.closest('button'); if (!b) return;
+      location.search = '?prueba=1&dia=' + (SALTO + parseInt(b.getAttribute('data-s'), 10));
+    });
+    document.body.appendChild(d);
+  }
+})();
+</script>

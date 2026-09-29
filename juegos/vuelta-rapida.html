@@ -1,0 +1,1156 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vuelta Rápida</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --bg:#0B0D10; --panel:rgba(15,18,22,.90); --panel-2:rgba(23,27,33,.96);
+  --line:rgba(255,255,255,.10); --line-2:rgba(255,255,255,.18);
+  --fg:#E9EAED; --fg-2:#99A0AA; --fg-3:#656C77;
+  --kerb:#E23B44; --c1:#F2F4F7; --c2:#F5A524; --c3:#3B9CFF; --mx:#14A05A;
+  --f-d:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-m:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);overflow:hidden;
+  font-family:var(--f-m);-webkit-font-smoothing:antialiased;overscroll-behavior:none}
+#app{position:fixed;inset:0;background:var(--bg)}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+.hud{position:absolute;inset:0;pointer-events:none;user-select:none}
+.hud *{pointer-events:none}
+:focus-visible{outline:2px solid var(--c3);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ---------- HUD ---------- */
+#speed{position:absolute;right:22px;bottom:20px;text-align:right;line-height:1}
+#speed b{font-family:var(--f-d);font-weight:800;font-stretch:118%;font-size:clamp(42px,7vw,74px);
+  letter-spacing:-.03em;font-variant-numeric:tabular-nums;display:block;text-shadow:0 2px 18px rgba(0,0,0,.65)}
+#speed span{font-size:11px;letter-spacing:.18em;color:var(--fg-2);display:block;margin-top:4px}
+
+#charge{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);
+  width:min(300px,48vw);height:9px;background:rgba(0,0,0,.5);
+  border:1px solid var(--line-2);border-radius:2px;overflow:hidden}
+#chargeFill{height:100%;width:0%;background:var(--c1)}
+.notch{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,255,255,.30)}
+#chargeLbl{position:absolute;left:50%;bottom:42px;transform:translateX(-50%);
+  font-size:10.5px;letter-spacing:.2em;color:var(--fg-3);white-space:nowrap}
+
+#timing{position:absolute;left:20px;top:20px;background:var(--panel);
+  border:1px solid var(--line);border-radius:3px;padding:12px 15px;min-width:206px;backdrop-filter:blur(8px)}
+#timing .big{font-family:var(--f-d);font-weight:700;font-stretch:112%;font-size:25px;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1;margin-bottom:9px}
+#timing .row{display:flex;justify-content:space-between;gap:16px;font-size:12px;padding:3px 0}
+#timing .row dt{color:var(--fg-3);letter-spacing:.09em;font-size:10px;text-transform:uppercase;padding-top:2px}
+#timing .row dd{margin:0;font-variant-numeric:tabular-nums;font-weight:500}
+#best{color:var(--c3)} #tlap.pb{color:var(--c3)}
+
+#pos{position:absolute;left:20px;top:172px;background:var(--panel);border:1px solid var(--line);
+  border-radius:3px;padding:11px 14px;min-width:206px;backdrop-filter:blur(8px)}
+#pos .hdr{font-size:9.5px;letter-spacing:.16em;color:var(--fg-3);text-transform:uppercase;margin-bottom:7px}
+#pos ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+#pos li{display:grid;grid-template-columns:15px 9px 1fr auto;gap:8px;align-items:center;font-size:12px}
+#pos li i{font-style:normal;color:var(--fg-3);font-variant-numeric:tabular-nums}
+#pos li u{text-decoration:none;width:9px;height:9px;border-radius:2px;display:block}
+#pos li b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#pos li em{font-style:normal;color:var(--fg-3);font-size:11px;font-variant-numeric:tabular-nums}
+#pos li.me b{color:var(--kerb);font-weight:600}
+
+#telem{position:absolute;left:20px;bottom:20px;background:var(--panel);
+  border:1px solid var(--line);border-radius:3px;padding:11px 14px;
+  font-size:11.5px;line-height:1.75;backdrop-filter:blur(8px);min-width:206px}
+#telem div{display:flex;justify-content:space-between;gap:14px}
+#telem i{font-style:normal;color:var(--fg-3);letter-spacing:.07em;font-size:10px;text-transform:uppercase}
+#telem b{font-weight:500;font-variant-numeric:tabular-nums}
+#telem .warn{color:var(--kerb)}
+
+#place{position:absolute;left:50%;top:24px;transform:translateX(-50%);text-align:center;
+  opacity:0;transition:opacity .5s ease}
+#place.on{opacity:1}
+#place b{font-family:var(--f-d);font-weight:700;font-stretch:114%;font-size:18px;
+  display:block;text-shadow:0 2px 14px rgba(0,0,0,.85)}
+#place span{font-size:10px;letter-spacing:.19em;color:var(--c2);text-transform:uppercase}
+
+#map{position:absolute;right:20px;top:20px;width:184px;background:var(--panel);
+  border:1px solid var(--line);border-radius:3px;padding:11px;backdrop-filter:blur(8px)}
+#map svg{width:162px;height:162px;display:block}
+#mapName{border-top:1px solid var(--line);margin-top:9px;padding-top:9px}
+#mapName b{font-family:var(--f-d);font-weight:700;font-stretch:112%;font-size:13.5px;
+  display:block;letter-spacing:-.005em;line-height:1.2}
+#mapName span{font-size:10px;color:var(--fg-3);display:block;margin-top:3px;letter-spacing:.05em}
+#tuneBtn{position:absolute;right:20px;top:262px;pointer-events:auto;z-index:6}
+
+/* ---------- semáforo ---------- */
+#lights{position:absolute;left:50%;top:26%;transform:translateX(-50%);display:flex;gap:14px}
+#lights div{width:34px;height:34px;border-radius:50%;background:#241012;
+  border:2px solid rgba(255,255,255,.14)}
+#lights div.on{background:#E2262F;box-shadow:0 0 26px rgba(226,38,47,.75)}
+#go{position:absolute;left:50%;top:34%;transform:translateX(-50%);
+  font-family:var(--f-d);font-weight:800;font-stretch:120%;font-size:64px;letter-spacing:-.02em;
+  color:var(--mx);text-shadow:0 4px 30px rgba(0,0,0,.9);opacity:0;transition:opacity .3s}
+#go.on{opacity:1}
+
+/* ---------- pantallas ---------- */
+.screen{position:absolute;inset:0;background:rgba(9,11,14,.965);backdrop-filter:blur(14px);
+  overflow-y:auto;pointer-events:auto;z-index:10;display:none}
+.screen.on{display:block}
+.screen .inner{max-width:1180px;margin:0 auto;padding:34px 28px 48px}
+.screen h1{font-family:var(--f-d);font-weight:800;font-stretch:118%;text-transform:uppercase;
+  font-size:clamp(28px,4.4vw,44px);letter-spacing:-.022em;margin:0}
+.screen .kicker{font-size:10.5px;letter-spacing:.2em;color:var(--c2);text-transform:uppercase;margin-bottom:8px}
+.screen .sub{color:var(--fg-2);font-size:13px;line-height:1.65;margin:12px 0 0;max-width:66ch}
+.sect{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-3);
+  margin:30px 0 12px;padding-bottom:7px;border-bottom:1px solid var(--line)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:10px}
+.card{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:4px;
+  padding:12px 12px 13px;cursor:pointer;text-align:left;font-family:var(--f-m);color:var(--fg);
+  transition:border-color .15s,background .15s;display:block;width:100%}
+.card:hover{background:rgba(255,255,255,.075);border-color:var(--line-2)}
+.card.on{border-color:var(--kerb);background:rgba(226,59,68,.10)}
+.card svg{width:100%;height:88px;display:block;margin-bottom:9px}
+.card .gp{font-family:var(--f-d);font-weight:700;font-stretch:112%;font-size:14px;
+  line-height:1.2;letter-spacing:-.005em}
+.card .ci{font-size:11px;color:var(--fg-2);margin-top:3px}
+.card .mt{font-size:10px;color:var(--fg-3);margin-top:6px;letter-spacing:.06em;
+  font-variant-numeric:tabular-nums}
+
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:9px 15px;border:1px solid var(--line-2);border-radius:3px;background:rgba(255,255,255,.05);
+  color:var(--fg);font-family:var(--f-m);font-size:12px;cursor:pointer;transition:background .15s}
+.chip:hover{background:rgba(255,255,255,.12)}
+.chip.on{background:var(--fg);color:#0B0D10;border-color:var(--fg)}
+.chip small{display:block;font-size:10px;color:var(--fg-3);margin-top:2px}
+.chip.on small{color:rgba(11,13,16,.62)}
+.gobar{position:sticky;bottom:0;background:linear-gradient(to top,rgba(9,11,14,.99) 62%,transparent);
+  padding:22px 0 6px;margin-top:26px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.go-btn{font-family:var(--f-d);font-weight:800;font-stretch:116%;text-transform:uppercase;
+  font-size:17px;letter-spacing:.02em;padding:14px 32px;border:0;border-radius:3px;
+  background:var(--kerb);color:#fff;cursor:pointer}
+.go-btn:hover{background:#F04A53}
+.gobar .pick{font-size:12px;color:var(--fg-2)}
+.gobar .pick b{color:var(--fg);font-weight:600}
+
+table.res{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+table.res th{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-3);
+  text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);font-weight:600}
+table.res td{padding:11px 10px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+table.res tr.me td{color:var(--kerb);font-weight:600}
+table.res td.n{font-family:var(--f-d);font-weight:700;font-stretch:112%;font-size:17px;width:38px}
+table.res td u{text-decoration:none;width:10px;height:10px;border-radius:2px;display:inline-block}
+
+/* ---------- panel de ajustes ---------- */
+#tune{position:absolute;right:0;top:0;bottom:0;width:min(352px,92vw);z-index:11;
+  background:var(--panel-2);border-left:1px solid var(--line-2);
+  overflow-y:auto;padding:16px 18px 34px;pointer-events:auto;
+  transform:translateX(100%);transition:transform .28s cubic-bezier(.3,.8,.3,1);backdrop-filter:blur(12px)}
+#tune.open{transform:translateX(0)}
+#tune *{pointer-events:auto}
+#tune h2{font-family:var(--f-d);font-weight:700;font-stretch:112%;font-size:15px;
+  text-transform:uppercase;letter-spacing:.05em;margin:0 0 3px}
+#tune .lead{font-size:11px;color:var(--fg-3);line-height:1.6;margin:0 0 15px}
+#tune h3{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--c2);
+  margin:20px 0 9px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.ctl{margin-bottom:11px}
+.ctl .lab{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;color:var(--fg-2);margin-bottom:5px}
+.ctl .lab b{color:var(--fg);font-weight:500;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;height:18px;background:transparent;-webkit-appearance:none;appearance:none;margin:0;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:3px;background:var(--line-2);border-radius:2px}
+input[type=range]::-moz-range-track{height:3px;background:var(--line-2);border-radius:2px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--fg);margin-top:-5px;border:0}
+input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--fg);border:0}
+.btns{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 4px}
+button.sm{font-family:var(--f-m);font-size:11px;letter-spacing:.06em;color:var(--fg);
+  background:rgba(255,255,255,.06);border:1px solid var(--line-2);border-radius:3px;
+  padding:7px 11px;cursor:pointer;transition:background .15s}
+button.sm:hover{background:rgba(255,255,255,.13)}
+button.sm.on{background:var(--fg);color:#0B0D10;border-color:var(--fg)}
+button.sm.mx.on{background:var(--mx);border-color:var(--mx);color:#04120A}
+#dump{width:100%;height:104px;margin-top:9px;background:rgba(0,0,0,.45);color:var(--fg-2);
+  border:1px solid var(--line);border-radius:3px;font-family:var(--f-m);font-size:10.5px;
+  padding:9px;resize:vertical;display:none;line-height:1.5}
+.watch{border-left:2px solid var(--c2);padding:2px 0 2px 12px;margin:12px 0;font-size:11.5px;
+  line-height:1.6;color:var(--fg-2)}
+.watch b{display:block;color:var(--fg);font-weight:600;margin-bottom:3px;font-size:12px}
+.watch em{font-style:normal;color:var(--c2);font-size:10.5px;display:block;margin-top:4px}
+#tune .foot{font-size:10.5px;color:var(--fg-3);line-height:1.6;margin-top:18px;
+  padding-top:12px;border-top:1px solid var(--line)}
+
+@media (max-width:760px){
+  #timing{padding:9px 12px;min-width:150px} #timing .big{font-size:20px}
+  #telem{display:none} #speed b{font-size:46px} #place b{font-size:15px}
+  #map{width:126px;padding:8px;right:12px;top:12px} #map svg{width:110px;height:110px}
+  #mapName b{font-size:11px} #mapName span{display:none}
+  #pos{top:132px;left:12px;min-width:150px;padding:8px 10px}
+  #tuneBtn{right:12px;top:196px;padding:5px 9px} .screen .inner{padding:22px 16px 40px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+  .card svg{height:70px}
+}
+#touch{position:absolute;inset:0;display:none}
+#touch .z{position:absolute;bottom:0;top:40%;pointer-events:auto}
+#tL{left:0;width:32%}#tR{right:0;width:32%}
+#tD{position:absolute;right:20px;bottom:112px;width:86px;height:86px;border-radius:50%;
+  border:1px solid var(--line-2);background:rgba(255,255,255,.07);pointer-events:auto;
+  display:flex;align-items:center;justify-content:center;font-size:10px;letter-spacing:.12em;color:var(--fg-2)}
+</style>
+
+<div id="app">
+  <canvas id="cv"></canvas>
+
+  <div class="hud">
+    <dl id="timing">
+      <div class="big" id="tlap">0.000</div>
+      <div class="row"><dt>Vuelta</dt><dd id="laps">1 / 3</dd></div>
+      <div class="row"><dt>Mejor</dt><dd id="best">--.---</dd></div>
+      <div class="row"><dt>Anterior</dt><dd id="last">--.---</dd></div>
+    </dl>
+
+    <div id="pos"><div class="hdr">Clasificación</div><ol id="posList"></ol></div>
+
+    <div id="telem">
+      <div><i>Ángulo de derrape</i><b id="tSlip">0°</b></div>
+      <div><i>Deriva trasera</i><b id="tRear">0°</b></div>
+      <div><i>Guiñada</i><b id="tYaw">0.00</b></div>
+      <div><i>Superficie</i><b id="tSurf">asfalto</b></div>
+    </div>
+
+    <div id="map">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-label="Minimapa del circuito">
+        <path id="mapRoad" fill="none" stroke="#3D444F" stroke-width="5.4" stroke-linejoin="round" stroke-linecap="round"/>
+        <path id="mapEdge" fill="none" stroke="#5C6572" stroke-width="0.7" stroke-linejoin="round"/>
+        <line id="mapMeta" stroke="#E9EAED" stroke-width="1.6"/>
+        <g id="mapAI"></g>
+        <g id="mapKart"><circle r="2.9" fill="#E23B44"/><path d="M0 -1 L2.4 4.6 L-2.4 4.6 Z" fill="#E23B44"/></g>
+      </svg>
+      <div id="mapName"><b>Gran Premio de México</b><span>Circuito Ajusco</span></div>
+    </div>
+
+    <div id="place"><span>Recorrido</span><b>—</b></div>
+    <div id="lights"><div></div><div></div><div></div><div></div><div></div></div>
+    <div id="go">¡VAMOS!</div>
+
+    <div id="chargeLbl">CARGA DE DERRAPE</div>
+    <div id="charge"><div id="chargeFill"></div></div>
+    <div id="speed"><b id="kmh">0</b><span>KM/H</span></div>
+
+    <div id="touch"><div class="z" id="tL"></div><div class="z" id="tR"></div><div id="tD">DERRAPE</div></div>
+  </div>
+
+  <button class="sm" id="tuneBtn">AJUSTES · T</button>
+
+  <!-- ============ PANTALLA DE SELECCIÓN ============ -->
+  <section class="screen on" id="menu">
+    <div class="inner">
+      <p class="kicker">FirstPlace.games · Juego 06 · Prototipo</p>
+      <h1>Vuelta Rápida</h1>
+      <p class="sub">Veinticuatro sedes, tres vueltas, tres rivales. Los trazados son originales: toman el carácter
+        de cada sede — recta larga, horquilla, eses, sección de estadio — sin copiar su geometría, sin su nombre
+        y sin su cartelería. Los Grandes Premios llevan el nombre del país; donde el país repite, el de la ciudad.</p>
+
+      <p class="sect">Elegí el circuito</p>
+      <div class="grid" id="grid"></div>
+
+      <p class="sect">Dificultad de los rivales</p>
+      <div class="row" id="diff"></div>
+
+      <p class="sect">Escala del trazado</p>
+      <div class="row" id="scale"></div>
+
+      <div class="gobar">
+        <button class="go-btn" id="btnGo">Correr</button>
+        <span class="pick">Corrés en <b id="pickGP">Gran Premio de México</b> · <b id="pickCi">Circuito Ajusco</b>
+          · rivales en <b id="pickDf">Normal</b></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESULTADO ============ -->
+  <section class="screen" id="result">
+    <div class="inner">
+      <p class="kicker" id="resKick">Resultado</p>
+      <h1 id="resTitle">Resultado</h1>
+      <p class="sect">Clasificación final</p>
+      <table class="res">
+        <thead><tr><th></th><th></th><th>Piloto</th><th>Tiempo</th><th>Mejor vuelta</th></tr></thead>
+        <tbody id="resBody"></tbody>
+      </table>
+      <div class="gobar">
+        <button class="go-btn" id="btnAgain">Repetir</button>
+        <button class="chip" id="btnMenu">Elegir otro circuito</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ AJUSTES ============ -->
+  <aside id="tune">
+    <h2>Ajustes en vivo</h2>
+    <p class="lead">Movelos mientras manejás. Cuando encuentres el punto, copiá los valores y pasámelos: eso es el entregable de este prototipo.</p>
+
+    <h3>Qué mirar</h3>
+    <div class="watch"><b>1 · ¿El derrape entra cuando vos querés?</b>
+      Apretá espacio a la entrada de una curva. Contá cuánto tarda la cola en soltarse y si sale al ángulo que esperabas.
+      <em>Mové: estabilidad · agarre trasero en derrape</em></div>
+    <div class="watch"><b>2 · ¿El nivel 3 se siente como premio?</b>
+      Compará una vuelta soltando en blanco contra otra aguantando hasta el azul. Si no es más rápida, está mal pagado.
+      <em>Mové: impulso del nivel 3 · duración</em></div>
+    <div class="watch"><b>3 · ¿El tope de ángulo te salva o te estorba?</b>
+      Aguantá un derrape a propósito de más. El punto donde sentís que el kart deja de ser tuyo es tu número.
+      <em>Mové: ángulo máximo de derrape</em></div>
+
+    <h3>Estabilidad</h3><div id="gStab"></div>
+    <p class="lead" style="margin:2px 0 0">Una sola perilla. A la izquierda patina y perdona; a la derecha va pegado al piso y solo derrapa cuando se lo pedís. Mueve seis parámetros a la vez.</p>
+    <div class="btns" style="margin-top:10px">
+      <button class="sm" data-preset="suelto">Suelto</button>
+      <button class="sm on" data-preset="base">Base</button>
+      <button class="sm" data-preset="pegado">Pegado</button>
+    </div>
+
+    <h3>Circuito</h3>
+    <div class="btns"><button class="sm mx on" id="bAlt">Altitud del circuito · activa</button></div>
+    <p class="lead" style="margin:8px 0 0">Cada sede tiene su altura sobre el nivel del mar. Cuanto más alto, menos densidad de aire: el motor pierde fuerza y el aire frena menos. En México se nota; en Mónaco no.</p>
+
+    <h3>Motor</h3><div id="gMotor"></div>
+    <h3>Agarre</h3><div id="gGrip"></div>
+    <h3>Derrape</h3><div id="gDrift"></div>
+    <h3>Cámara</h3><div id="gCam"></div>
+
+    <div class="btns" style="margin-top:18px">
+      <button class="sm" id="bCopy">Copiar ajustes</button>
+      <button class="sm" id="bReset">Restablecer</button>
+    </div>
+    <textarea id="dump" readonly spellcheck="false"></textarea>
+
+    <p class="foot">Controles: flechas o WASD para acelerar, frenar y girar · espacio para derrapar · R para volver a la
+      pista · Escape para salir al menú. Los karts rivales son cinemáticos en este prototipo: siguen un perfil de
+      velocidad calculado desde la curvatura del trazado, no la misma física del jugador.</p>
+  </aside>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* 24 trazados propios: capturan el caracter de cada sede, no su geometria */
+const CIRCUITS=[
+["melbourne","Australia","Circuito Yarra",5.278,5,"parque","-118 -30,-113 -34,-107 -36,-99 -39,-91 -40,-82 -42,-74 -43,-66 -45,-58 -46,-50 -47,-41 -48,-33 -49,-24 -50,-16 -50,-8 -50,1 -50,9 -49,18 -49,26 -48,34 -47,42 -45,49 -44,57 -42,64 -40,71 -37,78 -35,84 -32,90 -29,96 -25,101 -22,106 -18,110 -14,113 -10,115 -6,115 -2,114 2,113 6,110 10,107 13,104 16,100 18,95 21,89 22,82 24,76 25,69 26,63 26,57 26,50 25,43 24,37 23,30 22,24 22,18 22,11 22,5 23,-1 24,-7 25,-13 25,-19 27,-26 28,-32 29,-39 31,-45 32,-49 34,-52 36,-53 38,-53 41,-52 44,-49 46,-46 49,-42 51,-38 53,-32 54,-26 55,-18 56,-11 57,-3 58,4 58,11 58,19 58,26 58,34 58,41 57,48 56,56 56,63 54,70 52,78 51,85 49,91 48,96 48,101 49,105 51,109 53,112 56,113 58,113 61,110 63,105 65,97 67,88 69,78 71,68 73,58 74,48 75,38 75,28 75,17 75,7 75,-3 74,-13 74,-22 73,-32 71,-41 70,-50 68,-58 66,-66 64,-74 62,-81 59,-88 56,-94 53,-100 50,-106 46,-110 42,-114 37,-117 32,-120 27,-122 21,-123 16,-124 10,-125 4,-125 -3,-125 -10,-124 -16,-123 -22,-120 -28"],
+["shanghai","China","Circuito Huangpu",5.451,5,"torres","-126 -16,-119 -19,-110 -21,-99 -23,-88 -26,-76 -27,-65 -29,-55 -31,-46 -32,-36 -33,-27 -34,-18 -35,-9 -36,0 -36,8 -36,17 -36,24 -36,32 -36,39 -35,47 -34,53 -34,60 -32,66 -31,73 -29,78 -28,83 -26,88 -24,92 -22,95 -19,98 -17,101 -14,102 -12,104 -9,104 -7,104 -4,104 -2,103 0,101 2,99 4,96 6,93 7,88 8,83 8,78 9,73 9,68 10,64 10,59 11,54 13,49 14,45 15,42 16,40 18,39 20,40 22,41 25,44 27,47 29,50 31,54 33,59 34,66 35,72 36,79 37,86 38,92 38,98 38,104 37,110 36,115 34,120 34,124 34,128 35,130 37,133 40,135 43,135 46,135 49,132 52,127 54,121 56,113 59,104 60,94 62,85 63,75 64,65 65,54 66,43 66,32 66,21 66,10 66,-1 66,-11 65,-22 65,-32 64,-42 64,-52 63,-60 61,-69 60,-77 58,-85 57,-92 55,-98 52,-104 50,-109 47,-113 44,-116 41,-118 37,-121 33,-123 30,-125 26,-127 23,-129 20,-130 16,-131 13,-132 9,-132 6,-132 3,-133 -1,-134 -5,-133 -8,-132 -11,-128 -15"],
+["suzuka","Japón","Circuito Ise",5.807,6,"bosque","-127 -22,-122 -25,-115 -28,-108 -32,-99 -35,-90 -38,-82 -41,-74 -43,-66 -45,-58 -46,-50 -47,-42 -47,-35 -48,-27 -48,-20 -48,-12 -47,-5 -46,2 -45,9 -44,16 -43,22 -41,29 -39,35 -37,41 -35,47 -33,51 -30,54 -28,55 -26,53 -23,51 -20,48 -18,46 -15,46 -13,47 -11,50 -9,54 -8,60 -6,65 -5,71 -3,76 -2,82 -1,88 1,94 2,100 3,106 5,111 7,115 9,119 12,123 16,127 20,129 23,130 27,130 30,128 33,123 36,118 38,111 41,105 42,98 44,92 44,86 43,79 42,73 40,66 38,60 36,54 36,49 37,44 38,40 40,36 42,32 45,27 47,21 49,15 51,9 53,2 56,-5 57,-12 59,-19 60,-26 60,-34 60,-42 60,-50 59,-58 58,-65 57,-71 55,-77 53,-83 51,-88 48,-92 45,-95 43,-97 40,-96 38,-93 35,-88 33,-84 30,-80 28,-78 25,-79 23,-83 21,-88 19,-95 17,-102 15,-108 12,-113 10,-117 7,-120 5,-123 2,-126 -1,-128 -4,-129 -7,-131 -9,-132 -11,-132 -13,-133 -15,-132 -17,-130 -20"],
+["bahrein","Bahréin","Circuito Manama",5.412,4,"dunas","-114 -38,-107 -40,-97 -42,-86 -43,-75 -44,-63 -45,-51 -46,-41 -46,-30 -47,-19 -47,-7 -47,3 -47,14 -46,24 -46,34 -46,43 -45,52 -44,61 -43,69 -42,77 -41,83 -39,90 -37,96 -35,102 -32,106 -29,110 -27,112 -24,112 -21,112 -19,110 -16,107 -13,103 -11,98 -9,93 -7,87 -6,80 -6,73 -5,65 -5,57 -4,50 -4,43 -3,36 -3,29 -2,22 -2,15 -1,9 -1,3 1,-3 2,-9 3,-14 5,-19 6,-22 8,-24 10,-24 12,-23 15,-20 18,-17 20,-13 23,-8 25,-3 27,2 28,9 29,16 30,23 31,31 32,38 32,45 32,53 32,61 32,69 31,76 31,83 32,89 33,96 34,102 36,108 38,113 40,115 42,115 44,114 46,110 49,103 52,96 55,88 57,80 59,72 61,63 62,54 63,44 63,34 64,24 64,14 64,4 64,-5 64,-15 63,-25 63,-35 62,-44 61,-52 59,-61 58,-69 56,-77 54,-85 52,-92 49,-98 46,-103 43,-108 39,-112 35,-115 31,-118 27,-121 22,-123 18,-125 12,-126 7,-126 1,-127 -4,-126 -9,-126 -14,-126 -18,-125 -23,-125 -27,-123 -30,-121 -34,-117 -37"],
+["jeddah","Arabia Saudita","Circuito Mar Rojo",6.174,6,"torres","-140 -26,-134 -30,-126 -32,-117 -34,-108 -35,-98 -35,-88 -36,-80 -36,-71 -37,-62 -38,-53 -38,-44 -38,-35 -38,-26 -38,-17 -38,-8 -37,1 -36,10 -36,19 -35,28 -34,36 -34,46 -34,55 -33,64 -33,73 -33,82 -33,90 -32,98 -31,106 -30,114 -29,121 -27,128 -25,134 -23,138 -21,142 -17,145 -14,147 -10,149 -6,148 -3,146 0,142 2,135 4,127 5,119 6,109 7,100 8,92 8,83 9,74 8,65 8,56 8,47 8,38 8,29 8,20 8,11 9,2 9,-7 9,-16 10,-24 10,-33 10,-42 10,-51 11,-59 11,-68 11,-76 12,-84 13,-93 14,-102 15,-111 16,-117 17,-122 19,-125 21,-125 24,-124 27,-122 30,-118 33,-113 36,-108 38,-102 40,-94 41,-85 42,-76 43,-66 43,-57 44,-47 44,-38 44,-29 44,-19 44,-9 44,0 44,10 44,20 44,29 44,39 44,49 44,58 44,67 44,77 44,86 44,96 44,105 44,113 44,121 45,128 46,134 48,140 50,145 53,149 55,150 58,150 61,148 63,141 65,132 67,122 69,110 71,98 73,86 74,75 75,63 76,50 76,37 76,25 76,12 76,-0 76,-13 76,-26 75,-38 75,-51 74,-63 73,-74 72,-85 70,-95 68,-105 66,-115 64,-123 61,-131 58,-137 54,-142 50,-145 46,-148 42,-150 37,-151 32,-152 26,-152 19,-152 10,-151 1,-149 -8,-146 -16,-142 -23"],
+["miami","Miami","Circuito Bahía Biscayne",5.412,4,"palmeras","-116 -24,-109 -27,-100 -30,-90 -33,-79 -35,-68 -37,-57 -39,-47 -41,-36 -42,-26 -43,-15 -44,-5 -44,6 -44,16 -44,26 -44,36 -43,46 -42,56 -40,65 -39,74 -37,82 -35,89 -32,97 -29,103 -26,109 -23,113 -19,116 -16,117 -13,117 -9,115 -6,112 -2,108 1,104 3,99 5,93 6,86 6,79 6,71 6,63 6,56 6,50 6,44 5,38 5,32 4,26 4,21 4,15 4,9 5,3 7,-2 8,-7 10,-11 12,-14 14,-15 16,-15 19,-14 22,-12 25,-9 28,-6 31,-2 33,3 35,10 36,17 37,24 38,31 39,38 40,45 41,52 41,60 41,67 41,74 41,81 41,87 43,94 44,101 47,107 49,112 51,113 54,113 56,110 58,103 61,94 63,83 66,72 68,61 69,51 70,40 71,29 72,18 72,7 71,-4 71,-14 70,-24 69,-34 67,-44 66,-53 64,-62 62,-70 59,-78 57,-85 54,-91 51,-97 48,-103 45,-108 42,-112 38,-116 34,-119 30,-121 25,-123 20,-125 15,-126 10,-126 6,-126 0,-126 -5,-126 -10,-124 -15,-121 -20"],
+["montreal","Canadá","Circuito San Lorenzo",4.361,6,"bosque","-124 -22,-118 -25,-110 -26,-101 -28,-91 -28,-81 -29,-71 -30,-61 -30,-52 -31,-43 -31,-34 -32,-24 -32,-15 -32,-6 -32,3 -32,12 -32,21 -32,30 -31,39 -31,48 -30,56 -30,65 -29,74 -29,82 -28,90 -27,98 -26,104 -24,109 -22,114 -19,118 -16,122 -13,124 -10,126 -7,126 -5,125 -3,124 -1,121 1,117 2,113 3,108 4,102 4,95 4,86 4,78 3,69 2,60 2,52 2,44 2,36 2,28 3,20 3,12 3,4 4,-4 5,-14 5,-23 6,-32 7,-39 8,-43 9,-45 11,-45 13,-45 15,-44 18,-40 20,-35 22,-30 24,-24 25,-16 26,-8 27,2 27,11 28,20 28,28 28,37 28,45 27,54 27,62 26,70 26,78 26,85 26,93 26,100 27,107 27,113 28,118 29,122 31,125 33,128 36,129 40,130 43,129 46,126 48,121 50,114 51,105 53,95 54,85 55,75 56,65 56,55 57,45 57,35 57,25 57,14 56,4 56,-6 55,-17 55,-27 54,-37 53,-48 52,-57 51,-67 49,-76 48,-85 46,-94 44,-102 41,-110 39,-116 36,-121 33,-125 29,-128 25,-131 21,-132 17,-134 12,-134 8,-135 3,-134 -3,-133 -8,-132 -14,-128 -18"],
+["monaco","Mónaco","Circuito La Roca",3.337,11,"puerto","-72 -46,-67 -49,-60 -51,-52 -53,-44 -55,-36 -57,-28 -58,-20 -58,-13 -58,-6 -58,2 -58,9 -57,16 -55,22 -54,28 -52,34 -50,39 -48,45 -45,49 -42,53 -39,55 -36,57 -33,58 -29,59 -26,58 -22,58 -19,56 -16,54 -14,50 -12,46 -11,41 -9,36 -9,32 -8,28 -8,24 -9,20 -10,16 -12,13 -13,9 -14,6 -14,3 -13,-1 -11,-4 -9,-7 -6,-9 -4,-10 -1,-10 1,-8 4,-6 7,-2 9,1 12,6 14,10 16,15 17,21 18,27 18,34 18,40 19,46 19,50 21,55 22,60 24,64 27,67 29,69 32,70 34,69 37,67 40,63 43,59 46,54 48,49 51,43 53,38 55,31 56,25 58,18 59,11 60,4 60,-3 60,-10 60,-17 60,-24 59,-31 58,-37 57,-43 55,-48 53,-53 51,-58 48,-62 45,-64 43,-66 40,-66 37,-63 34,-60 32,-56 29,-53 26,-52 23,-53 21,-55 19,-59 17,-64 15,-69 13,-73 11,-76 8,-78 4,-80 0,-82 -4,-83 -9,-84 -13,-84 -18,-84 -22,-83 -26,-82 -31,-81 -35,-79 -39,-76 -43"],
+["barcelona","Barcelona","Circuito Llobregat",4.657,5,"montaña","-116 -28,-109 -32,-100 -34,-90 -37,-79 -39,-68 -40,-57 -41,-47 -43,-37 -43,-26 -44,-16 -44,-6 -45,4 -44,14 -44,24 -43,33 -43,42 -42,51 -40,60 -39,68 -37,76 -35,83 -32,90 -29,97 -26,103 -23,108 -19,112 -16,115 -13,117 -9,118 -5,118 -2,117 2,115 5,112 7,108 9,102 11,95 13,88 14,81 15,74 16,67 16,61 16,54 15,47 15,40 14,33 14,27 14,21 15,15 15,9 16,3 17,-3 19,-8 20,-14 22,-20 24,-26 26,-31 28,-35 31,-36 33,-36 35,-35 37,-31 40,-26 42,-19 44,-13 46,-6 48,1 49,8 50,16 51,24 51,32 52,40 52,48 52,56 51,64 50,72 49,79 48,86 48,92 48,98 49,104 51,109 53,114 56,115 58,115 61,114 63,108 65,100 67,90 70,79 71,68 73,58 74,48 75,38 75,27 75,16 74,5 73,-5 73,-15 71,-25 70,-35 68,-45 67,-55 65,-64 62,-72 60,-80 57,-87 55,-94 52,-101 49,-107 45,-112 42,-116 38,-120 34,-123 30,-125 25,-127 20,-128 15,-128 10,-128 4,-128 -2,-127 -8,-126 -15,-123 -21,-119 -26"],
+["austria","Austria","Circuito Estiria",4.318,6,"montaña","-116 -32,-108 -37,-98 -40,-86 -42,-73 -43,-59 -43,-46 -44,-34 -44,-21 -45,-9 -45,4 -45,17 -45,29 -45,40 -44,51 -43,62 -42,72 -40,82 -38,91 -36,99 -33,105 -31,110 -27,115 -24,118 -20,121 -16,121 -13,120 -10,117 -8,111 -5,104 -3,96 -2,87 -0,78 1,70 3,61 3,51 4,41 4,32 5,22 5,14 6,6 7,-3 8,-11 9,-19 10,-25 11,-28 13,-30 15,-29 18,-27 21,-23 25,-18 28,-12 32,-6 34,1 36,9 37,18 38,28 39,38 39,47 40,57 40,67 40,77 39,87 38,97 37,105 37,112 38,118 40,122 43,126 46,129 50,129 53,128 57,123 59,116 62,106 65,94 67,81 69,68 71,56 72,44 73,32 73,19 73,6 72,-6 72,-18 71,-30 69,-40 68,-51 66,-61 64,-71 62,-80 59,-88 56,-96 53,-103 50,-109 47,-115 43,-119 39,-123 33,-125 26,-127 17,-127 6,-127 -5,-125 -15,-121 -25"],
+["silverstone","Gran Bretaña","Circuito Northampton",5.891,5,"parque","-118 -34,-111 -38,-103 -41,-93 -43,-83 -45,-73 -46,-63 -47,-53 -49,-43 -50,-34 -51,-24 -51,-14 -52,-4 -52,6 -52,16 -52,26 -51,36 -50,46 -49,55 -48,64 -47,72 -45,80 -43,88 -41,95 -38,101 -36,107 -33,112 -30,116 -27,120 -23,124 -19,126 -15,128 -11,128 -8,127 -4,125 -1,122 1,118 4,113 7,108 8,102 10,96 11,89 11,82 11,74 11,67 11,59 10,53 10,46 9,40 7,33 6,27 5,20 4,14 4,7 4,0 5,-6 6,-13 8,-20 9,-25 11,-31 13,-36 16,-41 18,-46 21,-50 24,-52 27,-52 30,-50 32,-46 35,-40 37,-34 40,-27 42,-20 43,-12 45,-5 46,4 47,12 47,21 48,30 48,38 48,46 48,55 48,63 48,71 47,79 47,87 46,93 46,100 45,106 43,112 42,118 41,122 41,126 42,129 44,133 47,135 51,137 55,137 59,136 62,132 65,125 68,117 71,107 74,96 76,85 78,74 80,63 81,52 82,41 82,29 81,17 81,6 80,-6 80,-17 79,-28 77,-39 76,-50 74,-60 72,-70 70,-79 67,-87 65,-95 61,-103 58,-110 54,-115 50,-120 46,-125 41,-128 36,-131 31,-132 26,-134 20,-134 14,-134 7,-133 -1,-131 -9,-129 -17,-125 -25,-121 -31"],
+["spa","Bélgica","Circuito Ardenas",7.004,3,"bosque","-142 -18,-137 -22,-132 -26,-126 -29,-120 -32,-114 -35,-107 -37,-101 -39,-94 -41,-86 -42,-79 -44,-71 -45,-64 -45,-56 -46,-48 -46,-40 -46,-32 -46,-24 -46,-16 -45,-8 -44,0 -44,9 -43,17 -42,26 -41,35 -40,43 -39,52 -38,61 -37,70 -36,79 -34,88 -33,96 -31,104 -29,112 -27,119 -24,126 -21,133 -17,138 -13,143 -10,146 -6,148 -2,148 2,148 6,147 10,144 14,140 17,135 19,129 21,121 23,112 24,102 25,93 25,84 26,75 26,67 26,58 25,49 25,41 24,32 24,24 24,16 24,8 25,-0 25,-8 26,-16 27,-24 28,-32 29,-41 30,-50 32,-59 33,-66 35,-71 37,-72 39,-72 42,-71 44,-68 47,-63 50,-58 52,-52 54,-45 56,-38 57,-29 58,-20 59,-10 59,-1 60,9 60,18 60,28 61,37 61,47 60,57 60,66 60,76 60,86 59,96 59,105 58,115 58,123 57,129 55,135 53,140 50,144 47,147 45,150 44,152 45,153 46,155 50,155 54,154 59,152 64,149 68,143 72,135 75,125 78,114 80,102 82,90 84,78 86,66 87,54 88,41 89,28 89,15 89,2 88,-10 88,-23 87,-36 86,-49 84,-61 82,-73 80,-84 78,-95 75,-105 73,-115 69,-124 66,-132 62,-139 58,-145 54,-150 49,-153 44,-156 39,-158 33,-160 28,-160 22,-159 16,-158 9,-155 3,-152 -4,-148 -10,-144 -16"],
+["hungria","Hungría","Circuito Danubio",4.381,7,"parque","-84 -42,-79 -45,-72 -47,-64 -50,-55 -51,-46 -53,-38 -54,-30 -54,-22 -55,-14 -55,-6 -54,2 -54,9 -53,16 -52,23 -51,29 -49,35 -47,40 -46,45 -43,50 -41,54 -39,57 -36,61 -33,63 -30,65 -27,66 -24,66 -22,65 -20,63 -18,60 -16,56 -14,52 -13,48 -12,44 -12,39 -12,34 -13,29 -14,24 -15,19 -16,14 -16,9 -15,4 -14,-0 -13,-5 -11,-9 -9,-11 -7,-12 -5,-13 -2,-12 1,-10 4,-8 7,-5 10,-2 12,2 14,7 16,13 17,19 18,25 19,31 20,37 20,43 20,49 19,56 18,62 17,67 17,72 18,76 20,80 22,84 25,87 28,88 32,89 35,87 37,83 40,78 43,72 45,66 48,59 50,52 52,45 54,39 55,31 56,24 57,17 58,10 58,2 58,-5 58,-12 58,-20 57,-27 56,-34 55,-40 54,-46 53,-51 51,-57 49,-61 48,-66 45,-70 43,-74 41,-77 38,-80 36,-82 33,-84 29,-86 26,-88 22,-90 18,-91 12,-92 7,-93 1,-94 -4,-94 -9,-94 -14,-94 -20,-93 -25,-92 -30,-91 -34,-88 -38"],
+["zandvoort","Países Bajos","Circuito Duna Norte",4.259,7,"dunas","-96 -34,-90 -38,-82 -41,-73 -44,-64 -46,-54 -48,-45 -49,-35 -51,-26 -51,-17 -52,-7 -52,2 -51,11 -51,20 -50,29 -49,37 -48,46 -46,54 -44,62 -42,69 -39,75 -37,81 -34,87 -30,92 -27,97 -23,100 -19,102 -16,102 -13,101 -9,99 -6,96 -3,92 0,88 3,84 5,78 6,72 7,66 8,59 8,52 9,46 10,40 11,33 13,26 14,19 15,14 17,11 19,10 21,11 24,14 27,18 30,23 33,28 36,34 38,40 39,48 40,55 41,63 42,71 42,77 43,82 45,87 47,92 50,95 52,97 55,97 58,96 60,92 62,85 65,76 67,66 69,56 70,46 72,38 72,29 72,20 72,10 71,1 70,-8 69,-16 68,-24 66,-32 65,-40 63,-47 61,-54 58,-61 55,-67 52,-73 49,-78 46,-82 42,-87 38,-91 34,-94 30,-97 26,-100 21,-102 17,-104 12,-105 7,-106 2,-106 -3,-106 -8,-106 -14,-105 -19,-103 -25,-100 -30"],
+["monza","Italia","Circuito Lombardía",5.793,7,"parque","-150 -20,-143 -23,-134 -24,-124 -25,-113 -25,-102 -25,-91 -26,-81 -26,-70 -27,-59 -29,-48 -29,-38 -30,-29 -30,-22 -30,-18 -29,-16 -26,-16 -23,-16 -21,-15 -19,-14 -17,-12 -17,-8 -17,-4 -19,1 -22,7 -24,13 -27,20 -28,28 -29,36 -29,46 -29,55 -29,65 -29,74 -28,82 -28,91 -27,100 -27,108 -26,116 -25,124 -24,130 -22,136 -20,141 -17,145 -14,148 -11,151 -8,152 -5,152 -3,150 -1,147 2,143 4,138 5,132 7,126 8,119 9,111 9,102 9,93 8,84 8,74 8,66 8,57 8,48 9,40 9,31 9,23 10,14 10,5 10,-5 11,-15 11,-24 12,-32 12,-38 13,-41 15,-43 17,-43 19,-42 22,-40 24,-36 26,-32 28,-26 29,-18 30,-10 31,-0 31,10 32,19 32,29 32,38 32,47 32,56 32,66 32,75 32,84 32,93 32,102 31,111 30,120 29,128 29,135 30,141 31,146 33,151 36,156 39,158 42,158 45,156 48,150 50,142 52,131 55,119 56,106 58,94 59,82 60,70 61,57 62,45 62,32 62,19 62,6 62,-7 62,-20 62,-33 61,-46 61,-58 60,-70 59,-82 57,-93 56,-104 54,-114 52,-124 50,-133 47,-140 44,-146 41,-151 37,-155 33,-158 29,-160 25,-162 20,-162 15,-163 9,-162 3,-161 -4,-159 -10,-155 -16"],
+["madrid","Madrid","Circuito Manzanares",5.474,6,"torres","-120 -26,-113 -29,-104 -32,-94 -34,-83 -36,-72 -38,-61 -39,-51 -41,-41 -42,-31 -43,-20 -44,-10 -44,0 -44,10 -44,20 -44,30 -43,40 -42,50 -40,59 -39,68 -37,76 -35,84 -32,91 -29,98 -26,104 -23,110 -19,114 -16,117 -13,120 -9,122 -5,123 -2,122 2,121 5,118 7,114 10,108 12,102 14,94 16,87 17,80 18,73 18,66 18,59 17,51 16,44 15,37 14,31 14,25 15,18 15,13 16,7 17,1 19,-4 20,-10 22,-16 24,-22 26,-27 28,-32 31,-33 33,-33 35,-31 37,-26 40,-21 42,-14 45,-7 47,0 48,7 49,15 50,23 50,31 50,40 50,48 50,56 50,65 49,73 48,82 47,90 46,98 45,104 46,110 48,115 50,120 53,124 57,126 60,125 63,122 65,115 67,106 70,95 72,83 74,71 75,60 76,49 77,38 77,26 77,14 76,3 76,-9 75,-19 73,-30 72,-40 70,-51 68,-60 65,-69 63,-78 60,-86 57,-94 54,-101 51,-107 47,-113 44,-118 40,-122 36,-125 32,-128 27,-130 23,-131 18,-132 13,-132 8,-132 3,-132 -3,-131 -9,-129 -14,-127 -19,-123 -24"],
+["baku","Azerbaiyán","Circuito Caspio",6.003,6,"torres","-158 -24,-151 -27,-142 -29,-131 -30,-120 -31,-108 -31,-97 -32,-87 -32,-76 -33,-66 -33,-55 -34,-45 -34,-34 -34,-24 -34,-14 -34,-3 -34,7 -34,18 -34,28 -34,39 -34,49 -34,60 -34,71 -34,82 -33,93 -33,103 -33,112 -32,121 -31,130 -30,138 -30,145 -28,152 -27,158 -25,162 -23,166 -20,169 -16,171 -12,172 -8,171 -5,168 -2,162 -0,154 1,144 2,132 3,121 3,109 4,99 4,89 5,78 5,67 5,57 6,46 6,36 6,26 6,15 6,5 7,-6 7,-16 7,-25 8,-35 8,-44 9,-52 10,-61 11,-69 12,-77 13,-84 14,-92 15,-99 17,-107 18,-114 20,-119 21,-121 23,-121 25,-121 27,-120 30,-117 32,-112 34,-106 36,-100 38,-93 39,-85 40,-77 41,-68 41,-58 42,-49 42,-39 42,-30 42,-20 42,-10 41,0 41,10 40,20 40,30 40,40 40,50 40,60 40,69 40,79 40,89 40,99 40,110 39,120 39,130 39,139 39,146 40,153 42,159 44,164 47,168 51,169 54,168 57,166 59,158 62,148 64,136 67,123 69,109 71,96 72,83 73,69 74,55 74,40 74,26 74,11 74,-3 74,-18 73,-33 73,-47 72,-62 71,-75 70,-88 68,-100 66,-111 64,-122 61,-132 58,-141 55,-149 52,-155 48,-160 44,-164 40,-168 35,-170 31,-171 26,-172 20,-172 14,-172 6,-171 -1,-169 -9,-165 -16,-161 -22"],
+["singapur","Singapur","Circuito Marina Sur",4.94,8,"torres","-104 -40,-98 -44,-90 -46,-81 -47,-71 -48,-62 -48,-52 -48,-44 -48,-35 -49,-25 -50,-16 -50,-8 -50,-1 -49,4 -48,7 -45,7 -42,6 -37,4 -33,3 -29,5 -27,8 -26,14 -26,22 -28,30 -30,39 -33,48 -35,56 -36,64 -36,72 -36,79 -36,87 -35,94 -34,100 -33,104 -31,108 -28,112 -24,114 -20,116 -16,116 -13,114 -10,110 -8,104 -6,96 -4,87 -2,78 -1,70 -0,62 0,55 0,47 -0,40 -1,32 -2,25 -2,18 -2,11 -2,4 -1,-3 -1,-10 0,-16 1,-20 3,-24 5,-26 8,-28 12,-29 16,-28 20,-27 23,-24 26,-19 28,-13 29,-5 29,3 30,12 30,20 30,28 30,36 30,44 29,52 28,60 28,67 28,74 28,81 29,89 30,96 31,103 33,107 35,108 37,107 39,105 42,98 45,90 48,80 51,71 54,62 56,53 57,44 59,35 59,25 60,16 60,6 60,-2 60,-11 59,-20 59,-28 58,-36 57,-44 55,-52 54,-60 52,-67 51,-74 49,-81 47,-88 44,-93 41,-98 38,-103 35,-106 32,-109 29,-111 24,-113 20,-114 14,-114 7,-114 -2,-114 -12,-112 -21,-110 -30,-106 -37"],
+["austin","Austin","Circuito Colorado",5.513,9,"montaña","-118 -24,-113 -29,-106 -33,-99 -36,-90 -39,-82 -41,-74 -43,-66 -45,-59 -47,-52 -49,-44 -50,-37 -51,-30 -52,-24 -52,-18 -51,-11 -50,-5 -48,-0 -46,4 -44,7 -41,7 -39,6 -36,3 -33,-2 -30,-6 -27,-9 -24,-9 -22,-8 -20,-5 -18,0 -16,6 -14,12 -13,17 -12,23 -12,28 -13,34 -15,40 -17,46 -20,52 -22,58 -24,65 -26,72 -28,79 -31,86 -33,93 -34,99 -34,105 -33,110 -30,115 -26,119 -21,123 -16,124 -12,124 -8,121 -5,116 -2,110 1,103 3,95 6,87 7,81 9,74 9,66 9,59 8,52 8,45 8,38 8,31 9,25 10,19 11,13 12,7 14,1 15,-5 17,-12 19,-20 21,-28 23,-34 25,-38 28,-39 30,-38 33,-35 35,-29 38,-22 41,-15 43,-7 45,-1 47,7 48,15 48,23 48,31 48,40 48,48 48,56 48,65 47,75 45,83 44,92 44,99 44,105 45,111 46,118 49,123 51,126 54,127 57,126 60,121 63,112 66,101 68,89 71,76 74,64 75,52 76,41 77,30 77,18 77,7 76,-5 75,-16 74,-27 73,-38 71,-49 69,-60 67,-70 64,-80 62,-88 58,-96 55,-104 52,-110 49,-116 45,-121 40,-124 34,-126 26,-127 17,-127 7,-125 -3,-123 -13,-120 -21"],
+["mexico","México","Circuito Ajusco",4.304,8,"mexico","-124 -34,-118 -38,-109 -41,-98 -41,-87 -41,-75 -40,-63 -40,-53 -40,-42 -41,-32 -41,-21 -42,-11 -42,-0 -42,10 -42,20 -42,31 -41,41 -41,51 -40,60 -39,68 -39,76 -37,82 -36,88 -35,94 -33,98 -32,101 -30,102 -28,103 -26,102 -24,101 -22,98 -20,96 -17,95 -15,95 -13,96 -11,99 -9,102 -6,104 -4,105 -2,105 0,104 2,101 4,97 6,92 8,87 10,81 12,75 12,68 12,61 12,53 11,45 10,37 10,30 10,23 10,16 11,9 12,2 13,-4 14,-11 15,-17 17,-25 18,-32 20,-39 22,-46 24,-49 26,-50 28,-49 31,-48 33,-43 36,-37 39,-30 41,-23 43,-17 45,-9 46,-1 47,8 47,17 48,25 48,34 48,43 48,51 47,60 46,69 45,77 44,85 44,91 44,98 46,105 48,111 51,113 53,114 55,113 58,111 60,103 63,92 65,80 68,68 70,56 71,45 72,33 73,21 73,10 73,-2 72,-13 71,-24 70,-34 69,-44 67,-54 66,-63 64,-72 62,-80 59,-88 57,-95 54,-102 52,-108 49,-114 45,-118 40,-122 34,-125 25,-127 14,-129 2,-130 -10,-129 -22,-126 -31"],
+["interlagos","Brasil","Circuito Tietê",4.309,5,"parque","-96 -40,-90 -43,-81 -46,-72 -48,-61 -49,-51 -51,-41 -52,-31 -52,-22 -52,-12 -52,-3 -51,6 -50,15 -49,24 -48,32 -46,41 -45,48 -43,56 -40,63 -38,69 -35,75 -33,80 -29,85 -26,89 -22,92 -19,94 -15,94 -12,92 -9,89 -6,84 -3,79 -1,73 2,67 3,61 4,55 5,48 5,40 4,33 4,26 3,20 4,14 5,7 7,1 8,-5 10,-10 13,-13 15,-14 17,-14 20,-11 23,-8 26,-4 29,1 32,6 34,12 36,18 37,26 38,34 39,41 40,49 40,55 40,62 39,69 37,76 36,82 34,88 34,92 34,96 36,100 38,103 42,105 46,105 49,104 53,100 55,93 58,84 61,74 63,63 65,52 67,42 68,32 68,22 68,11 68,0 67,-10 66,-19 65,-28 63,-37 62,-45 60,-52 58,-59 56,-66 53,-72 50,-78 47,-83 43,-88 39,-92 35,-95 31,-99 26,-101 22,-103 17,-105 11,-106 6,-106 0,-106 -5,-106 -10,-106 -15,-106 -20,-105 -25,-104 -30,-102 -34,-98 -38"],
+["lasvegas","Las Vegas","Circuito Mojave",6.201,6,"torres","-168 -26,-160 -30,-149 -33,-137 -34,-123 -34,-110 -34,-96 -34,-84 -34,-71 -35,-59 -35,-46 -36,-33 -36,-21 -36,-8 -36,5 -36,17 -36,30 -36,43 -35,55 -35,68 -34,80 -34,93 -33,106 -33,118 -32,130 -31,141 -30,150 -28,158 -25,166 -22,172 -18,177 -14,178 -11,178 -8,175 -5,168 -3,157 -2,144 -0,130 0,115 1,102 2,89 3,76 3,63 3,50 3,36 4,23 4,9 4,-5 5,-19 5,-33 6,-46 6,-60 7,-72 8,-84 9,-97 10,-110 11,-121 12,-130 13,-138 15,-141 17,-143 20,-143 23,-141 26,-137 29,-131 32,-124 34,-115 36,-103 37,-90 38,-76 39,-61 39,-47 40,-33 40,-20 40,-6 41,7 40,21 40,34 40,48 40,62 40,77 39,91 39,105 39,119 38,131 38,141 38,150 38,159 38,166 38,172 38,177 39,180 40,182 42,183 46,183 49,181 53,178 57,172 61,163 63,152 66,137 68,121 70,104 72,87 73,70 74,54 75,37 75,19 75,2 74,-15 73,-32 73,-48 71,-64 70,-80 69,-96 67,-111 65,-124 63,-136 60,-146 57,-155 55,-163 52,-170 49,-175 44,-179 39,-181 32,-182 23,-182 12,-181 1,-178 -10,-174 -19"],
+["qatar","Catar","Circuito Doha",5.419,4,"dunas","-112 -30,-105 -33,-96 -36,-85 -39,-74 -42,-62 -44,-51 -45,-41 -47,-31 -47,-21 -48,-11 -48,-1 -47,9 -47,18 -46,27 -45,37 -44,46 -43,55 -41,64 -39,72 -37,80 -35,87 -32,95 -28,101 -25,107 -21,111 -18,114 -14,115 -10,114 -7,112 -3,109 1,105 4,100 7,95 9,89 10,82 11,75 12,67 13,59 13,52 14,45 15,37 16,28 17,21 18,15 19,11 21,10 23,11 26,14 29,19 33,24 36,30 40,36 42,42 44,50 45,58 45,66 46,74 46,81 47,87 49,94 51,101 54,107 56,111 59,112 62,111 64,107 66,99 69,88 71,76 73,63 74,51 76,41 76,30 76,19 76,7 76,-4 75,-14 73,-24 72,-33 70,-43 68,-51 66,-60 63,-67 60,-75 58,-81 54,-87 51,-93 48,-98 44,-102 40,-106 36,-110 32,-113 27,-116 23,-118 18,-120 13,-121 7,-122 2,-122 -2,-122 -7,-122 -12,-122 -17,-120 -22,-117 -26"],
+["abudabi","Emiratos Árabes","Circuito Duna Blanca",5.281,7,"palmeras","-124 -28,-117 -33,-108 -36,-97 -38,-85 -39,-73 -40,-61 -41,-51 -43,-40 -43,-29 -44,-18 -44,-7 -45,3 -44,14 -44,25 -43,35 -43,46 -42,57 -41,67 -39,76 -37,84 -35,92 -32,100 -28,107 -25,113 -21,118 -17,120 -14,120 -11,118 -8,114 -5,108 -3,103 -0,97 1,91 2,85 3,77 2,70 1,62 0,55 -0,48 0,41 1,35 2,29 3,23 4,17 6,11 7,5 9,-2 11,-9 13,-15 15,-21 17,-24 20,-25 22,-24 25,-21 27,-16 30,-9 33,-2 35,5 37,11 39,18 40,26 41,34 41,42 42,50 42,58 42,66 42,74 41,82 39,90 38,97 37,103 38,109 39,114 41,119 44,123 48,126 52,126 55,124 58,118 61,109 63,98 66,86 68,73 70,60 72,48 72,36 73,24 72,11 72,-1 71,-13 69,-24 68,-35 66,-45 65,-55 63,-65 61,-74 58,-82 55,-90 53,-97 50,-104 47,-110 44,-116 40,-120 36,-124 30,-127 23,-129 13,-130 3,-131 -7,-129 -17,-126 -25"],
+];
+</script>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+
+/* ===================== ALTITUD REAL DE CADA SEDE (m) ===================== */
+const ALT={mexico:2240,interlagos:800,austria:680,madrid:600,spa:400,hungria:250,
+  barcelona:150,silverstone:150,suzuka:45,lasvegas:610,austin:160,shanghai:5,
+  melbourne:10,bahrein:10,jeddah:5,miami:2,montreal:15,monaco:10,zandvoort:5,
+  monza:162,baku:-25,singapur:5,qatar:10,abudabi:5};
+
+/* ===================== PARÁMETROS DE FÍSICA ===================== */
+const LOOSE   = {muF:1.30, muR:1.15, driftRear:0.26, yawAssist:1.25, maxDrift:62, steerMax:36};
+const PLANTED = {muF:2.05, muR:2.20, driftRear:0.78, yawAssist:0.30, maxDrift:26, steerMax:24};
+function fromStability(s){
+  const o={}; for(const k in LOOSE) o[k]=LOOSE[k]+(PLANTED[k]-LOOSE[k])*s;
+  o.muF=+o.muF.toFixed(2); o.muR=+o.muR.toFixed(2);
+  o.driftRear=+o.driftRear.toFixed(2); o.yawAssist=+o.yawAssist.toFixed(2);
+  o.maxDrift=Math.round(o.maxDrift); o.steerMax=Math.round(o.steerMax); return o;
+}
+const STAB_DEF=0.72; let stability=STAB_DEF;
+const DEF = Object.assign({
+  engine:3600, vmax:155, brake:5200, drag:0.44, steerSpeed:5.4,
+  ch1:0.70, ch2:1.40, ch3:2.30, boost:15.5, boostTime:1.10,
+  camBlend:0.45, camDist:7.4
+}, fromStability(STAB_DEF));
+const PRESETS={suelto:0.18, base:STAB_DEF, pegado:1.00};
+let P=Object.assign({},DEF), altitude=true;
+const SPEC=[
+  ['gMotor','engine','Fuerza del motor',1800,6200,50,v=>v+' N'],
+  ['gMotor','vmax','Velocidad máxima',90,230,1,v=>v+' km/h'],
+  ['gMotor','brake','Freno',2000,9000,100,v=>v+' N'],
+  ['gMotor','drag','Resistencia del aire',0.15,0.90,.01,v=>v.toFixed(2)],
+  ['gGrip','muF','Agarre delantero',0.70,2.40,.01,v=>v.toFixed(2)],
+  ['gGrip','muR','Agarre trasero',0.70,2.40,.01,v=>v.toFixed(2)],
+  ['gGrip','steerMax','Ángulo de dirección',18,46,1,v=>v+'°'],
+  ['gGrip','steerSpeed','Respuesta del volante',2.0,10.0,.1,v=>v.toFixed(1)],
+  ['gDrift','driftRear','Agarre trasero en derrape',0.15,1.00,.01,v=>v.toFixed(2)],
+  ['gDrift','yawAssist','Asistencia de guiñada',0.00,1.80,.05,v=>v.toFixed(2)],
+  ['gDrift','maxDrift','Ángulo máximo de derrape',20,75,1,v=>v+'°'],
+  ['gDrift','ch1','Carga · nivel 1',0.30,1.50,.05,v=>v.toFixed(2)+' s'],
+  ['gDrift','ch2','Carga · nivel 2',0.60,2.60,.05,v=>v.toFixed(2)+' s'],
+  ['gDrift','ch3','Carga · nivel 3',1.00,4.00,.05,v=>v.toFixed(2)+' s'],
+  ['gDrift','boost','Impulso del nivel 3',4.0,26.0,.5,v=>v.toFixed(1)+' m/s'],
+  ['gDrift','boostTime','Duración del impulso',0.30,2.20,.05,v=>v.toFixed(2)+' s'],
+  ['gCam','camBlend','Cámara sigue al movimiento',0.00,1.00,.05,v=>v.toFixed(2)],
+  ['gCam','camDist','Distancia de cámara',4.5,13.0,.1,v=>v.toFixed(1)+' m']
+];
+
+/* ===================== CONFIGURACIÓN DE CARRERA ===================== */
+const DIFFS=[['Fácil',0.80,0.55],['Normal',0.88,0.30],['Difícil',0.95,0.12],['Experto',1.00,0.00]];
+const SCALES=[['Corto',0.38,'vueltas de ~45 s'],['Medio',0.55,'vueltas de ~65 s'],['Escala real',1.00,'la longitud verdadera']];
+const RIVALS=[
+  ['Pívot',0xD2601A,'#D2601A'], ['Saque',0xC9D22E,'#C9D22E'],
+  ['Placaje',0x2C4E9B,'#2C4E9B'], ['Relevo',0xB02D3A,'#B02D3A'],
+  ['Bateador',0x8C6239,'#8C6239']
+];
+const LAPS=3;
+let circuitIx=CIRCUITS.findIndex(c=>c[0]==='mexico'); if(circuitIx<0) circuitIx=0;
+let diffIx=1, scaleIx=1;
+
+/* ===================== PISTA ===================== */
+const N=680; let HALF=6.0;
+let CL=[],TAN=[],NRM=[],CUM=[],LAPLEN=0,DS=1,VPROF=[],RAD=[];
+const LANDMARKS=[[0.030,'Puestos de comida'],[0.075,'Papel picado'],[0.150,'Cancha de fútbol'],
+  [0.225,'Juego de pelota'],[0.310,'Pirámide'],[0.400,'Campo de agave'],[0.480,'Lienzo charro'],
+  [0.555,'Nopalera y cempasúchil'],[0.635,'Trajineras'],[0.700,'Mariposas monarca'],
+  [0.775,'Diamante de béisbol'],[0.880,'Sección de estadio'],[0.925,'Ring de lucha libre']];
+
+function parsePts(s){ return s.split(',').map(p=>{const a=p.split(' ');return [+a[0],+a[1]];}); }
+
+function buildCenterline(cix, gs){
+  const c=CIRCUITS[cix], raw=parsePts(c[6]);
+  const cps=raw.map(p=>new THREE.Vector3(p[0],0,p[1]));
+  const curve=new THREE.CatmullRomCurve3(cps,true,'catmullrom',0.5);
+  let pts=curve.getSpacedPoints(N);
+  // longitud cruda y factor para llegar a la longitud objetivo
+  let raw_len=0; for(let i=0;i<N;i++) raw_len+=pts[i].distanceTo(pts[(i+1)%N]);
+  const k=(c[3]*1000*gs)/raw_len;
+  CL=[]; for(let i=0;i<N;i++) CL.push(new THREE.Vector2(pts[i].x*k, pts[i].z*k));
+  TAN=[];NRM=[];CUM=[];LAPLEN=0;
+  for(let i=0;i<N;i++){
+    const a=CL[(i-1+N)%N], b=CL[(i+1)%N];
+    const t=new THREE.Vector2(b.x-a.x,b.y-a.y).normalize();
+    TAN.push(t); NRM.push(new THREE.Vector2(-t.y,t.x));
+    CUM.push(LAPLEN); LAPLEN+=CL[i].distanceTo(CL[(i+1)%N]);
+  }
+  DS=LAPLEN/N;
+  HALF=Math.max(4.8, 7.2*gs);
+  // radio de curvatura por punto
+  RAD=[];
+  for(let i=0;i<N;i++){
+    const a=CL[(i-1+N)%N], b=CL[i], c2=CL[(i+1)%N];
+    const ab=a.distanceTo(b), bc=b.distanceTo(c2), ca=c2.distanceTo(a);
+    const ar=Math.abs((b.x-a.x)*(c2.y-a.y)-(b.y-a.y)*(c2.x-a.x))/2;
+    RAD.push(ar<1e-6 ? 1e6 : (ab*bc*ca)/(4*ar));
+  }
+  buildProfile();
+}
+function buildProfile(){
+  const alt=altitude?ALT[CIRCUITS[circuitIx][0]]||0:0;
+  const thin=1+alt/2240*0.06;                       // menos aire, un poco más de punta
+  const vTop=P.vmax/3.6*thin, aLat=P.muR*9.81*0.92, aB=9.5, aA=6.2;
+  VPROF=RAD.map(r=>Math.min(vTop, Math.sqrt(aLat*r)));
+  for(let pass=0;pass<3;pass++){
+    for(let i=N-1;i>=0;i--){ const n=(i+1)%N;
+      VPROF[i]=Math.min(VPROF[i], Math.sqrt(VPROF[n]*VPROF[n]+2*aB*DS)); }
+    for(let i=0;i<N;i++){ const p=(i-1+N)%N;
+      VPROF[i]=Math.min(VPROF[i], Math.sqrt(VPROF[p]*VPROF[p]+2*aA*DS)); }
+  }
+}
+const atS=s=>{ const f=((s%LAPLEN)+LAPLEN)%LAPLEN; return Math.floor(f/DS)%N; };
+
+/* ===================== ESCENA ===================== */
+const renderer=new THREE.WebGLRenderer({canvas:$('cv'),antialias:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
+renderer.setClearColor(0x0B0D10);
+const scene=new THREE.Scene();
+scene.fog=new THREE.Fog(0x0B0D10,220,1750);
+const camera=new THREE.PerspectiveCamera(62,1,0.4,3000);
+scene.add(new THREE.HemisphereLight(0x9fb4cc,0x1B2028,1.05));
+const sun=new THREE.DirectionalLight(0xfff2df,0.80); sun.position.set(120,240,80); scene.add(sun);
+
+const M2=(c)=>new THREE.MeshLambertMaterial({color:c});
+const MAT={road:M2(0x33383F),line:M2(0x2A2E34),grass:M2(0x202630),post:M2(0x4A515C),
+  stone:M2(0x8E8375),stone2:M2(0x6F675C),agave:M2(0x5F86A0),nopal:M2(0x2F7A45),
+  pitch:M2(0x1E6B3A),clay:M2(0x8A5A3B),water:M2(0x1D4A5E),seat:M2(0x3A4049),
+  snow:M2(0xD9DEE4),rock:M2(0x2A2E36),marigold:M2(0xE0821A),mask:M2(0xC8322F),
+  canvasW:M2(0xE6E1D6),dark:M2(0x22262C),tree:M2(0x24512F),trunk:M2(0x3D3226),
+  sand:M2(0x9C8A66),glass:M2(0x2E3946),palm:M2(0x2E7A4A),white:new THREE.MeshBasicMaterial({color:0xE9EAED,side:THREE.DoubleSide})};
+const FLAG=[0x1E7A44,0xEFEFEF,0xC8322F], FEST=[0xE0821A,0xC8322F,0x1E7A44,0x2C6FB5,0xE8C33A,0xD44E9B];
+let world=new THREE.Group(); scene.add(world);
+
+const mv=(o,x,y,z)=>{o.position.set(x,y,z);return o;};
+const box=(w,h,d,m)=>new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);
+const cyl=(r1,r2,h,s,m)=>new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,s),m);
+const pad=(w,d,m,y)=>{const p=new THREE.Mesh(new THREE.PlaneGeometry(w,d),m);
+  p.rotation.x=-Math.PI/2; p.position.y=y||0.04; return p;};
+
+function ribbon(inner,outer,mat,y){
+  const pos=[],idx=[];
+  for(let i=0;i<N;i++){const c=CL[i],n=NRM[i];
+    pos.push(c.x+n.x*outer,0,c.y+n.y*outer, c.x+n.x*inner,0,c.y+n.y*inner);}
+  for(let i=0;i<N;i++){const a=i*2,b=((i+1)%N)*2; idx.push(a,b,a+1,b,b+1,a+1);}
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+  g.setIndex(idx); g.computeVertexNormals();
+  return mv(new THREE.Mesh(g,mat),0,y,0);
+}
+function kerbRibbon(sign){
+  const pos=[],col=[],idx=[],i0=sign*HALF,i1=sign*(HALF+1.5);
+  for(let i=0;i<N;i++){const c=CL[i],n=NRM[i];
+    pos.push(c.x+n.x*i0,0,c.y+n.y*i0, c.x+n.x*i1,0,c.y+n.y*i1);
+    const on=Math.floor(CUM[i]/5)%2===0, r=on?.886:.90,g=on?.231:.90,b=on?.267:.90;
+    col.push(r,g,b,r,g,b);}
+  for(let i=0;i<N;i++){const a=i*2,b=((i+1)%N)*2; idx.push(a,b,a+1,b,b+1,a+1);}
+  const G=new THREE.BufferGeometry();
+  G.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+  G.setAttribute('color',new THREE.Float32BufferAttribute(col,3));
+  G.setIndex(idx); G.computeVertexNormals();
+  return mv(new THREE.Mesh(G,new THREE.MeshLambertMaterial({vertexColors:true})),0,0.055,0);
+}
+function at(frac,lat,ahead){
+  const i=Math.floor((((frac%1)+1)%1)*N)%N,c=CL[i],n=NRM[i],t=TAN[i],a=ahead||0;
+  return {x:c.x+n.x*lat+t.x*a, z:c.y+n.y*lat+t.y*a, rot:Math.atan2(t.x,t.y), i};
+}
+function put(o,frac,lat,ahead,spin){
+  const p=at(frac,lat,ahead); o.position.set(p.x,0,p.z); o.rotation.y=p.rot+(spin||0);
+  world.add(o); return o;
+}
+
+/* --------- utilería compartida --------- */
+function bTribuna(len){
+  const pos=[],idx=[];let v=0;
+  for(let k=0;k<7;k++){
+    const y0=k*1.9,y1=(k+1)*1.9,z0=k*2.7,z1=(k+1)*2.7;
+    pos.push(-len/2,y0,z0, len/2,y0,z0, len/2,y1,z1, -len/2,y1,z1);
+    idx.push(v,v+1,v+2,v,v+2,v+3); v+=4;
+  }
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+  g.setIndex(idx); g.computeVertexNormals();
+  return new THREE.Mesh(g,MAT.seat);
+}
+function bTorres(){const g=new THREE.Group();
+  for(let k=0;k<11;k++){const h=26+Math.random()*70,w=9+Math.random()*9;
+    g.add(mv(box(w,h,w,k%3?MAT.glass:MAT.dark),(Math.random()-.5)*130,h/2,(Math.random()-.5)*110));}
+  return g;}
+function bBosque(){const g=new THREE.Group(),n=90,geo=new THREE.ConeGeometry(3.2,13,6);
+  const im=new THREE.InstancedMesh(geo,MAT.tree,n),m=new THREE.Matrix4();
+  for(let i=0;i<n;i++){const s=0.7+Math.random()*0.8;
+    m.makeScale(s,s,s); m.setPosition((Math.random()-.5)*150,6.5*s,(Math.random()-.5)*120);
+    im.setMatrixAt(i,m);} im.instanceMatrix.needsUpdate=true; g.add(im); return g;}
+function bDunas(){const g=new THREE.Group();
+  for(let k=0;k<9;k++)g.add(mv(cyl(0,16+Math.random()*22,7+Math.random()*9,7,MAT.sand),
+    (Math.random()-.5)*150,3.5,(Math.random()-.5)*120)); return g;}
+function bPalmeras(){const g=new THREE.Group();
+  for(let k=0;k<16;k++){const x=(Math.random()-.5)*140,z=(Math.random()-.5)*110,h=9+Math.random()*6;
+    g.add(mv(cyl(0.5,0.75,h,6,MAT.trunk),x,h/2,z));
+    for(let f=0;f<5;f++){const a=f/5*Math.PI*2,l=box(0.5,0.25,7,MAT.palm);
+      l.position.set(x+Math.cos(a)*3,h,z+Math.sin(a)*3); l.rotation.y=-a; l.rotation.x=0.42; g.add(l);}}
+  return g;}
+function bMontana(){const g=new THREE.Group();
+  g.add(mv(cyl(0,120,190,7,MAT.rock),0,95,0)); g.add(mv(cyl(0,34,32,7,MAT.snow),0,172,0)); return g;}
+function bParque(){const g=new THREE.Group(),n=52,geo=new THREE.SphereGeometry(4.6,7,5);
+  const im=new THREE.InstancedMesh(geo,MAT.tree,n),m=new THREE.Matrix4();
+  for(let i=0;i<n;i++){const s=0.7+Math.random();m.makeScale(s,s*1.2,s);
+    m.setPosition((Math.random()-.5)*150,5*s,(Math.random()-.5)*120); im.setMatrixAt(i,m);}
+  im.instanceMatrix.needsUpdate=true; g.add(im);
+  g.add(pad(150,120,MAT.pitch,0.02)); return g;}
+function bPuerto(){const g=new THREE.Group(); g.add(pad(150,90,MAT.water,0.03));
+  for(let k=0;k<7;k++){const c=FEST[k%FEST.length];
+    g.add(mv(box(5,2.4,17,MAT.canvasW),(k-3)*20,1.2,(k%2?12:-12)));
+    g.add(mv(cyl(0.3,0.3,16,5,new THREE.MeshLambertMaterial({color:c})),(k-3)*20,8,(k%2?12:-12)));}
+  return g;}
+
+/* --------- utilería mexicana --------- */
+function bPiramide(){const g=new THREE.Group();let w=54,h=0;
+  for(let i=0;i<6;i++){g.add(mv(box(w,7,w*0.82,i%2?MAT.stone2:MAT.stone),0,h+3.5,0));h+=7;w-=8;}
+  const st=box(11,1.4,34,MAT.stone2); st.position.set(0,10,26); st.rotation.x=-0.62; g.add(st);
+  g.add(mv(box(13,6,11,MAT.stone2),0,h+3,0)); return g;}
+function bJuegoPelota(){const g=new THREE.Group();
+  for(const s of [1,-1]){const w=box(4,9,46,MAT.stone); w.position.set(s*11,4.5,0); w.rotation.z=s*0.26; g.add(w);
+    const r=new THREE.Mesh(new THREE.TorusGeometry(1.9,0.5,6,14),MAT.stone2);
+    r.position.set(s*8.4,9.6,0); r.rotation.y=Math.PI/2; g.add(r);}
+  g.add(pad(18,46,MAT.clay,0.05)); return g;}
+function bLucha(){const g=new THREE.Group();
+  g.add(mv(box(14,1.6,14,MAT.dark),0,0.8,0)); g.add(mv(box(13,0.3,13,MAT.canvasW),0,1.7,0));
+  for(const sx of[1,-1])for(const sz of[1,-1]){
+    g.add(mv(cyl(0.3,0.3,5,6,MAT.mask),sx*6.3,4,sz*6.3));
+    for(let k=1;k<=3;k++){g.add(mv(box(12.6,.16,.16,MAT.canvasW),0,1.9+k,sz*6.3));
+      g.add(mv(box(.16,.16,12.6,MAT.canvasW),sx*6.3,1.9+k,0));}}
+  const m=new THREE.Mesh(new THREE.SphereGeometry(4.4,14,10),MAT.mask);
+  m.scale.set(1,1.24,0.72); m.position.set(0,15,-13); g.add(m);
+  for(const s of[1,-1]) g.add(mv(box(1.5,0.9,0.5,MAT.dark),s*1.6,16.1,-9.8));
+  g.add(mv(cyl(0.7,0.7,10,8,MAT.stone2),0,5,-13)); return g;}
+function bCharro(){const g=new THREE.Group();
+  const r=new THREE.Mesh(new THREE.TorusGeometry(17,0.45,6,34),MAT.clay);
+  r.rotation.x=Math.PI/2; r.position.y=1.5; g.add(r);
+  for(let k=0;k<20;k++){const a=k/20*Math.PI*2;
+    g.add(mv(cyl(.28,.28,3,5,MAT.clay),Math.cos(a)*17,1.5,Math.sin(a)*17));}
+  g.add(pad(34,34,MAT.clay,0.05)); return g;}
+function bFutbol(){const g=new THREE.Group(); g.add(pad(46,68,MAT.pitch,0.05));
+  for(const s of[1,-1]){g.add(mv(box(9,.35,.35,MAT.canvasW),0,3.2,s*33));
+    for(const sx of[1,-1]) g.add(mv(box(.3,3.2,.3,MAT.canvasW),sx*4.4,1.6,s*33));}
+  return g;}
+function bBeisbol(){const g=new THREE.Group();
+  const d=pad(40,40,MAT.clay,0.05); d.rotation.z=Math.PI/4; g.add(d);
+  const inf=pad(23,23,MAT.pitch,0.07); inf.rotation.z=Math.PI/4; g.add(inf);
+  [[0,-16],[16,0],[0,16],[-16,0]].forEach(([x,z])=>g.add(mv(box(2.2,.2,2.2,MAT.canvasW),x,.1,z)));
+  g.add(mv(box(26,7,1,MAT.dark),0,3.5,-22)); return g;}
+function bAgave(){const g=new THREE.Group(),rows=9,cols=7,per=8;
+  const im=new THREE.InstancedMesh(new THREE.ConeGeometry(.55,4.2,4),MAT.agave,rows*cols*per);
+  const m=new THREE.Matrix4(),q=new THREE.Quaternion(),e=new THREE.Euler(),sc=new THREE.Vector3(1,1,1);
+  let n=0;
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){const bx=(c-cols/2)*7.5,bz=(r-rows/2)*8.5;
+    for(let k=0;k<per;k++){const a=k/per*Math.PI*2; e.set(Math.cos(a)*.85,-a,Math.sin(a)*.85);
+      q.setFromEuler(e); m.compose(new THREE.Vector3(bx+Math.cos(a)*.9,1.9,bz+Math.sin(a)*.9),q,sc);
+      im.setMatrixAt(n++,m);}}
+  im.instanceMatrix.needsUpdate=true; g.add(im); return g;}
+function bNopal(){const g=new THREE.Group();
+  for(let k=0;k<16;k++){const x=(Math.random()-.5)*44,z=(Math.random()-.5)*30;
+    const p=box(3.2,4.4,.7,MAT.nopal); p.position.set(x,2.2,z); p.rotation.y=Math.random()*3; g.add(p);
+    const p2=box(2.2,3,.6,MAT.nopal); p2.position.set(x+1.6,3.6,z); p2.rotation.z=.7; p2.rotation.y=p.rotation.y; g.add(p2);}
+  for(let k=0;k<5;k++){const f=pad(13,9,MAT.marigold,.06);
+    f.position.set((Math.random()-.5)*46,.06,(Math.random()-.5)*34); g.add(f);}
+  return g;}
+function bTrajineras(){const g=new THREE.Group(); g.add(pad(64,40,MAT.water,.03));
+  for(let k=0;k<3;k++){const c=FEST[k%FEST.length],z=(k%2?6:-6),x=-18+k*17;
+    g.add(mv(box(5,1.6,17,MAT.trunk),x,.9,z));
+    const arch=new THREE.Mesh(new THREE.TorusGeometry(2.7,.35,5,12,Math.PI),new THREE.MeshLambertMaterial({color:c}));
+    arch.position.set(x,1.7,z-6.5); g.add(arch);
+    g.add(mv(box(4.6,.3,11,new THREE.MeshLambertMaterial({color:c})),x,4.2,z));}
+  return g;}
+function bPuestos(){const g=new THREE.Group();
+  for(let k=0;k<7;k++){const c=FEST[k%FEST.length],x=(k-3)*11;
+    g.add(mv(box(8,2.6,5,MAT.dark),x,1.3,0));
+    const cn=box(9.4,.34,6.4,new THREE.MeshLambertMaterial({color:c}));
+    cn.position.set(x,4.3,0); cn.rotation.x=.10; g.add(cn);
+    for(const sx of[1,-1]) g.add(mv(box(.24,4.2,.24,MAT.stone2),x+sx*4,2.1,2.6));}
+  return g;}
+function bPapel(frac){const g=new THREE.Group();
+  for(let r=0;r<4;r++){const p0=at(frac+r*.004,-(HALF+6)),p1=at(frac+r*.004,HALF+6),n=26;
+    for(let k=0;k<=n;k++){const t=k/n;
+      const f=new THREE.Mesh(new THREE.PlaneGeometry(1,1.3),
+        new THREE.MeshLambertMaterial({color:FEST[(k+r)%FEST.length],side:THREE.DoubleSide}));
+      f.position.set(p0.x+(p1.x-p0.x)*t,8.4-Math.sin(t*Math.PI)*1.5,p0.z+(p1.z-p0.z)*t);
+      f.rotation.y=p0.rot; g.add(f);}
+    for(const p of[p0,p1]) g.add(mv(cyl(.22,.22,10,6,MAT.stone2),p.x,5,p.z));}
+  return g;}
+let swarms=[];
+function bMonarcas(frac){const p=at(frac,-(HALF+30)),n=420;
+  const pos=new Float32Array(n*3),col=new Float32Array(n*3);
+  for(let i=0;i<n;i++){pos[i*3]=p.x+(Math.random()-.5)*54; pos[i*3+1]=1.5+Math.random()*16;
+    pos[i*3+2]=p.z+(Math.random()-.5)*54;
+    col[i*3]=.90; col[i*3+1]=.46+Math.random()*.18; col[i*3+2]=.10;}
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  g.setAttribute('color',new THREE.BufferAttribute(col,3));
+  return new THREE.Points(g,new THREE.PointsMaterial({size:.55,vertexColors:true,transparent:true,opacity:.95}));}
+function bEstadio(i0,i1){const pos=[],idx=[],T=9;let v=0;
+  for(const s of[1,-1])for(let k=0;k<T;k++){
+    const o0=s*(HALF+4+k*3.1),o1=s*(HALF+4+(k+1)*3.1),y0=k*2,y1=(k+1)*2;
+    for(let i=i0;i<i1;i++){const a=CL[i%N],na=NRM[i%N],b=CL[(i+1)%N],nb=NRM[(i+1)%N];
+      pos.push(a.x+na.x*o0,y0,a.y+na.y*o0, b.x+nb.x*o0,y0,b.y+nb.y*o0,
+               b.x+nb.x*o1,y1,b.y+nb.y*o1, a.x+na.x*o1,y1,a.y+na.y*o1);
+      idx.push(v,v+1,v+2,v,v+2,v+3); v+=4;}}
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+  g.setIndex(idx); g.computeVertexNormals(); return new THREE.Mesh(g,MAT.seat);}
+
+/* --------- construir el mundo --------- */
+const PROPS={torres:bTorres,bosque:bBosque,dunas:bDunas,palmeras:bPalmeras,
+  montaña:bMontana,parque:bParque,puerto:bPuerto};
+function buildWorld(){
+  world.traverse(o=>{if(o.geometry)o.geometry.dispose();});
+  scene.remove(world); world=new THREE.Group(); scene.add(world); swarms=[];
+  buildCenterline(circuitIx, SCALES[scaleIx][1]);
+
+  const gr=new THREE.Mesh(new THREE.PlaneGeometry(6000,6000),MAT.grass);
+  gr.rotation.x=-Math.PI/2; gr.position.y=-0.02; world.add(gr);
+  world.add(ribbon(-HALF,HALF,MAT.road,0.02));
+  world.add(ribbon(-HALF*0.25,HALF*0.25,MAT.line,0.03));
+  world.add(kerbRibbon(1)); world.add(kerbRibbon(-1));
+
+  {const c=CL[0],n=NRM[0],t=TAN[0],p=[];
+   [[HALF,.6],[-HALF,.6],[-HALF,-.6],[HALF,-.6]].forEach(([a,b])=>
+     p.push(c.x+n.x*a+t.x*b,0.07,c.y+n.y*a+t.y*b));
+   const g=new THREE.BufferGeometry();
+   g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));
+   g.setIndex([0,1,2,0,2,3]); world.add(new THREE.Mesh(g,MAT.white));}
+
+  for(let d=0;d<LAPLEN;d+=45){const i=Math.min(N-1,Math.floor(d/DS)),c=CL[i],n=NRM[i];
+    world.add(mv(box(.3,1.6,.3,MAT.post),c.x+n.x*(HALF+3.2),.8,c.y+n.y*(HALF+3.2)));}
+
+  // tribunas y banderas en todos los circuitos
+  [0.00,0.34,0.66].forEach(f=>put(bTribuna(70),f,HALF+9));
+  for(let k=0;k<14;k++){const p=at(0.90+k*0.007,HALF+5);
+    world.add(mv(cyl(.16,.16,9,5,MAT.stone2),p.x,4.5,p.z));
+    const fl=box(.2,1.6,3.4,new THREE.MeshLambertMaterial({color:FLAG[k%3]}));
+    fl.position.set(p.x,8,p.z); fl.rotation.y=p.rot; world.add(fl);}
+
+  const kind=CIRCUITS[circuitIx][5];
+  if(kind==='mexico'){
+    put(bPuestos(),0.030,-(HALF+16)); world.add(bPapel(0.075));
+    put(bFutbol(),0.150,HALF+52); put(bJuegoPelota(),0.225,-(HALF+30));
+    put(bPiramide(),0.310,HALF+70); put(bAgave(),0.400,-(HALF+42));
+    put(bCharro(),0.480,HALF+38); put(bNopal(),0.555,-(HALF+34));
+    put(bTrajineras(),0.635,HALF+40);
+    const sw=bMonarcas(0.700); world.add(sw); swarms.push(sw);
+    put(bBeisbol(),0.775,-(HALF+46));
+    world.add(bEstadio(Math.floor(.845*N),Math.floor(.935*N)));
+    put(bLucha(),0.890,HALF+46);
+    world.add(mv(cyl(0,210,300,7,MAT.rock),-1120,150,760));
+    world.add(mv(cyl(0,60,60,7,MAT.snow),-1120,272,760));
+  } else {
+    const mk=PROPS[kind]||bParque;
+    [0.13,0.40,0.62,0.86].forEach((f,i)=>put(mk(),f,(i%2?1:-1)*(HALF+95)));
+    if(kind==='montaña'){world.add(mv(bMontana(),-900,0,700));}
+  }
+  buildMap();
+}
+
+/* ===================== MINIMAPA ===================== */
+let MAPT={ox:0,oz:0,s:1};
+const mapX=x=>50+(x-MAPT.ox)*MAPT.s, mapY=z=>50+(z-MAPT.oz)*MAPT.s;
+function pathOf(pts,pad){
+  let a=1e9,b=-1e9,c=1e9,d=-1e9;
+  pts.forEach(p=>{a=Math.min(a,p.x);b=Math.max(b,p.x);c=Math.min(c,p.y);d=Math.max(d,p.y);});
+  const w=b-a,h=d-c,s=pad/Math.max(w,h),ox=a+w/2,oz=c+h/2;
+  let path='';
+  for(let i=0;i<pts.length;i+=3)
+    path+=(i?'L':'M')+(50+(pts[i].x-ox)*s).toFixed(1)+' '+(50+(pts[i].y-oz)*s).toFixed(1)+' ';
+  return {d:path+'Z',s,ox,oz};
+}
+function buildMap(){
+  const r=pathOf(CL,91); MAPT={ox:r.ox,oz:r.oz,s:r.s};
+  $('mapRoad').setAttribute('d',r.d); $('mapEdge').setAttribute('d',r.d);
+  const m0=CL[0],n0=NRM[0];
+  $('mapMeta').setAttribute('x1',mapX(m0.x+n0.x*HALF*1.5)); $('mapMeta').setAttribute('y1',mapY(m0.y+n0.y*HALF*1.5));
+  $('mapMeta').setAttribute('x2',mapX(m0.x-n0.x*HALF*1.5)); $('mapMeta').setAttribute('y2',mapY(m0.y-n0.y*HALF*1.5));
+  const c=CIRCUITS[circuitIx];
+  $('mapName').innerHTML='<b>'+gpName(c)+'</b><span>'+c[2]+'</span>';
+  const g=$('mapAI'); g.innerHTML='';
+  ai.forEach(a=>{const e=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    e.setAttribute('r',2.3); e.setAttribute('fill',a.hex); g.appendChild(e); a.dot=e;});
+}
+function gpName(c){ return 'Gran Premio de '+c[1]; }
+
+/* ===================== KART Y PARTÍCULAS ===================== */
+function makeKart(color){
+  const k=new THREE.Group(), bm=M2(color);
+  k.add(mv(box(1,.30,1.85,bm),0,.36,0)); k.add(mv(box(.62,.26,.72,bm),0,.60,-.16));
+  const hp=new THREE.Mesh(new THREE.TorusGeometry(.30,.045,6,14,Math.PI),M2(0xB9BFC7));
+  hp.position.set(0,.74,-.30); k.add(hp);
+  const gm=new THREE.MeshBasicMaterial({color:0x30343A});
+  k.add(mv(box(.94,.05,1.7,gm),0,.19,0));
+  const wh=[];
+  for(let i=0;i<4;i++){const w=cyl(.30,.30,.24,12,M2(0x1B1E23)); w.rotation.z=Math.PI/2;
+    const g=new THREE.Group(); g.position.set(.60*(i%2?-1:1),.30,.66*(i<2?1:-1)); g.add(w);
+    k.add(g); wh.push({grp:g,mesh:w,front:i<2});}
+  scene.add(k); return {grp:k,glow:gm,wheels:wh};
+}
+const player=makeKart(0x8A9099);
+const PMAX=200,pPos=new Float32Array(PMAX*3),pCol=new Float32Array(PMAX*3),pool=[];
+for(let i=0;i<PMAX;i++){pool.push({life:0,x:0,y:0,z:0,vx:0,vy:0,vz:0,r:1,g:1,b:1});pPos[i*3+1]=-999;}
+const pg=new THREE.BufferGeometry();
+pg.setAttribute('position',new THREE.BufferAttribute(pPos,3));
+pg.setAttribute('color',new THREE.BufferAttribute(pCol,3));
+scene.add(new THREE.Points(pg,new THREE.PointsMaterial({size:.26,vertexColors:true,transparent:true,opacity:.95,depthWrite:false})));
+let pNext=0;
+function spark(x,y,z,r,g,b){const p=pool[pNext];pNext=(pNext+1)%PMAX;
+  p.life=.45;p.x=x;p.y=y;p.z=z;p.vx=(Math.random()-.5)*4;p.vy=Math.random()*3+1.2;
+  p.vz=(Math.random()-.5)*4;p.r=r;p.g=g;p.b=b;}
+
+/* ===================== ESTADO DE CARRERA ===================== */
+const MASS=180,IZZ=118,AF=.62,AR=.68,G=9.81,CF=9200,CR=9800;
+let S={x:0,z:0,yaw:0,vx:0,vy:0,r:0,steer:0,charge:0,boostT:0,off:false};
+let throttle=0,brake=0,steerIn=0,drifting=false;
+let mode='menu', lapT=0, best=null, last=null, lap=1, lastIdx=0, armed=false;
+let total=0, cdT=0, ai=[], finished=false, playerS=0;
+const keys={};
+
+function resetKart(){
+  const c=CL[0],t=TAN[0],n=NRM[0];
+  S.x=c.x-n.x*2.6-t.x*8; S.z=c.y-n.y*2.6-t.y*8; S.yaw=Math.atan2(t.x,t.y);
+  S.vx=S.vy=S.r=S.steer=S.charge=S.boostT=0; S.off=false; lastIdx=0;
+}
+function startRace(){
+  buildWorld();
+  ai=[]; const pick=RIVALS.slice().sort(()=>Math.random()-.5).slice(0,3);
+  const sk=DIFFS[diffIx][1], nz=DIFFS[diffIx][2];
+  pick.forEach((r,i)=>{
+    const k=makeKart(r[1]);
+    ai.push({name:r[0],hex:r[2],kart:k,s:-(6+i*7),lane:(i%2?1:-1)*(2.2+i*0.8),
+      v:0,lap:1,lapT:0,best:null,tot:0,done:false,skill:sk*(1-Math.random()*nz*0.35),
+      wob:Math.random()*6.28,dot:null});
+  });
+  buildMap();
+  resetKart(); lapT=0;best=null;last=null;lap=1;armed=false;total=0;finished=false;
+  playerS=0; cdT=0; mode='lights';
+  $('menu').classList.remove('on'); $('result').classList.remove('on');
+  $('laps').textContent='1 / '+LAPS;
+  $('best').textContent='--.---'; $('last').textContent='--.---'; $('tlap').textContent='0.000';
+  const c=CIRCUITS[circuitIx];
+  $('place').classList.remove('on'); curPlace='';
+}
+function toMenu(){ mode='menu'; $('menu').classList.add('on'); $('result').classList.remove('on'); }
+
+/* --------- física del jugador --------- */
+function stepPlayer(dt){
+  const alt=altitude?(ALT[CIRCUITS[circuitIx][0]]||0):0, f=alt/2240;
+  const eng=P.engine*(1-0.16*f), drg=P.drag*(1-0.22*f), vmaxMS=P.vmax/3.6*(1+0.06*f);
+  const target=steerIn*P.steerMax*Math.PI/180*(1-.50*Math.min(1,Math.abs(S.vx)/vmaxMS));
+  S.steer+=(target-S.steer)*Math.min(1,P.steerSpeed*dt);
+  const spd=Math.hypot(S.vx,S.vy), vg=Math.max(Math.abs(S.vx),2.2);
+  const wantDrift=drifting&&spd>6&&S.vx>0, rearMul=wantDrift?P.driftRear:1;
+  const aFr=Math.atan2(S.vy+AF*S.r,vg)-S.steer, aRr=Math.atan2(S.vy-AR*S.r,vg);
+  const FzF=MASS*G*AR/(AF+AR),FzR=MASS*G*AF/(AF+AR),surf=S.off?.45:1;
+  const capF=P.muF*FzF*surf, capR=P.muR*FzR*surf*rearMul;
+  const FyF=clamp(-CF*aFr,-capF,capF), FyR=clamp(-CR*rearMul*aRr,-capR,capR);
+  const fade=Math.max(0,1-Math.abs(S.vx)/vmaxMS);
+  let Fx=throttle*eng*fade-brake*P.brake*Math.sign(S.vx||1);
+  if(!throttle&&!brake) Fx-=260*Math.sign(S.vx);
+  Fx-=drg*S.vx*Math.abs(S.vx)+(S.off?70:14)*S.vx;
+  if(S.boostT>0){Fx+=MASS*P.boost/P.boostTime;S.boostT-=dt;}
+  let Mz=AF*FyF*Math.cos(S.steer)-AR*FyR;
+  if(wantDrift) Mz+=P.yawAssist*2600*S.steer*Math.min(1,spd/16);
+  const beta=Math.atan2(S.vy,vg), bmax=P.maxDrift*Math.PI/180;
+  if(Math.abs(beta)>bmax) Mz-=Math.sign(beta)*(Math.abs(beta)-bmax)*15000;
+  Mz-=S.r*(170+330*stability);
+  S.vx+=(Fx/MASS+S.r*S.vy)*dt;
+  S.vy+=((FyF*Math.cos(S.steer)+FyR)/MASS-S.r*S.vx)*dt;
+  S.r+=(Mz/IZZ)*dt; S.yaw+=S.r*dt;
+  const sn=Math.sin(S.yaw),cs=Math.cos(S.yaw);
+  S.x+=(S.vx*sn+S.vy*cs)*dt; S.z+=(S.vx*cs-S.vy*sn)*dt;
+
+  let bi=lastIdx,bd=1e18;
+  for(let k=-18;k<=18;k++){const i=((lastIdx+k)%N+N)%N;
+    const d=(CL[i].x-S.x)**2+(CL[i].y-S.z)**2; if(d<bd){bd=d;bi=i;}}
+  if(bd>3600){bd=1e18; for(let i=0;i<N;i++){const d=(CL[i].x-S.x)**2+(CL[i].y-S.z)**2; if(d<bd){bd=d;bi=i;}}}
+  const prev=lastIdx; lastIdx=bi;
+  const n=NRM[bi], d=(S.x-CL[bi].x)*n.x+(S.z-CL[bi].y)*n.y;
+  S.off=Math.abs(d)>HALF;
+  playerS=CUM[bi];
+
+  if(wantDrift&&Math.abs(beta)>.13&&!S.off) S.charge+=dt;
+  else if(!drifting&&S.charge>0){
+    const lv=S.charge>=P.ch3?3:S.charge>=P.ch2?2:S.charge>=P.ch1?1:0;
+    if(lv) S.boostT=P.boostTime*(lv===3?1:lv===2?.78:.55);
+    S.charge=0;
+  } else if(!drifting) S.charge=0;
+
+  if(mode!=='race') return;
+  lapT+=dt; total+=dt;
+  if(bi>N*.55&&bi<N*.95) armed=true;
+  if(armed&&bi<N*.10){ armed=false;
+    if(lapT>6){ last=lapT; if(best===null||lapT<best) best=lapT;
+      lap++;
+      if(lap>LAPS){ finished=true; mode='done'; showResult(); }
+      else $('laps').textContent=lap+' / '+LAPS;
+    }
+    lapT=0; }
+}
+/* --------- rivales --------- */
+function stepAI(dt){
+  for(const a of ai){
+    if(a.done) continue;
+    const i=atS(a.s), tgt=VPROF[i]*a.skill*(1+Math.sin(a.wob+performance.now()/2600)*0.02);
+    a.v+=clamp(tgt-a.v,-11*dt,7*dt);
+    a.s+=a.v*dt; a.lapT+=dt; a.tot+=dt;
+    if(a.s>=LAPLEN){ a.s-=LAPLEN;
+      if(a.best===null||a.lapT<a.best) a.best=a.lapT;
+      a.lapT=0; a.lap++;
+      if(a.lap>LAPS) a.done=true; }
+    const j=atS(a.s), c=CL[j], n=NRM[j], t=TAN[j];
+    const lane=a.lane+Math.sin(a.s*0.012+a.wob)*0.7;
+    const x=c.x+n.x*lane, z=c.y+n.y*lane;
+    a.kart.grp.position.set(x,0,z); a.kart.grp.rotation.y=Math.atan2(t.x,t.y);
+    a.kart.wheels.forEach(w=>w.mesh.rotation.x-=a.v*dt/0.30);
+    // choque con el jugador
+    const dx=x-S.x, dz=z-S.z, dd=Math.hypot(dx,dz);
+    if(dd<2.5&&dd>0.001){
+      const px=dx/dd, pz=dz/dd, push=(2.5-dd)*0.6;
+      S.x-=px*push; S.z-=pz*push;
+      S.vx*=0.965; a.v*=0.975;
+    }
+    if(a.dot){ a.dot.setAttribute('cx',mapX(x).toFixed(2)); a.dot.setAttribute('cy',mapY(z).toFixed(2)); }
+  }
+}
+function standings(){
+  const rows=[{me:true,name:'Vos',hex:'#E23B44',key:(lap-1)*LAPLEN+playerS,lap:lap,done:finished,tot:total,best:best}];
+  ai.forEach(a=>rows.push({me:false,name:a.name,hex:a.hex,key:(a.lap-1)*LAPLEN+a.s,
+    lap:a.lap,done:a.done,tot:a.tot,best:a.best}));
+  rows.sort((x,y)=>y.key-x.key);
+  return rows;
+}
+
+/* ===================== RESULTADO ===================== */
+const fmt=t=>{ if(t===null||t===undefined) return '--.---';
+  const m=Math.floor(t/60), s=t-m*60;
+  return (m>0?m+':'+(s<10?'0':''):'')+s.toFixed(3); };
+function showResult(){
+  const rows=standings(), me=rows.findIndex(r=>r.me)+1;
+  const c=CIRCUITS[circuitIx];
+  $('resKick').textContent=gpName(c)+' · '+c[2]+' · rivales en '+DIFFS[diffIx][0];
+  $('resTitle').textContent= me===1?'Ganaste':(me===2?'Segundo':(me===3?'Tercero':'Cuarto'));
+  const tb=$('resBody'); tb.innerHTML='';
+  rows.forEach((r,i)=>{
+    const tr=document.createElement('tr'); if(r.me) tr.className='me';
+    tr.innerHTML='<td class="n">'+(i+1)+'</td>'+
+      '<td><u style="background:'+r.hex+'"></u></td>'+
+      '<td>'+r.name+'</td>'+
+      '<td>'+(r.done?fmt(r.tot):'en pista')+'</td>'+
+      '<td>'+fmt(r.best)+'</td>';
+    tb.appendChild(tr);
+  });
+  $('result').classList.add('on');
+}
+
+/* ===================== BUCLE ===================== */
+const CH=[[.95,.96,.97],[.96,.65,.14],[.23,.61,1]];
+let camPos=new THREE.Vector3(),acc=0,prev=performance.now(),tAcc=0,hudN=0,curPlace='';
+const eK=$('kmh'),eT=$('tlap'),eB=$('best'),eL=$('last'),eFill=$('chargeFill'),
+      eSlip=$('tSlip'),eRear=$('tRear'),eYaw=$('tYaw'),eSurf=$('tSurf'),
+      ePlace=$('place'),eKart=$('mapKart'),eLights=$('lights'),eGo=$('go');
+
+function frame(now){
+  requestAnimationFrame(frame);
+  let dt=(now-prev)/1000; prev=now; if(dt>.25) dt=.25;
+  tAcc+=dt;
+
+  if(mode==='lights'){
+    cdT+=dt;
+    const on=Math.min(5,Math.floor(cdT/0.62));
+    eLights.style.display='flex';
+    [...eLights.children].forEach((d,i)=>d.classList.toggle('on',i<on&&cdT<3.5));
+    if(cdT>=3.5){ mode='race'; eLights.style.display='none';
+      eGo.classList.add('on'); setTimeout(()=>eGo.classList.remove('on'),700); }
+  } else eLights.style.display='none';
+
+  const live=(mode==='race'||mode==='lights'||mode==='done');
+  if(live){
+    acc+=dt; const h=1/120; let guard=0;
+    while(acc>=h&&guard++<40){ stepPlayer(h); acc-=h; }
+    if(mode==='race'||mode==='done') stepAI(dt);
+  }
+
+  player.grp.position.set(S.x,0,S.z); player.grp.rotation.y=S.yaw;
+  const lvl=S.charge>=P.ch3?3:S.charge>=P.ch2?2:S.charge>=P.ch1?1:0, cc=lvl?CH[lvl-1]:null;
+  player.glow.color.setRGB(cc?cc[0]*.9:.19,cc?cc[1]*.9:.20,cc?cc[2]*.9:.23);
+  const wr=S.vx*dt/.30;
+  player.wheels.forEach(w=>{w.mesh.rotation.x-=wr; if(w.front) w.grp.rotation.y=S.steer;});
+
+  if(S.charge>0&&lvl&&Math.random()<.9){const sn=Math.sin(S.yaw),cs=Math.cos(S.yaw);
+    for(const lr of[.6,-.6]) spark(S.x+(-.66*sn+lr*cs),.18,S.z+(-.66*cs-lr*sn),cc[0],cc[1],cc[2]);}
+  if(S.off&&Math.abs(S.vx)>6&&Math.random()<.5)
+    spark(S.x+(Math.random()-.5)*1.4,.15,S.z+(Math.random()-.5)*1.4,.22,.24,.27);
+  for(let i=0;i<PMAX;i++){const p=pool[i];
+    if(p.life>0){p.life-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.z+=p.vz*dt;p.vy-=9*dt;
+      const k=Math.max(0,p.life/.45);
+      pPos[i*3]=p.x;pPos[i*3+1]=Math.max(.04,p.y);pPos[i*3+2]=p.z;
+      pCol[i*3]=p.r*k;pCol[i*3+1]=p.g*k;pCol[i*3+2]=p.b*k;
+    } else pPos[i*3+1]=-999;}
+  pg.attributes.position.needsUpdate=true; pg.attributes.color.needsUpdate=true;
+  swarms.forEach(sw=>{sw.position.y=Math.sin(tAcc*.8)*.8; sw.rotation.y=tAcc*.05;});
+
+  const sn=Math.sin(S.yaw),cs=Math.cos(S.yaw);
+  const wvx=S.vx*sn+S.vy*cs, wvz=S.vx*cs-S.vy*sn, sp=Math.hypot(wvx,wvz);
+  let dx=sn,dz=cs;
+  if(sp>3){const bl=P.camBlend; dx=sn*(1-bl)+(wvx/sp)*bl; dz=cs*(1-bl)+(wvz/sp)*bl;
+    const l=Math.hypot(dx,dz); dx/=l; dz/=l;}
+  camPos.lerp(new THREE.Vector3(S.x-dx*P.camDist,2.9+Math.min(1.4,sp*.03),S.z-dz*P.camDist),
+    1-Math.pow(.0025,dt));
+  camera.position.copy(camPos); camera.lookAt(S.x+dx*5.5,1,S.z+dz*5.5);
+
+  eKart.setAttribute('transform','translate('+mapX(S.x).toFixed(2)+','+mapY(S.z).toFixed(2)+
+    ') rotate('+(-S.yaw*180/Math.PI).toFixed(1)+')');
+  eK.textContent=Math.round(Math.hypot(S.vx,S.vy)*3.6);
+  eT.textContent=fmt(lapT);
+  eFill.style.width=Math.min(1,S.charge/P.ch3)*100+'%';
+  eFill.style.background=lvl===3?'#3B9CFF':lvl===2?'#F5A524':'#F2F4F7';
+
+  if(!(hudN++%6)){
+    eB.textContent=fmt(best); eL.textContent=fmt(last);
+    const vg=Math.max(Math.abs(S.vx),2.2);
+    eSlip.textContent=Math.round(Math.atan2(S.vy,vg)*180/Math.PI)+'°';
+    eRear.textContent=Math.round(Math.atan2(S.vy-AR*S.r,vg)*180/Math.PI)+'°';
+    eYaw.textContent=S.r.toFixed(2);
+    eSurf.textContent=S.off?'PASTO':'asfalto'; eSurf.className=S.off?'warn':'';
+    eT.className=(best!==null&&lapT<best)?'big pb':'big';
+    // clasificación
+    const rows=standings(), lead=rows[0].key, ol=$('posList');
+    if(ol.children.length!==rows.length){ ol.innerHTML='';
+      rows.forEach(()=>{const li=document.createElement('li');
+        li.innerHTML='<i></i><u></u><b></b><em></em>'; ol.appendChild(li);}); }
+    rows.forEach((r,i)=>{const li=ol.children[i];
+      li.className=r.me?'me':'';
+      li.children[0].textContent=(i+1);
+      li.children[1].style.background=r.hex;
+      li.children[2].textContent=r.name;
+      li.children[3].textContent= i===0?'líder':('-'+Math.round(lead-r.key)+' m');});
+    // hitos (solo México)
+    if(CIRCUITS[circuitIx][5]==='mexico'){
+      const f=lastIdx/N; let name='',bd=1;
+      LANDMARKS.forEach(([lf,ln])=>{let d=Math.abs(f-lf); d=Math.min(d,1-d); if(d<bd){bd=d;name=ln;}});
+      const near=(mode==='race'&&bd*LAPLEN<95)?name:'';
+      if(near!==curPlace){curPlace=near;
+        if(near){ePlace.querySelector('b').textContent=near;ePlace.classList.add('on');}
+        else ePlace.classList.remove('on');}
+    } else if(curPlace){ curPlace=''; ePlace.classList.remove('on'); }
+  }
+  renderer.render(scene,camera);
+}
+
+/* ===================== CONTROLES ===================== */
+function read(){
+  const locked=(mode!=='race'&&mode!=='done');
+  throttle=locked?0:((keys.ArrowUp||keys.KeyW)?1:0);
+  brake=locked?0:((keys.ArrowDown||keys.KeyS)?1:0);
+  steerIn=locked?0:(((keys.ArrowLeft||keys.KeyA)?1:0)-((keys.ArrowRight||keys.KeyD)?1:0));
+  drifting=locked?false:!!keys.Space;
+}
+addEventListener('keydown',e=>{
+  if(e.repeat) return; keys[e.code]=1;
+  if(e.code==='KeyT'){$('tune').classList.toggle('open');e.preventDefault();}
+  if(e.code==='KeyR'&&mode!=='menu') resetKart();
+  if(e.code==='Escape') toMenu();
+  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code)) e.preventDefault();
+  read();
+});
+addEventListener('keyup',e=>{keys[e.code]=0;read();});
+addEventListener('blur',()=>{for(const k in keys)keys[k]=0;read();});
+if(matchMedia('(pointer:coarse)').matches){
+  $('touch').style.display='block';
+  const bind=(el,on,off)=>{el.addEventListener('pointerdown',e=>{e.preventDefault();on();});
+    ['pointerup','pointercancel','pointerleave'].forEach(t=>el.addEventListener(t,e=>{e.preventDefault();off();}));};
+  bind($('tL'),()=>{if(mode==='race'){steerIn=1;throttle=1;}},()=>steerIn=0);
+  bind($('tR'),()=>{if(mode==='race'){steerIn=-1;throttle=1;}},()=>steerIn=0);
+  bind($('tD'),()=>{if(mode==='race')drifting=true;},()=>drifting=false);
+  setInterval(()=>{ if(mode==='race') throttle=1; },250);
+}
+
+/* ===================== MENÚ ===================== */
+function refreshPick(){
+  const c=CIRCUITS[circuitIx];
+  $('pickGP').textContent=gpName(c); $('pickCi').textContent=c[2];
+  $('pickDf').textContent=DIFFS[diffIx][0];
+}
+(function buildMenu(){
+  const g=$('grid');
+  CIRCUITS.forEach((c,ix)=>{
+    const pts=parsePts(c[6]).map(p=>({x:p[0],y:p[1]}));
+    const r=pathOf(pts,84);
+    const b=document.createElement('button');
+    b.className='card'+(ix===circuitIx?' on':''); b.type='button';
+    b.innerHTML='<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true">'+
+      '<path d="'+r.d+'" fill="none" stroke="#4A525E" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>'+
+      '<path d="'+r.d+'" fill="none" stroke="#8A93A0" stroke-width="0.9"/></svg>'+
+      '<div class="gp">'+gpName(c)+'</div><div class="ci">'+c[2]+'</div>'+
+      '<div class="mt">'+c[3].toFixed(3)+' km · '+c[4]+' curvas'+
+      ((ALT[c[0]]||0)>=400?' · '+ALT[c[0]]+' m':'')+'</div>';
+    b.addEventListener('click',()=>{circuitIx=ix;
+      [...g.children].forEach(x=>x.classList.remove('on')); b.classList.add('on'); refreshPick();});
+    g.appendChild(b);
+  });
+  const dw=$('diff');
+  DIFFS.forEach((d,i)=>{const b=document.createElement('button');
+    b.className='chip'+(i===diffIx?' on':''); b.type='button';
+    b.innerHTML=d[0]+'<small>'+Math.round(d[1]*100)+'% del ritmo</small>';
+    b.addEventListener('click',()=>{diffIx=i;
+      [...dw.children].forEach(x=>x.classList.remove('on')); b.classList.add('on'); refreshPick();});
+    dw.appendChild(b);});
+  const sw=$('scale');
+  SCALES.forEach((s,i)=>{const b=document.createElement('button');
+    b.className='chip'+(i===scaleIx?' on':''); b.type='button';
+    b.innerHTML=s[0]+'<small>'+s[2]+'</small>';
+    b.addEventListener('click',()=>{scaleIx=i;
+      [...sw.children].forEach(x=>x.classList.remove('on')); b.classList.add('on');});
+    sw.appendChild(b);});
+  refreshPick();
+})();
+$('btnGo').addEventListener('click',startRace);
+$('btnAgain').addEventListener('click',startRace);
+$('btnMenu').addEventListener('click',toMenu);
+
+/* ===================== PANEL ===================== */
+const inputs={};
+SPEC.forEach(([grp,key,label,min,max,stp,f])=>{
+  const d=document.createElement('div'); d.className='ctl';
+  d.innerHTML='<div class="lab"><span></span><b></b></div>';
+  d.querySelector('span').textContent=label;
+  const out=d.querySelector('b'); out.textContent=f(P[key]);
+  const inp=document.createElement('input');
+  inp.type='range'; inp.min=min; inp.max=max; inp.step=stp; inp.value=P[key];
+  inp.setAttribute('aria-label',label);
+  inp.addEventListener('input',()=>{P[key]=parseFloat(inp.value);out.textContent=f(P[key]);
+    buildProfile(); save();});
+  d.appendChild(inp); $(grp).appendChild(d); inputs[key]={inp,out,f};
+});
+let stabIn=null;
+const stabWord=s=>s<.28?'suelto':s<.58?'medio':s<.88?'firme':'pegado al piso';
+function setStab(s){ if(stabIn){stabIn.inp.value=s;
+  stabIn.out.textContent=Math.round(s*100)+'% · '+stabWord(s);} }
+(function(){
+  const d=document.createElement('div'); d.className='ctl';
+  d.innerHTML='<div class="lab"><span>Estabilidad general</span><b></b></div>';
+  const out=d.querySelector('b');
+  const inp=document.createElement('input');
+  inp.type='range'; inp.min=0; inp.max=1; inp.step=.01; inp.value=stability;
+  inp.setAttribute('aria-label','Estabilidad general');
+  inp.addEventListener('input',()=>{ stability=parseFloat(inp.value);
+    out.textContent=Math.round(stability*100)+'% · '+stabWord(stability);
+    Object.assign(P,fromStability(stability));
+    for(const k in LOOSE) if(inputs[k]){inputs[k].inp.value=P[k];inputs[k].out.textContent=inputs[k].f(P[k]);}
+    buildProfile(); save(); });
+  d.appendChild(inp); $('gStab').appendChild(d); stabIn={inp,out}; setStab(stability);
+})();
+function sync(){for(const k in inputs){inputs[k].inp.value=P[k];inputs[k].out.textContent=inputs[k].f(P[k]);}
+  buildProfile(); save();}
+$('tuneBtn').addEventListener('click',()=>$('tune').classList.toggle('open'));
+document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('[data-preset]').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); stability=PRESETS[b.dataset.preset];
+  P=Object.assign({},DEF,fromStability(stability)); setStab(stability); sync();}));
+$('bAlt').addEventListener('click',function(){altitude=!altitude;
+  this.classList.toggle('on',altitude);
+  this.textContent='Altitud del circuito · '+(altitude?'activa':'apagada'); buildProfile();});
+$('bReset').addEventListener('click',()=>{stability=STAB_DEF;P=Object.assign({},DEF);setStab(stability);sync();});
+$('bCopy').addEventListener('click',()=>{
+  const t=$('dump'),o={}; SPEC.forEach(([,k])=>o[k]=P[k]);
+  t.value='Ajustes del prototipo de derrape\nestabilidad: '+Math.round(stability*100)+'%'+
+    '\naltitud: '+(altitude?'sí':'no')+'\ncircuito: '+CIRCUITS[circuitIx][2]+
+    '\nescala: '+SCALES[scaleIx][0]+'\n'+JSON.stringify(o,null,1)+
+    (best!==null?'\nmejor vuelta: '+fmt(best)+' s':'');
+  t.style.display='block'; t.select();
+  try{navigator.clipboard.writeText(t.value);}catch(e){}});
+function save(){try{localStorage.setItem('vr-drift2',JSON.stringify(P));}catch(e){}}
+try{const s=localStorage.getItem('vr-drift2');
+  if(s){P=Object.assign({},DEF,JSON.parse(s));
+    for(const k in inputs){inputs[k].inp.value=P[k];inputs[k].out.textContent=inputs[k].f(P[k]);}}}catch(e){}
+
+/* ===================== ARRANQUE ===================== */
+function resize(){renderer.setSize(innerWidth,innerHeight,false);
+  camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix();}
+addEventListener('resize',resize); resize();
+(function(){const b=$('charge');
+  [P.ch1,P.ch2].forEach(v=>{const d=document.createElement('div');
+    d.className='notch'; d.style.left=(v/P.ch3*100)+'%'; b.appendChild(d);});})();
+buildWorld(); resetKart();
+camPos.set(S.x-Math.sin(S.yaw)*P.camDist,3.2,S.z-Math.cos(S.yaw)*P.camDist);
+requestAnimationFrame(t=>{prev=t;frame(t);});
+})();
+</script>

@@ -1,0 +1,579 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Fierljeppen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --hueso:#F2EFE9; --tinta:#141A1F; --punto:#F4551D; --ambar:#C98A16; --verde:#0E8F63;
+  --papel:#FBFAF7; --linea:#DCD7CD; --apagado:#6B7480; --sombra:rgba(20,26,31,.9);
+  --fd:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --fm:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --hueso:#12171C; --tinta:#F2EFE9; --papel:#1B2229; --linea:#2C343D; --apagado:#98A2AE;
+  --punto:#FF7034; --ambar:#DFA53B; --verde:#28B183; --sombra:rgba(0,0,0,.75);
+}}
+:root[data-theme="dark"]{
+  --hueso:#12171C; --tinta:#F2EFE9; --papel:#1B2229; --linea:#2C343D; --apagado:#98A2AE;
+  --punto:#FF7034; --ambar:#DFA53B; --verde:#28B183; --sombra:rgba(0,0,0,.75);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--hueso);color:var(--tinta);font-family:var(--fd);font-size:16px;
+  line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3{margin:0;line-height:1.05;font-stretch:112%}
+p{margin:0}
+:focus-visible{outline:2px solid var(--punto);outline-offset:3px}
+.wrap{max-width:1000px;margin:0 auto;padding:0 16px 40px}
+
+/* cabecera */
+header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0 14px}
+.marca{font-family:var(--fm);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--apagado)}
+.marca i{font-style:normal;color:var(--punto)}
+.idioma{margin-left:auto;display:flex;border:2px solid var(--tinta)}
+.idioma button{border:0;background:transparent;color:var(--tinta);font-family:var(--fm);
+  font-size:11px;font-weight:600;letter-spacing:.12em;padding:6px 11px;cursor:pointer}
+.idioma button[aria-pressed="true"]{background:var(--tinta);color:var(--hueso)}
+
+/* tablero */
+.marco{border:3px solid var(--tinta);box-shadow:8px 8px 0 var(--sombra);background:#DCE6EA;
+  position:relative;overflow:hidden}
+canvas{display:block;width:100%;height:auto;touch-action:none}
+
+/* marcador */
+.marcador{border:3px solid var(--tinta);border-bottom:0;background:var(--tinta);color:#F2EFE9;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:12px 18px 13px;
+  box-shadow:8px 0 0 var(--sombra)}
+.mk{display:flex;align-items:center;gap:16px}
+.mk .eq{display:flex;align-items:baseline;gap:11px}
+.mk .eq.rv{flex-direction:row}
+.mk .eq span{font-family:var(--fm);font-size:11px;letter-spacing:.17em;text-transform:uppercase;
+  opacity:.72}
+.mk .eq b{font-family:var(--fd);font-weight:800;font-stretch:118%;
+  font-size:clamp(38px,6.4vw,56px);line-height:.82;letter-spacing:-.04em;
+  font-variant-numeric:tabular-nums;display:inline-block}
+.mk .eq.yo b{color:var(--punto)}
+.mk .gui{font-family:var(--fd);font-weight:800;font-size:30px;opacity:.4;line-height:.82}
+.mk b.sube{animation:sube .42s ease-out}
+@keyframes sube{0%{transform:scale(1)}32%{transform:scale(1.42)}100%{transform:scale(1)}}
+.extra{margin-left:auto;display:flex;gap:20px;font-family:var(--fm);font-size:10.5px;
+  letter-spacing:.14em;text-transform:uppercase;opacity:.78}
+.extra div{display:flex;align-items:baseline;gap:8px}
+.extra b{font-family:var(--fd);font-size:19px;font-weight:800;letter-spacing:0;
+  font-variant-numeric:tabular-nums}
+
+/* HUD */
+.hud{position:absolute;inset:0;pointer-events:none;font-family:var(--fm)}
+.aviso{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%) rotate(-2deg);
+  background:var(--punto);color:#fff;border:3px solid var(--tinta);padding:9px 18px 11px;
+  font-family:var(--fd);font-weight:800;font-size:clamp(15px,2.6vw,22px);letter-spacing:.06em;
+  text-transform:uppercase;box-shadow:5px 5px 0 rgba(0,0,0,.35);opacity:0;visibility:hidden;transition:opacity .18s}
+.aviso.on{opacity:1;visibility:visible}
+
+/* pantallas */
+.pant{position:absolute;inset:0;background:rgba(20,26,31,.94);color:#F2EFE9;
+  display:flex;align-items:center;justify-content:center;padding:22px;text-align:center}
+.pant[hidden]{display:none}
+.pant .in{max-width:44ch}
+.pant .et{font-family:var(--fm);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--punto);font-weight:600}
+.pant h2{font-size:clamp(34px,6.5vw,58px);font-weight:800;font-stretch:120%;letter-spacing:-.03em;
+  text-transform:uppercase;margin:9px 0 0}
+.pant p{margin:12px 0 0;font-size:14.5px;opacity:.92}
+.pant .reglas{margin:16px auto 0;text-align:left;font-size:13.5px;opacity:.9;max-width:38ch;
+  display:flex;flex-direction:column;gap:5px}
+.pant .reglas span{padding-left:16px;position:relative}
+.pant .reglas span::before{content:"";position:absolute;left:0;top:.62em;width:8px;height:2px;
+  background:var(--punto)}
+.btn{margin-top:20px;border:3px solid #F2EFE9;background:var(--punto);color:#fff;
+  font-family:var(--fd);font-weight:800;font-size:14px;letter-spacing:.12em;text-transform:uppercase;
+  padding:13px 26px;cursor:pointer}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 rgba(0,0,0,.4)}
+.btn.sec{background:transparent;margin-left:8px}
+.rec{margin-top:13px;font-family:var(--fm);font-size:11px;letter-spacing:.13em;
+  text-transform:uppercase;opacity:.72}
+
+/* mandos táctiles */
+.mandos{display:none;gap:9px;margin-top:12px}
+.mandos button{flex:1;border:3px solid var(--tinta);background:var(--papel);color:var(--tinta);
+  font-family:var(--fd);font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase;
+  padding:16px 8px;cursor:pointer;box-shadow:4px 4px 0 var(--sombra);touch-action:manipulation}
+.mandos button.gol{background:var(--punto);color:#fff;flex:1.5}
+@media (hover:none) and (pointer:coarse){ .mandos{display:flex} }
+.mandos button.gol{flex:1}
+/* En el teléfono el marco mide ~250 px de alto: la pantalla de inicio no entra
+   adentro. Pasa a cubrir toda la ventana, que además es la regla de «un juego,
+   una sola pantalla». */
+@media (max-width:700px){
+  .pant{position:fixed;z-index:50;overflow-y:auto;align-items:flex-start;padding:26px 20px 40px}
+  .pant .in{margin:auto}
+}
+
+/* pie */
+.pie{margin-top:22px;display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  border-top:1px solid var(--linea);padding-top:18px}
+.pie h4{font-family:var(--fm);font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--punto);font-weight:600;margin-bottom:7px}
+.pie p{font-size:13px;color:var(--apagado);line-height:1.6}
+.pie a{color:var(--apagado)}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="marca">FirstPlace<i>.</i>games &nbsp;·&nbsp; <span id="mDelMundo"></span> &nbsp;·&nbsp; Países Bajos</span>
+    <div class="idioma" role="group">
+      <button type="button" data-l="es">ES</button><button type="button" data-l="en">EN</button>
+    </div>
+  </header>
+
+  <div class="marcador">
+    <div class="mk">
+      <div class="eq yo"><span id="lYo"></span><b id="pYo">0</b></div>
+      <span class="gui">–</span>
+      <div class="eq rv"><b id="pRival">0</b><span id="lRival"></span></div>
+    </div>
+    <div class="extra">
+      <div><span id="lRally"></span><b id="pRally">0</b></div>
+      <div><span id="lMejor"></span><b id="pMejor">—</b></div>
+    </div>
+  </div>
+
+  <div class="marco">
+    <canvas id="cv" width="960" height="382" aria-label="Fierljeppen"></canvas>
+    <div class="hud"><div class="aviso" id="aviso"></div></div>
+
+    <section class="pant" id="pInicio"><div class="in">
+      <p class="et" id="iEt"></p>
+      <h2>Fierljeppen</h2>
+      <p id="iTxt"></p>
+      <div class="reglas" id="iReglas"></div>
+      <button class="btn" id="bJugar"></button>
+      <p class="rec" id="iRec"></p>
+    </div></section>
+
+    <section class="pant" id="pFin" hidden><div class="in">
+      <p class="et" id="fEt"></p>
+      <h2 id="fTit"></h2>
+      <p id="fTxt"></p>
+      <button class="btn" id="bOtra"></button>
+      <p class="rec" id="fRec"></p>
+    </div></section>
+  </div>
+
+  <div class="mandos">
+    <button type="button" class="gol" id="mGol"></button>
+  </div>
+
+  <div class="pie" id="pie"></div>
+</div>
+
+<script>
+/* ══════════ idioma ══════════ */
+var LANG = 'es';
+try { var g0 = localStorage.getItem('fp-lang'); if (g0 === 'es' || g0 === 'en') LANG = g0; } catch(e){}
+
+var T = {
+ es:{
+  mundo:'Del mundo',
+  yo:'Salto', rival:'Mejor', rally:'Intento', mejor:'Récord',
+  et:'Frisia, Países Bajos · récord sobre 22 m',
+  txt:'Correr hacia el canal, agarrarse de una pértiga de trece metros clavada en el agua, trepar mientras la pértiga se va cayendo, y soltarse para caer en la arena del otro lado. Si te soltás tarde, te vas al agua.',
+  reglas:['Tres saltos. Vale el mejor',
+          'Primer toque: soltás la carrera y saltás a la pértiga',
+          'Mantené apretado para trepar. Cuanto más alto, más lejos',
+          'Soltá para volar. Ni muy pronto ni muy tarde: la pértiga sigue cayendo',
+          'Si caés en el agua, ese salto es nulo'],
+  jugar:'Saltar', golpear:'Trepar', otra:'Otra vez',
+  rec:function(n){ return n ? 'Tu mejor salto: ' + n.toFixed(2) + ' m' : 'Todavía no saltaste'; },
+  finEt:'Tres saltos',
+  fin:'Terminaste',
+  finTxt:function(m, saltos){
+    return (m > 0 ? 'Tu mejor salto fue de ' + m.toFixed(2) + ' m. ' : 'Ninguno válido. ') +
+           'Saltos: ' + saltos.map(function(s){ return s > 0 ? s.toFixed(2) : 'agua'; }).join(' · ');
+  },
+  faseCorre:'Tocá para saltar a la pértiga', faseTrepa:'Mantené para trepar',
+  faseVuela:'', avAgua:'¡Al agua! Salto nulo', avNada:'Muy lejos de la pértiga',
+  avSalto:function(m){ return m.toFixed(2) + ' m'; },
+  pie:[['Qué es de verdad','El <i>fierljeppen</i>, o <i>polsstokverspringen</i>, se compite en Frisia y en Holanda Septentrional. Se corre hacia un canal, se salta a una pértiga de aluminio de <b>8 a 13 metros</b> clavada en el fondo, se trepa mientras cae y se aterriza en un cajón de arena. Los saltos de élite pasan los <b>22 metros</b>. Si el saltador cae al agua, el salto no cuenta.'],
+       ['Qué cambiamos para que entre en una pantalla','Está de perfil y se salta con un solo botón: el toque para agarrarse, el mantener para trepar, el soltar para volar. Lo que sí respetamos: que la altura a la que trepás y el momento en que te soltás son las dos cosas que deciden la distancia, y que caer al agua anula el salto.'],
+       ['Fuentes','Contrastado con <a href="https://en.wikipedia.org/wiki/Fierljeppen" target="_blank" rel="noopener">Fierljeppen</a>.']]
+ },
+ en:{
+  mundo:'Around the world',
+  yo:'Jump', rival:'Best', rally:'Attempt', mejor:'Record',
+  et:'Friesland, Netherlands · record over 22 m',
+  txt:'Sprint at the canal, grab a thirteen-metre pole planted in the water, climb it while it topples, and let go to land in the sand on the far side. Release too late and you are in the water.',
+  reglas:['Three jumps. Your best one counts',
+          'First tap: you leave the run-up and jump for the pole',
+          'Hold to climb. The higher you get, the further you go',
+          'Release to fly. Not too soon, not too late: the pole keeps falling',
+          'Land in the water and the jump does not count'],
+  jugar:'Jump', golpear:'Climb', otra:'Again',
+  rec:function(n){ return n ? 'Your best jump: ' + n.toFixed(2) + ' m' : 'You have not jumped yet'; },
+  finEt:'Three jumps',
+  fin:'Done',
+  finTxt:function(m, saltos){
+    return (m > 0 ? 'Your best was ' + m.toFixed(2) + ' m. ' : 'None valid. ') +
+           'Jumps: ' + saltos.map(function(s){ return s > 0 ? s.toFixed(2) : 'water'; }).join(' · ');
+  },
+  faseCorre:'Tap to jump for the pole', faseTrepa:'Hold to climb',
+  faseVuela:'', avAgua:'In the water! No jump', avNada:'Too far from the pole',
+  avSalto:function(m){ return m.toFixed(2) + ' m'; },
+  pie:[['What is real','<i>Fierljeppen</i>, or <i>polsstokverspringen</i>, is competed in Friesland and North Holland. You run at a canal, jump onto an aluminium pole <b>8 to 13 metres</b> long planted in the bed, climb it as it topples, and land in a sandbox. Elite jumps clear <b>22 metres</b>. Land in the water and the jump does not count.'],
+       ['What we changed to fit a screen','It is shown from the side and jumped with one button: tap to grab, hold to climb, release to fly. What we kept: that how high you climb and when you let go are the two things that decide the distance, and that landing in the water voids the jump.'],
+       ['Sources','Checked against <a href="https://en.wikipedia.org/wiki/Fierljeppen" target="_blank" rel="noopener">Fierljeppen</a>.']]
+ }
+};
+
+/* ══════════ marcas · más es mejor ══════════ */
+var Marcas = (function(){
+  var CLAVE = 'fp-marcas';
+  var d = {};
+  try { d = JSON.parse(localStorage.getItem(CLAVE) || '{}'); } catch(e){ d = {}; }
+  return {
+    mejor:function(j){ return d[j] || 0; },
+    anotar:function(j,p){
+      if (p <= (d[j] || 0)) return false;
+      d[j] = p;
+      try { localStorage.setItem(CLAVE, JSON.stringify(d)); } catch(e){}
+      return true;
+    }
+  };
+})();
+
+/* ══════════ el canal ══════════ */
+var ANGOSTO = (typeof matchMedia === 'function') && matchMedia('(max-width:700px)').matches;
+var W = ANGOSTO ? 620 : 960;
+var H = ANGOSTO ? 392 : 382;
+var K = W / 960;
+var PXM = 26 * K;                 // píxeles por metro
+var SUELO = H - 84;               // borde de salida
+var ORILLA = 250 * K;             // dónde empieza el agua = base de la pértiga
+var LARGO = 13 * PXM;             // pértiga de 13 m
+var G = 9.81 * PXM;
+
+var cv = document.getElementById('cv'), cx = cv.getContext('2d');
+cv.width = W; cv.height = H;
+var $ = function(id){ return document.getElementById(id); };
+
+var S = null;
+function nuevaSerie(){
+  S = { intento:0, saltos:[], mejor:0, fin:null, aviso:0, cam:0 };
+  nuevoSalto();
+}
+function nuevoSalto(){
+  S.fase = 'corre';
+  S.corredor = { x: 20 * K, v: 0 };
+  S.p = { ang: 0.28, w: 0, alto: 2.2 * PXM };   // ángulo desde la vertical, hacia +x
+  S.vuelo = null;
+  S.dist = 0;
+  S.cam = 0;
+  msg('');
+  refrescarHud();
+}
+
+function refrescarHud(){
+  $('pYo').textContent = S.dist ? S.dist.toFixed(1) : '0.0';
+  $('pRival').textContent = S.mejor ? S.mejor.toFixed(1) : '0.0';
+  $('pRally').textContent = Math.min(S.intento + 1, 3) + '/3';
+  var m = Marcas.mejor('fierljeppen');
+  $('pMejor').textContent = m ? m.toFixed(2) : '—';
+}
+function msg(txt){
+  var a = $('aviso');
+  a.textContent = txt;
+  a.classList.toggle('on', !!txt);
+  S.aviso = txt ? 1.5 : 0;
+}
+
+/* ══════════ mandos ══════════ */
+var apretado = false, apretadoAntes = false;
+addEventListener('keydown', function(e){ if (e.key === ' '){ e.preventDefault(); apretado = true; } });
+addEventListener('keyup',   function(e){ if (e.key === ' ') apretado = false; });
+function abajo(e){ e.preventDefault(); apretado = true; }
+function arriba(){ apretado = false; }
+$('mGol').addEventListener('pointerdown', abajo);
+['pointerup','pointercancel','pointerleave'].forEach(function(ev){ $('mGol').addEventListener(ev, arriba); });
+cv.addEventListener('pointerdown', abajo);
+['pointerup','pointercancel','pointerleave'].forEach(function(ev){ cv.addEventListener(ev, arriba); });
+
+/* ══════════ física ══════════ */
+function paso(dt){
+  if (!S || S.fin) return;
+  if (S.aviso > 0){ S.aviso -= dt; if (S.aviso <= 0) msg(''); }
+  var recienApretado = apretado && !apretadoAntes;
+  var recienSoltado  = !apretado && apretadoAntes;
+  apretadoAntes = apretado;
+
+  if (S.fase === 'corre'){
+    S.corredor.v = Math.min(9.2 * PXM, S.corredor.v + 11 * PXM * dt);
+    S.corredor.x += S.corredor.v * dt;
+    if (recienApretado){
+      var d = Math.abs(S.corredor.x - ORILLA);
+      /* Un toque muy lejos no gasta el intento: se ignora sin más. Así el que
+         aprieta antes de tiempo sólo pierde el toque, no el salto. */
+      if (d > 200 * K){ /* nada */ }
+      else if (d > 46 * K){ msg(T[LANG].avNada); }
+      else {
+        // la carrera se convierte en giro de la pértiga
+        var calidad = 1 - d / (46 * K);
+        S.p.w = (0.20 + 1.00 * calidad) * (S.corredor.v / (9.2 * PXM));
+        S.p.alto = 2.2 * PXM;
+        S.p.t = 0;
+        S.fase = 'trepa';
+      }
+    }
+    if (S.corredor.x > ORILLA + 90 * K){ caerAlAgua(); }
+    return;
+  }
+
+  if (S.fase === 'trepa'){
+    var p = S.p;
+    /* La pértiga cae por gravedad, pero cuanto más alto trepás más te cuesta
+       tumbarla: subís el centro de masa y la inercia crece. Sin este término,
+       trepar hasta arriba salía gratis y el mejor salto era el del peor agarre. */
+    p.w += (G / Math.max(3.2 * PXM, p.alto)) * Math.sin(p.ang) * 1.75 * dt;
+    p.ang += p.w * dt;
+    if (apretado){
+      /* Trepar conserva el momento angular: al subir, la inercia crece con el
+         cuadrado de la altura y el giro se frena. Es lo que hace que trepar
+         sea una apuesta y no un regalo — sin esto, el mejor salto salía del
+         peor agarre. */
+      var a0 = p.alto;
+      p.alto = Math.min(LARGO - 0.4 * PXM, p.alto + 7.6 * PXM * dt);
+      p.w *= (a0 / p.alto) * (a0 / p.alto);
+    }
+    p.t = (p.t || 0) + dt;
+    if (recienSoltado || p.ang > 1.5 || p.t > 4.2){ soltar(); return; }
+    return;
+  }
+
+  if (S.fase === 'vuela'){
+    var v = S.vuelo;
+    v.vy += G * dt;
+    v.x  += v.vx * dt;
+    v.y  += v.vy * dt;
+    v.giro += 7 * dt;
+    if (v.y >= SUELO){
+      v.y = SUELO;
+      S.fase = 'quieto';
+      var metros = (v.x - ORILLA) / PXM;
+      if (v.x < ORILLA + 2.4 * PXM){ caerAlAgua(); return; }
+      S.dist = metros;
+      S.saltos.push(metros);
+      if (metros > S.mejor) S.mejor = metros;
+      msg(T[LANG].avSalto(metros));
+      refrescarHud();
+      setTimeout(siguiente, 1500);
+    }
+    S.cam += (Math.max(0, v.x - W * 0.5) - S.cam) * Math.min(1, dt * 5);
+    return;
+  }
+}
+
+function soltar(){
+  var p = S.p;
+  var vt = p.w * p.alto;                       // velocidad tangencial en la mano
+  var px = ORILLA + Math.sin(p.ang) * p.alto;
+  var py = SUELO - Math.cos(p.ang) * p.alto;
+  S.vuelo = {
+    x: px, y: py, giro: 0,
+    vx: (vt * Math.cos(p.ang) + 1.1 * PXM) * 1.00,
+    vy: (vt * Math.sin(p.ang) * -1 - 1.6 * PXM) * 1.00
+  };
+  S.fase = 'vuela';
+}
+
+function caerAlAgua(){
+  S.saltos.push(0);
+  S.dist = 0;
+  msg(T[LANG].avAgua);
+  S.fase = 'quieto';
+  refrescarHud();
+  setTimeout(siguiente, 1500);
+}
+
+function siguiente(){
+  if (!S || S.fin) return;
+  S.intento++;
+  if (S.intento >= 3){ terminar(); return; }
+  nuevoSalto();
+}
+
+function terminar(){
+  S.fin = true;
+  var t = T[LANG];
+  var nuevo = S.mejor > 0 && Marcas.anotar('fierljeppen', S.mejor);
+  $('fEt').textContent   = t.finEt;
+  $('fTit').textContent  = t.fin;
+  $('fTxt').textContent  = t.finTxt(S.mejor, S.saltos);
+  $('bOtra').textContent = t.otra;
+  $('fRec').textContent  = (nuevo ? '★ ' : '') + t.rec(Marcas.mejor('fierljeppen'));
+  $('pFin').hidden = false;
+}
+
+/* ══════════ dibujo ══════════ */
+function figura(x, y, ang, giro){
+  cx.save(); cx.translate(x, y); cx.rotate(ang + giro); cx.scale(K, K);
+  cx.strokeStyle = '#141A1F'; cx.lineWidth = 5; cx.lineCap = 'round';
+  cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(-6, 18); cx.stroke();
+  cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(7, 17); cx.stroke();
+  cx.fillStyle = '#F4551D';
+  cx.beginPath(); cx.roundRect(-8, -18, 16, 20, 4); cx.fill();
+  cx.strokeStyle = '#141A1F'; cx.lineWidth = 3;
+  cx.beginPath(); cx.roundRect(-8, -18, 16, 20, 4); cx.stroke();
+  cx.lineWidth = 4;
+  cx.beginPath(); cx.moveTo(0, -14); cx.lineTo(-3, -30); cx.stroke();
+  cx.beginPath(); cx.moveTo(0, -14); cx.lineTo(4, -30); cx.stroke();
+  cx.fillStyle = '#141A1F';
+  cx.beginPath(); cx.arc(0, -25, 7, 0, 6.3); cx.fill();
+  cx.restore();
+}
+
+function dibujar(){
+  cx.fillStyle = '#DCE6EA'; cx.fillRect(0, 0, W, H);
+  if (!S) return;
+  var cam = S.cam;
+
+  // molinos y horizonte plano
+  cx.fillStyle = '#C6D6DA';
+  cx.fillRect(0, SUELO - 96*K, W, 96*K);
+  cx.fillStyle = '#B4C7CC';
+  for (var m = 0; m < 6; m++){
+    var mx = m * 330*K - (cam * 0.25) % (330*K);
+    if (mx < -40 || mx > W + 40) continue;
+    cx.beginPath(); cx.moveTo(mx - 9*K, SUELO - 96*K); cx.lineTo(mx + 9*K, SUELO - 96*K);
+    cx.lineTo(mx + 5*K, SUELO - 140*K); cx.lineTo(mx - 5*K, SUELO - 140*K); cx.closePath(); cx.fill();
+    cx.strokeStyle = '#B4C7CC'; cx.lineWidth = 3*K;
+    cx.beginPath(); cx.moveTo(mx - 20*K, SUELO - 155*K); cx.lineTo(mx + 20*K, SUELO - 129*K); cx.stroke();
+    cx.beginPath(); cx.moveTo(mx - 20*K, SUELO - 129*K); cx.lineTo(mx + 20*K, SUELO - 155*K); cx.stroke();
+  }
+
+  // pasto de la orilla de salida
+  cx.fillStyle = '#7FA05C'; cx.fillRect(-cam, SUELO, ORILLA + cam, H - SUELO);
+  // agua
+  cx.fillStyle = '#5E8FA8';
+  cx.fillRect(ORILLA - cam, SUELO, 2.4 * PXM, H - SUELO);
+  // arena del otro lado
+  cx.fillStyle = '#D9C79B';
+  cx.fillRect(ORILLA + 2.4 * PXM - cam, SUELO, W + cam + 3000, H - SUELO);
+  cx.strokeStyle = '#141A1F'; cx.lineWidth = 3.5;
+  cx.beginPath(); cx.moveTo(-10, SUELO); cx.lineTo(W + 10, SUELO); cx.stroke();
+
+  // marcas de metros
+  cx.font = '600 ' + (10*K|0) + 'px "IBM Plex Mono", monospace';
+  cx.textAlign = 'center';
+  for (var mm = 5; mm <= 30; mm += 5){
+    var xx = ORILLA + mm * PXM - cam;
+    if (xx < -20 || xx > W + 20) continue;
+    cx.strokeStyle = 'rgba(20,26,31,.32)'; cx.lineWidth = 2;
+    cx.beginPath(); cx.moveTo(xx, SUELO); cx.lineTo(xx, SUELO + 16*K); cx.stroke();
+    cx.fillStyle = 'rgba(20,26,31,.55)';
+    cx.fillText(mm + ' m', xx, SUELO + 30*K);
+  }
+  // el récord del mundo, como referencia
+  var rx = ORILLA + 22.2 * PXM - cam;
+  if (rx > -20 && rx < W + 20){
+    cx.strokeStyle = 'rgba(244,85,29,.8)'; cx.lineWidth = 2.5;
+    cx.setLineDash([5,4]);
+    cx.beginPath(); cx.moveTo(rx, SUELO - 60*K); cx.lineTo(rx, SUELO + 18*K); cx.stroke();
+    cx.setLineDash([]);
+    cx.fillStyle = '#F4551D';
+    cx.fillText('22 m', rx, SUELO - 68*K);
+  }
+  cx.textAlign = 'start';
+
+  if (S.fase === 'corre'){
+    // pértiga parada en el agua
+    cx.strokeStyle = '#8C8C8C'; cx.lineWidth = 6*K;
+    cx.beginPath(); cx.moveTo(ORILLA - cam, SUELO); cx.lineTo(ORILLA - cam + Math.sin(0.28)*LARGO, SUELO - Math.cos(0.28)*LARGO); cx.stroke();
+    figura(S.corredor.x - cam, SUELO, 0, 0);
+  } else if (S.fase === 'trepa'){
+    var p = S.p;
+    var tx = ORILLA - cam + Math.sin(p.ang) * LARGO, ty = SUELO - Math.cos(p.ang) * LARGO;
+    cx.strokeStyle = '#8C8C8C'; cx.lineWidth = 6*K; cx.lineCap = 'round';
+    cx.beginPath(); cx.moveTo(ORILLA - cam, SUELO); cx.lineTo(tx, ty); cx.stroke();
+    var hx = ORILLA - cam + Math.sin(p.ang) * p.alto, hy = SUELO - Math.cos(p.ang) * p.alto;
+    figura(hx, hy, p.ang, 0);
+    // altura trepada
+    cx.fillStyle = '#141A1F';
+    cx.font = '600 ' + (11*K|0) + 'px "IBM Plex Mono", monospace';
+    cx.fillText((p.alto / PXM).toFixed(1) + ' m', hx + 16*K, hy - 6*K);
+  } else if (S.fase === 'vuela' || S.fase === 'quieto'){
+    if (S.vuelo){
+      var pp = S.p;
+      cx.strokeStyle = '#8C8C8C'; cx.lineWidth = 6*K;
+      cx.beginPath(); cx.moveTo(ORILLA - cam, SUELO);
+      cx.lineTo(ORILLA - cam + Math.sin(Math.min(1.5, pp.ang)) * LARGO, SUELO - Math.cos(Math.min(1.5, pp.ang)) * LARGO);
+      cx.stroke();
+      figura(S.vuelo.x - cam, S.vuelo.y, 0, S.fase === 'vuela' ? S.vuelo.giro : 0);
+    }
+  }
+
+  // ayuda de fase
+  var t = T[LANG];
+  cx.fillStyle = 'rgba(20,26,31,.72)';
+  cx.font = '600 ' + (11*K|0) + 'px "IBM Plex Mono", monospace';
+  var ayuda = S.fase === 'corre' ? t.faseCorre : S.fase === 'trepa' ? t.faseTrepa : '';
+  if (ayuda) cx.fillText(ayuda.toUpperCase(), 12*K, 24*K);
+}
+
+/* ══════════ bucle ══════════ */
+var ant = 0, corriendo = false;
+function bucle(ms){
+  if (!ant) ant = ms;
+  var dt = Math.min(0.033, (ms - ant) / 1000);
+  ant = ms;
+  if (corriendo) paso(dt);
+  dibujar();
+  requestAnimationFrame(bucle);
+}
+requestAnimationFrame(bucle);
+
+/* ══════════ interfaz ══════════ */
+function pintarTextos(){
+  var t = T[LANG];
+  document.documentElement.lang = LANG;
+  $('mDelMundo').textContent = t.mundo;
+  $('lYo').textContent = t.yo;
+  $('lRival').textContent = t.rival;
+  $('lRally').textContent = t.rally;
+  $('lMejor').textContent = t.mejor;
+  $('iEt').textContent = t.et;
+  $('iTxt').textContent = t.txt;
+  $('iReglas').innerHTML = t.reglas.map(function(r){ return '<span>'+r+'</span>'; }).join('');
+  $('bJugar').textContent = t.jugar;
+  $('iRec').textContent = t.rec(Marcas.mejor('fierljeppen'));
+  $('mGol').textContent = t.golpear;
+  $('pie').innerHTML = t.pie.map(function(p){
+    return '<div><h4>'+p[0]+'</h4><p>'+p[1]+'</p></div>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('.idioma button'), function(b){
+    b.setAttribute('aria-pressed', b.getAttribute('data-l') === LANG ? 'true' : 'false');
+  });
+  if (S) refrescarHud();
+}
+document.querySelector('.idioma').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if (!b) return;
+  LANG = b.getAttribute('data-l');
+  try { localStorage.setItem('fp-lang', LANG); } catch(err){}
+  pintarTextos();
+});
+
+function arrancar(){
+  nuevaSerie();
+  $('pInicio').hidden = true;
+  $('pFin').hidden = true;
+  corriendo = true;
+}
+$('bJugar').addEventListener('click', arrancar);
+$('bOtra').addEventListener('click', arrancar);
+
+pintarTextos();
+nuevaSerie();
+corriendo = false;
+</script>

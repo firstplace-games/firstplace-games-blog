@@ -1,0 +1,681 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ulama</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --hueso:#F2EFE9; --tinta:#141A1F; --punto:#F4551D; --ambar:#C98A16; --verde:#0E8F63;
+  --papel:#FBFAF7; --linea:#DCD7CD; --apagado:#6B7480; --sombra:rgba(20,26,31,.9);
+  --fd:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --fm:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --hueso:#12171C; --tinta:#F2EFE9; --papel:#1B2229; --linea:#2C343D; --apagado:#98A2AE;
+  --punto:#FF7034; --ambar:#DFA53B; --verde:#28B183; --sombra:rgba(0,0,0,.75);
+}}
+:root[data-theme="dark"]{
+  --hueso:#12171C; --tinta:#F2EFE9; --papel:#1B2229; --linea:#2C343D; --apagado:#98A2AE;
+  --punto:#FF7034; --ambar:#DFA53B; --verde:#28B183; --sombra:rgba(0,0,0,.75);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--hueso);color:var(--tinta);font-family:var(--fd);font-size:16px;
+  line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3{margin:0;line-height:1.05;font-stretch:112%}
+p{margin:0}
+:focus-visible{outline:2px solid var(--punto);outline-offset:3px}
+.wrap{max-width:1000px;margin:0 auto;padding:0 16px 40px}
+
+/* cabecera */
+header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0 14px}
+.marca{font-family:var(--fm);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--apagado)}
+.marca i{font-style:normal;color:var(--punto)}
+.idioma{margin-left:auto;display:flex;border:2px solid var(--tinta)}
+.idioma button{border:0;background:transparent;color:var(--tinta);font-family:var(--fm);
+  font-size:11px;font-weight:600;letter-spacing:.12em;padding:6px 11px;cursor:pointer}
+.idioma button[aria-pressed="true"]{background:var(--tinta);color:var(--hueso)}
+
+/* tablero */
+.marco{border:3px solid var(--tinta);box-shadow:8px 8px 0 var(--sombra);background:#EFE6D6;
+  position:relative;overflow:hidden}
+canvas{display:block;width:100%;height:auto;touch-action:none}
+
+/* marcador */
+.marcador{border:3px solid var(--tinta);border-bottom:0;background:var(--tinta);color:#F2EFE9;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:12px 18px 13px;
+  box-shadow:8px 0 0 var(--sombra)}
+.mk{display:flex;align-items:center;gap:16px}
+.mk .eq{display:flex;align-items:baseline;gap:11px}
+.mk .eq.rv{flex-direction:row}
+.mk .eq span{font-family:var(--fm);font-size:11px;letter-spacing:.17em;text-transform:uppercase;
+  opacity:.72}
+.mk .eq b{font-family:var(--fd);font-weight:800;font-stretch:118%;
+  font-size:clamp(38px,6.4vw,56px);line-height:.82;letter-spacing:-.04em;
+  font-variant-numeric:tabular-nums;display:inline-block}
+.mk .eq.yo b{color:var(--punto)}
+.mk .gui{font-family:var(--fd);font-weight:800;font-size:30px;opacity:.4;line-height:.82}
+.mk b.sube{animation:sube .42s ease-out}
+@keyframes sube{0%{transform:scale(1)}32%{transform:scale(1.42)}100%{transform:scale(1)}}
+.extra{margin-left:auto;display:flex;gap:20px;font-family:var(--fm);font-size:10.5px;
+  letter-spacing:.14em;text-transform:uppercase;opacity:.78}
+.extra div{display:flex;align-items:baseline;gap:8px}
+.extra b{font-family:var(--fd);font-size:19px;font-weight:800;letter-spacing:0;
+  font-variant-numeric:tabular-nums}
+
+/* HUD */
+.hud{position:absolute;inset:0;pointer-events:none;font-family:var(--fm)}
+.aviso{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%) rotate(-2deg);
+  background:var(--punto);color:#fff;border:3px solid var(--tinta);padding:9px 18px 11px;
+  font-family:var(--fd);font-weight:800;font-size:clamp(15px,2.6vw,22px);letter-spacing:.06em;
+  text-transform:uppercase;box-shadow:5px 5px 0 rgba(0,0,0,.35);opacity:0;visibility:hidden;transition:opacity .18s}
+.aviso.on{opacity:1;visibility:visible}
+
+/* pantallas */
+.pant{position:absolute;inset:0;background:rgba(20,26,31,.94);color:#F2EFE9;
+  display:flex;align-items:center;justify-content:center;padding:22px;text-align:center}
+.pant[hidden]{display:none}
+.pant .in{max-width:44ch}
+.pant .et{font-family:var(--fm);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--punto);font-weight:600}
+.pant h2{font-size:clamp(34px,6.5vw,58px);font-weight:800;font-stretch:120%;letter-spacing:-.03em;
+  text-transform:uppercase;margin:9px 0 0}
+.pant p{margin:12px 0 0;font-size:14.5px;opacity:.92}
+.pant .reglas{margin:16px auto 0;text-align:left;font-size:13.5px;opacity:.9;max-width:38ch;
+  display:flex;flex-direction:column;gap:5px}
+.pant .reglas span{padding-left:16px;position:relative}
+.pant .reglas span::before{content:"";position:absolute;left:0;top:.62em;width:8px;height:2px;
+  background:var(--punto)}
+.btn{margin-top:20px;border:3px solid #F2EFE9;background:var(--punto);color:#fff;
+  font-family:var(--fd);font-weight:800;font-size:14px;letter-spacing:.12em;text-transform:uppercase;
+  padding:13px 26px;cursor:pointer}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 rgba(0,0,0,.4)}
+.btn.sec{background:transparent;margin-left:8px}
+.rec{margin-top:13px;font-family:var(--fm);font-size:11px;letter-spacing:.13em;
+  text-transform:uppercase;opacity:.72}
+
+/* mandos táctiles */
+.mandos{display:none;gap:9px;margin-top:12px}
+.mandos button{flex:1;border:3px solid var(--tinta);background:var(--papel);color:var(--tinta);
+  font-family:var(--fd);font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase;
+  padding:16px 8px;cursor:pointer;box-shadow:4px 4px 0 var(--sombra);touch-action:manipulation}
+.mandos button.gol{background:var(--punto);color:#fff;flex:1.5}
+@media (hover:none) and (pointer:coarse){ .mandos{display:flex} }
+/* En el teléfono el marco mide ~250 px de alto: la pantalla de inicio no entra
+   adentro. Pasa a cubrir toda la ventana, que además es la regla de «un juego,
+   una sola pantalla». */
+@media (max-width:700px){
+  .pant{position:fixed;z-index:50;overflow-y:auto;align-items:flex-start;padding:26px 20px 40px}
+  .pant .in{margin:auto}
+}
+
+/* pie */
+.pie{margin-top:22px;display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  border-top:1px solid var(--linea);padding-top:18px}
+.pie h4{font-family:var(--fm);font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--punto);font-weight:600;margin-bottom:7px}
+.pie p{font-size:13px;color:var(--apagado);line-height:1.6}
+.pie a{color:var(--apagado)}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="marca">FirstPlace<i>.</i>games &nbsp;·&nbsp; <span id="mDelMundo"></span> &nbsp;·&nbsp; México</span>
+    <div class="idioma" role="group">
+      <button type="button" data-l="es">ES</button><button type="button" data-l="en">EN</button>
+    </div>
+  </header>
+
+  <div class="marcador">
+    <div class="mk">
+      <div class="eq yo"><span id="lYo"></span><b id="pYo">0</b></div>
+      <span class="gui">–</span>
+      <div class="eq rv"><b id="pRival">0</b><span id="lRival"></span></div>
+    </div>
+    <div class="extra">
+      <div><span id="lRally"></span><b id="pRally">0</b></div>
+      <div><span id="lMejor"></span><b id="pMejor">—</b></div>
+    </div>
+  </div>
+
+  <div class="marco">
+    <canvas id="cv" width="960" height="382" aria-label="Cancha de ulama"></canvas>
+    <div class="hud"><div class="aviso" id="aviso"></div></div>
+
+    <section class="pant" id="pInicio"><div class="in">
+      <p class="et" id="iEt"></p>
+      <h2>Ulama</h2>
+      <p id="iTxt"></p>
+      <div class="reglas" id="iReglas"></div>
+      <button class="btn" id="bJugar"></button>
+      <p class="rec" id="iRec"></p>
+    </div></section>
+
+    <section class="pant" id="pFin" hidden><div class="in">
+      <p class="et" id="fEt"></p>
+      <h2 id="fTit"></h2>
+      <p id="fTxt"></p>
+      <button class="btn" id="bOtra"></button>
+      <p class="rec" id="fRec"></p>
+    </div></section>
+  </div>
+
+  <div class="mandos">
+    <button type="button" id="mIzq" aria-label="Izquierda">◀</button>
+    <button type="button" class="gol" id="mGol"></button>
+    <button type="button" id="mDer" aria-label="Derecha">▶</button>
+  </div>
+
+  <div class="pie" id="pie"></div>
+</div>
+
+<script>
+/* ══════════ idioma ══════════ */
+var LANG = 'es';
+try { var g0 = localStorage.getItem('fp-lang'); if (g0 === 'es' || g0 === 'en') LANG = g0; } catch(e){}
+
+var T = {
+ es:{
+  mundo:'Del mundo',
+  yo:'Vos', rival:'Rival', rally:'Peloteo', mejor:'Récord',
+  et:'Sinaloa, México · se juega hoy',
+  txt:'El juego de pelota mesoamericano, con 3.400 años encima, que nunca se dejó de jugar. La pelota es de hule macizo y pesa cuatro kilos: sólo se le puede pegar con la cadera y el muslo.',
+  reglas:['Flechas o A y D para moverte · espacio para golpear con la cadera',
+          'La pelota puede picar una vez de tu lado. Dos, y el punto es del otro',
+          'Si pica pasando la última raya vale dos. Si se va larga sin picar, es falta',
+          'Gana el primero que llega a ocho · el récord es el peloteo más largo'],
+  jugar:'Jugar', golpear:'Golpear', otra:'Otra vez',
+  rec:function(n){ return n ? 'Tu peloteo más largo: ' + n + ' golpes' : 'Todavía no jugaste'; },
+  rallyTxt:function(n){ return 'Tu peloteo más largo del partido: ' + n + ' golpes.'; },
+  ganaste:'Ganaste', perdiste:'Perdiste',
+  finEt:'Fin del partido',
+  finTxt:function(a,b){ return a + ' a ' + b + '.'; },
+  avRaya:'¡Raya! +2', avPunto:'Punto', avFalta:'Falta · larga', avDoble:'Dos picadas',
+  avRivalPunto:'Punto del rival', avSaque:'Sacás vos', avSaqueR:'Saca el rival',
+  pie:[['Qué es de verdad','El ulama de cadera se sigue jugando en pueblos de Sinaloa. La cancha, el <i>taste</i>, mide entre 50 y 80 metros de largo por 4 a 6 de ancho, con una línea en el medio; los equipos son de dos a cinco; sólo valen la cadera y el muslo; y se juega a ocho.'],
+       ['Qué cambiamos para que entre en una pantalla','Está de perfil y es uno contra uno. Lo que sí respetamos: el peso de la pelota, que sólo se golpee con la cadera, la picada permitida, las rayas que valen más y el ocho.'],
+       ['Fuentes','Reglas básicas contrastadas con <a href="https://deporteka.com/ulama/reglas/reglas-basicas/" target="_blank" rel="noopener">Deporteka</a> y con <a href="https://arqueologiamexicana.mx/mexico-antiguo/ulama-el-juego-de-pelota-prehispanico-que-sobrevivio-hasta-nuestros-dias" target="_blank" rel="noopener">Arqueología Mexicana</a>.']]
+ },
+ en:{
+  mundo:'Around the world',
+  yo:'You', rival:'Rival', rally:'Rally', mejor:'Record',
+  et:'Sinaloa, Mexico · still played today',
+  txt:'The Mesoamerican ballgame, 3,400 years old, that was never abandoned. The ball is solid rubber and weighs four kilos: you may only strike it with your hip and thigh.',
+  reglas:['Arrows or A and D to move · space to strike with your hip',
+          'The ball may bounce once on your side. Twice, and the point is theirs',
+          'Landing past the last line is worth two. Flying out without landing is a fault',
+          'First to eight wins · the record is your longest rally'],
+  jugar:'Play', golpear:'Strike', otra:'Again',
+  rec:function(n){ return n ? 'Your longest rally: ' + n + ' strikes' : 'You have not played yet'; },
+  rallyTxt:function(n){ return 'Longest rally this match: ' + n + ' strikes.'; },
+  ganaste:'You won', perdiste:'You lost',
+  finEt:'Match over',
+  finTxt:function(a,b){ return a + ' to ' + b + '.'; },
+  avRaya:'Line! +2', avPunto:'Point', avFalta:'Fault · long', avDoble:'Two bounces',
+  avRivalPunto:'Their point', avSaque:'You serve', avSaqueR:'They serve',
+  pie:[['What is real','Hip ulama is still played in villages across Sinaloa. The court, the <i>taste</i>, is 50 to 80 metres long and 4 to 6 wide, split by a centre line; teams are two to five players; only hip and thigh count; and a set is played to eight.'],
+       ['What we changed to fit a screen','It is shown from the side and it is one against one. What we kept: the weight of the ball, hip-only contact, the allowed bounce, the lines that score more, and the eight.'],
+       ['Sources','Rules checked against <a href="https://deporteka.com/ulama/reglas/reglas-basicas/" target="_blank" rel="noopener">Deporteka</a> and <a href="https://arqueologiamexicana.mx/mexico-antiguo/ulama-el-juego-de-pelota-prehispanico-que-sobrevivio-hasta-nuestros-dias" target="_blank" rel="noopener">Arqueología Mexicana</a>.']]
+ }
+};
+
+/* ══════════ marcas ══════════ */
+var Marcas = (function(){
+  var CLAVE = 'fp-marcas';
+  var d = {};
+  try { d = JSON.parse(localStorage.getItem(CLAVE) || '{}'); } catch(e){ d = {}; }
+  return {
+    mejor:function(j){ return d[j] || 0; },
+    anotar:function(j,p){
+      if (p <= (d[j] || 0)) return false;
+      d[j] = p;
+      try { localStorage.setItem(CLAVE, JSON.stringify(d)); } catch(e){}
+      return true;
+    }
+  };
+})();
+
+/* ══════════ tablero ══════════ */
+/* En el teléfono la cancha se acorta y TODA la física se escala con ella (K).
+   Si sólo se acortara el largo, los tiros cruzarían de sobra y el juego se
+   volvería otro. */
+var ANGOSTO = (typeof matchMedia === 'function') && matchMedia('(max-width:700px)').matches;
+var W = ANGOSTO ? 620 : 960;
+var H = ANGOSTO ? 392 : 382;
+var K = W / 960;                 // escala
+var SUELO = H - 76;              // altura del piso
+var X0 = 46 * K, X1 = W - 46 * K;
+var MED = (X0 + X1) / 2;         // línea del medio (analco)
+var HONDO = (X1 - X0) * 0.196;   // zona de raya, pegada a cada fondo
+var G = 1500 * K;                // gravedad
+var R = 14 * K;                  // radio de la pelota
+var META = 8;
+
+var cv = document.getElementById('cv'), cx = cv.getContext('2d');
+cv.width = W; cv.height = H;
+var $ = function(id){ return document.getElementById(id); };
+
+var S = null;
+function nuevoPartido(){
+  S = {
+    fase:'saque', t:0, pYo:0, pRival:0, saque:'yo', golpes:0,
+    yo:   { x: X0 + 150*K, v:0, gol:0, mira:1 },
+    riv:  { x: X1 - 150*K, v:0, gol:0, mira:-1, reac:0, turno:false, exito:true, qObj:.6, lento:1 },
+    b:    { x:0, y:0, vx:0, vy:0, lado:'yo', picadas:0, ultimo:'', viva:false },
+    aviso:0, sacudon:0, fin:null, rally:0, rallyMax:0
+  };
+  ponerSaque();
+}
+function ponerSaque(){
+  var yo = S.saque === 'yo';
+  var p = yo ? S.yo : S.riv;
+  S.b.x = p.x + (yo ? 26*K : -26*K);
+  S.b.y = SUELO - 78*K;
+  S.b.vx = 0; S.b.vy = 0;
+  S.b.lado = yo ? 'yo' : 'riv';
+  S.b.picadas = 0; S.b.ultimo = '';
+  S.b.viva = false;
+  S.fase = 'saque'; S.t = 0;
+  msg(yo ? T[LANG].avSaque : T[LANG].avSaqueR);
+  if (!yo) S.riv.reac = 0.65 + Math.random()*0.35;
+}
+
+var tecla = {};
+addEventListener('keydown', function(e){
+  if (['ArrowLeft','ArrowRight','a','d','A','D',' '].indexOf(e.key) !== -1) e.preventDefault();
+  tecla[e.key] = true;
+  if (e.key === ' ') pedirGolpe();
+});
+addEventListener('keyup', function(e){ tecla[e.key] = false; });
+
+var tIzq = false, tDer = false;
+function mando(el, on, off){
+  ['pointerdown'].forEach(function(ev){ el.addEventListener(ev, function(e){ e.preventDefault(); on(); }); });
+  ['pointerup','pointercancel','pointerleave'].forEach(function(ev){ el.addEventListener(ev, function(){ off(); }); });
+}
+mando($('mIzq'), function(){ tIzq = true; }, function(){ tIzq = false; });
+mando($('mDer'), function(){ tDer = true; }, function(){ tDer = false; });
+$('mGol').addEventListener('pointerdown', function(e){ e.preventDefault(); pedirGolpe(); });
+
+function pedirGolpe(){
+  if (!S || S.fin) return;
+  if (S.fase === 'saque' && S.saque === 'yo'){ sacar(S.yo, 1); return; }
+  if (S.fase !== 'juego') return;
+  golpear(S.yo, 1);
+}
+
+function sacar(p, dir){
+  var j = 0.92 + Math.random() * 0.16;
+  S.b.vx = dir * 395 * j * K;
+  S.b.vy = -415 * j * K;
+  S.b.esSaque = true;
+  S.b.viva = true;
+  S.b.lado = dir > 0 ? 'yo' : 'riv';
+  S.b.picadas = 0;
+  S.b.ultimo = dir > 0 ? 'yo' : 'riv';
+  S.fase = 'juego';
+  p.gol = 0.16;
+  msg('');
+}
+
+/* calidad del golpe: qué tan cerca está la pelota del punto de cadera */
+function calidad(p){
+  var hx = p.x, hy = SUELO - 54*K;
+  var dx = Math.abs(S.b.x - hx), dy = Math.abs(S.b.y - hy);
+  if (dx > 64*K || dy > 74*K) return -1;             // fuera de alcance
+  var d = Math.sqrt((dx/(64*K))*(dx/(64*K)) + (dy/(74*K))*(dy/(74*K)));
+  return Math.max(0, 1 - d);
+}
+
+function golpear(p, dir){
+  var q = calidad(p);
+  if (q < 0){ p.gol = 0.14; return false; }          // amago: se ve, no pega
+  S.b.esSaque = false;
+  var soy = dir > 0 ? 'yo' : 'riv';
+  S.b.vx = dir * (300 + 300 * q) * K;
+  S.b.vy = -(330 + 190 * q) * K;
+  S.b.picadas = 0;
+  S.b.lado = soy;
+  S.b.ultimo = soy;
+  S.b.viva = true;
+  p.gol = 0.18;
+  S.sacudon = 0.12 + 0.12 * q;
+  S.golpes = (S.golpes || 0) + 1;
+  S.rally++; if (S.rally > S.rallyMax) S.rallyMax = S.rally;
+  return true;
+}
+
+function golpearFijo(p, dir, q){
+  if (calidad(p) < 0) return false;
+  S.b.esSaque = false;
+  var soy = dir > 0 ? 'yo' : 'riv';
+  S.b.vx = dir * (300 + 300 * q) * K;
+  S.b.vy = -(330 + 190 * q) * K;
+  S.b.picadas = 0;
+  S.b.lado = soy;
+  S.b.ultimo = soy;
+  S.b.viva = true;
+  p.gol = 0.18;
+  S.golpes = (S.golpes || 0) + 1;
+  S.rally++; if (S.rally > S.rallyMax) S.rallyMax = S.rally;
+  return true;
+}
+
+function msg(txt){
+  var a = $('aviso');
+  a.textContent = txt;
+  a.classList.toggle('on', !!txt);
+  S.aviso = txt ? 1.15 : 0;
+}
+
+function punto(quien, cuanto, texto){
+  if (quien === 'yo') S.pYo += cuanto; else S.pRival += cuanto;
+  var caja = $(quien === 'yo' ? 'pYo' : 'pRival');
+  $('pYo').textContent = S.pYo;
+  $('pRival').textContent = S.pRival;
+  caja.classList.remove('sube'); void caja.offsetWidth; caja.classList.add('sube');
+  msg(texto);
+  S.b.viva = false;
+  S.rally = 0;
+  S.fase = 'pausa'; S.t = 0;
+  S.saque = quien === 'yo' ? 'riv' : 'yo';
+  if (S.pYo >= META || S.pRival >= META) terminar();
+}
+
+function terminar(){
+  S.fin = S.pYo >= META ? 'gano' : 'perdio';
+  var t = T[LANG];
+  var nuevo = Marcas.anotar('ulama', S.rallyMax);
+  $('fEt').textContent  = t.finEt;
+  $('fTit').textContent = S.fin === 'gano' ? t.ganaste : t.perdiste;
+  $('fTxt').textContent = t.finTxt(S.pYo, S.pRival) + ' ' + t.rallyTxt(S.rallyMax);
+  $('bOtra').textContent = t.otra;
+  $('fRec').textContent = (nuevo ? '★ ' : '') + t.rec(Marcas.mejor('ulama'));
+  $('pMejor').textContent = Marcas.mejor('ulama') || '—';
+  $('pFin').hidden = false;
+}
+
+/* ══════════ el rival ══════════ */
+/* Decide UNA vez por turno si va a llegar y con cuánta calidad. Sin esto,
+   preguntarle en cada cuadro equivale a que devuelva siempre y el peloteo
+   no termina nunca: 338 golpes y cero puntos en la primera prueba. */
+function pensarRival(dt){
+  var r = S.riv;
+  if (S.fase === 'saque'){
+    if (S.saque === 'riv'){
+      r.reac -= dt;
+      if (r.reac <= 0) sacar(r, -1);
+    }
+    return;
+  }
+  if (S.fase !== 'juego') return;
+
+  var maña = 0.78 + Math.min(0.10, (S.pRival + S.pYo) * 0.009);
+
+  // la pelota entra a su campo: decide el turno
+  if (S.b.ultimo === 'yo' && !r.turno){
+    r.turno = true;
+    var fuerza = Math.max(0, (Math.abs(S.b.vx)/K - 300) / 300);      // 0 a 1
+    var prob   = maña - 0.30 * fuerza + (S.b.esSaque ? 0.15 : 0);  // el saque no es un ace gratis
+    r.exito   = Math.random() < Math.max(0.24, Math.min(0.94, prob));
+    r.qObj    = 0.30 + Math.random() * (r.exito ? 0.62 : 0.25);
+    r.lento   = r.exito ? 1 : 0.62;                                 // si falla, llega tarde
+  }
+  if (S.b.ultimo === 'riv') r.turno = false;
+
+  // se acomoda donde va a caer
+  var destino = r.x;
+  if (S.b.vx > 0 || S.b.x > MED){
+    var t1 = tiempoHastaAltura(S.b.y, S.b.vy, SUELO - 54*K);
+    destino = S.b.x + S.b.vx * Math.max(t1, 0.05);
+    if (destino < MED + 60*K) destino = MED + 60*K;
+    if (!r.exito) destino += (70 + Math.random() * 50) * K;               // se pasa de largo
+    destino += (Math.random() - 0.5) * 26 * K;
+  }
+  var dx = destino - r.x;
+  var vel = 300 * K * (r.lento || 1);
+  r.x += Math.max(-vel*dt, Math.min(vel*dt, dx));
+  r.x = Math.max(MED + 34*K, Math.min(X1 - 34*K, r.x));
+
+  if (r.exito && r.turno && S.b.x > MED && calidad(r) >= 0) golpearFijo(r, -1, r.qObj);
+}
+
+function tiempoHastaAltura(y, vy, objetivo){
+  // resuelve y + vy t + G t²/2 = objetivo, la raíz positiva mayor
+  var a = G/2, b = vy, c = y - objetivo;
+  var disc = b*b - 4*a*c;
+  if (disc < 0) return 0.25;
+  return (-b + Math.sqrt(disc)) / (2*a);
+}
+
+/* ══════════ física ══════════ */
+function paso(dt){
+  if (!S || S.fin) return;
+  S.t += dt;
+  if (S.aviso > 0){ S.aviso -= dt; if (S.aviso <= 0) msg(''); }
+  if (S.sacudon > 0) S.sacudon -= dt;
+  var er = $('pRally'); if (er) er.textContent = S.rally;
+  S.yo.gol = Math.max(0, S.yo.gol - dt);
+  S.riv.gol = Math.max(0, S.riv.gol - dt);
+
+  // movimiento del jugador
+  var iz = tecla['ArrowLeft'] || tecla['a'] || tecla['A'] || tIzq;
+  var de = tecla['ArrowRight'] || tecla['d'] || tecla['D'] || tDer;
+  var v = 330 * K * ((iz?-1:0) + (de?1:0));
+  S.yo.x += v * dt;
+  S.yo.x = Math.max(X0 + 34*K, Math.min(MED - 34*K, S.yo.x));
+  if (v) S.yo.mira = v > 0 ? 1 : -1;
+
+  pensarRival(dt);
+
+  if (S.fase === 'pausa'){
+    if (S.t > 1.05) ponerSaque();
+    return;
+  }
+  if (S.fase === 'saque'){
+    var p = S.saque === 'yo' ? S.yo : S.riv;
+    S.b.x = p.x + (S.saque === 'yo' ? 26*K : -26*K);
+    S.b.y = SUELO - 78*K;
+    return;
+  }
+
+  // pelota
+  var b = S.b;
+  b.vy += G * dt;
+  b.x += b.vx * dt;
+  b.y += b.vy * dt;
+  b.lado = b.x < MED ? 'yo' : 'riv';
+
+  // pique
+  if (b.y > SUELO - R){
+    b.y = SUELO - R;
+    b.vy = -b.vy * 0.52;
+    b.vx *= 0.9;
+    b.picadas++;
+    if (Math.abs(b.vy) < 60*K) b.vy = -60*K;
+
+    var dentro = b.x > X0 && b.x < X1;
+    if (!dentro){
+      // picó fuera del taste: falta del que la golpeó
+      punto(b.ultimo === 'yo' ? 'riv' : 'yo', 1, T[LANG].avFalta);
+      return;
+    }
+    if (b.picadas >= 2){
+      // dos picadas del mismo lado: punto para el que la mandó
+      var duenio = b.lado === 'yo' ? 'riv' : 'yo';
+      var raya = b.lado === 'yo' ? (b.x < X0 + HONDO) : (b.x > X1 - HONDO);
+      var t = T[LANG];
+      punto(duenio, raya ? 2 : 1,
+            duenio === 'yo' ? (raya ? t.avRaya : t.avPunto) : t.avRivalPunto);
+      return;
+    }
+  }
+
+  // se fue por el fondo sin picar dentro
+  if (b.x < X0 - 30*K || b.x > X1 + 30*K){
+    punto(b.ultimo === 'yo' ? 'riv' : 'yo', 1, T[LANG].avFalta);
+    return;
+  }
+  // techo
+  if (b.y < R + 26*K){ b.y = R + 26*K; b.vy = Math.abs(b.vy) * 0.5; }
+}
+
+/* ══════════ dibujo ══════════ */
+function jugador(p, color, mira, golpe){
+  var x = p.x, y = SUELO;
+  cx.save();
+  cx.translate(x, y);
+  // sombra
+  cx.fillStyle = 'rgba(20,26,31,.16)';
+  cx.beginPath(); cx.ellipse(0, 3, 26, 6, 0, 0, 6.3); cx.fill();
+  cx.scale(mira * 1.22 * K, 1.22 * K);
+
+  var cad = golpe > 0 ? 13 * (golpe / 0.18) : 0;      // la cadera sale al golpear
+  cx.strokeStyle = '#141A1F'; cx.lineWidth = 6; cx.lineCap = 'round';
+  // piernas
+  cx.beginPath(); cx.moveTo(-8, 0); cx.lineTo(-2 + cad*0.3, -34); cx.stroke();
+  cx.beginPath(); cx.moveTo(10, 0);  cx.lineTo(2 + cad*0.3, -34); cx.stroke();
+  // cadera y tronco
+  cx.fillStyle = color;
+  cx.beginPath(); cx.roundRect(-11 + cad, -52, 24, 22, 4); cx.fill();
+  cx.strokeStyle = '#141A1F'; cx.lineWidth = 3;
+  cx.beginPath(); cx.roundRect(-11 + cad, -52, 24, 22, 4); cx.stroke();
+  cx.lineWidth = 6; cx.strokeStyle = '#141A1F';
+  cx.beginPath(); cx.moveTo(1, -52); cx.lineTo(1, -76); cx.stroke();
+  // brazos
+  cx.lineWidth = 5;
+  cx.beginPath(); cx.moveTo(1, -70); cx.lineTo(-16 - cad*0.4, -56); cx.stroke();
+  cx.beginPath(); cx.moveTo(1, -70); cx.lineTo(17 + cad*0.5, -58); cx.stroke();
+  // cabeza
+  cx.fillStyle = '#141A1F';
+  cx.beginPath(); cx.arc(1, -86, 11, 0, 6.3); cx.fill();
+  cx.restore();
+}
+
+function dibujar(){
+  var sac = S && S.sacudon > 0 ? (Math.random()-0.5) * 10 * S.sacudon : 0;
+  cx.save();
+  cx.translate(sac, 0);
+
+  // cielo y cerros
+  cx.fillStyle = '#EFE6D6'; cx.fillRect(-20, 0, W + 40, H);
+  cx.fillStyle = '#E2D4BC';
+  cx.beginPath(); cx.moveTo(-20, SUELO-74);
+  cx.lineTo(W*0.16, SUELO-168); cx.lineTo(W*0.31, SUELO-78); cx.lineTo(W*0.49, SUELO-186);
+  cx.lineTo(W*0.69, SUELO-76); cx.lineTo(W*0.85, SUELO-154); cx.lineTo(W+20, SUELO-72);
+  cx.lineTo(W+20, SUELO); cx.lineTo(-20, SUELO); cx.closePath(); cx.fill();
+  // sol
+  cx.fillStyle = 'rgba(244,85,29,.16)';
+  cx.beginPath(); cx.arc(W*0.81, SUELO-210, 38*K, 0, 6.3); cx.fill();
+
+  // piso
+  cx.fillStyle = '#D9C39B'; cx.fillRect(-20, SUELO, W + 40, H - SUELO);
+  cx.strokeStyle = '#141A1F'; cx.lineWidth = 4;
+  cx.beginPath(); cx.moveTo(-20, SUELO); cx.lineTo(W + 20, SUELO); cx.stroke();
+
+  // zonas de raya
+  cx.fillStyle = 'rgba(244,85,29,.13)';
+  cx.fillRect(X0, SUELO, HONDO, H - SUELO);
+  cx.fillRect(X1 - HONDO, SUELO, HONDO, H - SUELO);
+
+  // líneas del taste
+  cx.lineWidth = 3; cx.strokeStyle = '#141A1F';
+  [X0, X1].forEach(function(x){
+    cx.beginPath(); cx.moveTo(x, SUELO - 14*K); cx.lineTo(x, H); cx.stroke();
+  });
+  cx.lineWidth = 2; cx.strokeStyle = 'rgba(20,26,31,.55)';
+  [X0 + HONDO, X1 - HONDO].forEach(function(x){
+    cx.beginPath(); cx.moveTo(x, SUELO - 8*K); cx.lineTo(x, H); cx.stroke();
+  });
+  // analco
+  cx.lineWidth = 3; cx.strokeStyle = '#F4551D';
+  cx.setLineDash([9, 7]);
+  cx.beginPath(); cx.moveTo(MED, SUELO - 108*K); cx.lineTo(MED, H); cx.stroke();
+  cx.setLineDash([]);
+
+  if (S){
+    jugador(S.yo,  '#F4551D', S.yo.mira, S.yo.gol);
+    jugador(S.riv, '#2B4C6F', -1, S.riv.gol);
+
+    // pelota: de hule, pesada
+    var b = S.b;
+    cx.fillStyle = 'rgba(20,26,31,.13)';
+    cx.beginPath(); cx.ellipse(b.x, SUELO + 3, R * 0.9, 5*K, 0, 0, 6.3); cx.fill();
+    cx.fillStyle = '#3B2A20';
+    cx.beginPath(); cx.arc(b.x, b.y, R, 0, 6.3); cx.fill();
+    cx.strokeStyle = '#F4551D'; cx.lineWidth = 3.5;   // contorno naranja: si no, se confunde con la cabeza
+    cx.beginPath(); cx.arc(b.x, b.y, R, 0, 6.3); cx.stroke();
+    cx.fillStyle = 'rgba(242,239,233,.30)';
+    cx.beginPath(); cx.arc(b.x - 4*K, b.y - 5*K, 4.2*K, 0, 6.3); cx.fill();
+
+    // aro de alcance cuando se puede pegar
+    if (S.fase === 'juego' && calidad(S.yo) >= 0){
+      cx.strokeStyle = 'rgba(244,85,29,.85)'; cx.lineWidth = 3;
+      cx.setLineDash([5, 5]);
+      cx.beginPath(); cx.arc(S.yo.x, SUELO - 54*K, 32*K, 0, 6.3); cx.stroke();
+      cx.setLineDash([]);
+    }
+  }
+  cx.restore();
+}
+
+/* ══════════ bucle ══════════ */
+var ant = 0, corriendo = false;
+function bucle(ms){
+  if (!ant) ant = ms;
+  var dt = Math.min(0.033, (ms - ant) / 1000);
+  ant = ms;
+  if (corriendo) paso(dt);
+  dibujar();
+  requestAnimationFrame(bucle);
+}
+requestAnimationFrame(bucle);
+
+/* ══════════ interfaz ══════════ */
+function pintarTextos(){
+  var t = T[LANG];
+  document.documentElement.lang = LANG;
+  $('mDelMundo').textContent = t.mundo;
+  $('lYo').textContent = t.yo;
+  $('lRival').textContent = t.rival;
+  $('lRally').textContent = t.rally;
+  $('lMejor').textContent = t.mejor;
+  $('pMejor').textContent = Marcas.mejor('ulama') || '—';
+  $('iEt').textContent = t.et;
+  $('iTxt').textContent = t.txt;
+  $('iReglas').innerHTML = t.reglas.map(function(r){ return '<span>'+r+'</span>'; }).join('');
+  $('bJugar').textContent = t.jugar;
+  $('iRec').textContent = t.rec(Marcas.mejor('ulama'));
+  $('mGol').textContent = t.golpear;
+  $('pie').innerHTML = t.pie.map(function(p){
+    return '<div><h4>'+p[0]+'</h4><p>'+p[1]+'</p></div>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('.idioma button'), function(b){
+    b.setAttribute('aria-pressed', b.getAttribute('data-l') === LANG ? 'true' : 'false');
+  });
+}
+document.querySelector('.idioma').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if (!b) return;
+  LANG = b.getAttribute('data-l');
+  try { localStorage.setItem('fp-lang', LANG); } catch(err){}
+  pintarTextos();
+});
+
+function arrancar(){
+  nuevoPartido();
+  $('pInicio').hidden = true;
+  $('pFin').hidden = true;
+  $('pYo').textContent = 0; $('pRival').textContent = 0;
+  corriendo = true;
+  cv.focus();
+}
+$('bJugar').addEventListener('click', arrancar);
+$('bOtra').addEventListener('click', arrancar);
+
+pintarTextos();
+nuevoPartido();
+corriendo = false;
+</script>

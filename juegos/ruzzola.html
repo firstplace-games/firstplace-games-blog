@@ -1,0 +1,662 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ruzzola</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --hueso:#F2EFE9; --tinta:#141A1F; --punto:#F4551D; --ambar:#C98A16; --verde:#0E8F63;
+  --papel:#FBFAF7; --linea:#DCD7CD; --apagado:#6B7480; --sombra:rgba(20,26,31,.9);
+  --fd:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --fm:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --hueso:#12171C; --tinta:#F2EFE9; --papel:#1B2229; --linea:#2C343D; --apagado:#98A2AE;
+  --punto:#FF7034; --ambar:#DFA53B; --verde:#28B183; --sombra:rgba(0,0,0,.75);
+}}
+:root[data-theme="dark"]{
+  --hueso:#12171C; --tinta:#F2EFE9; --papel:#1B2229; --linea:#2C343D; --apagado:#98A2AE;
+  --punto:#FF7034; --ambar:#DFA53B; --verde:#28B183; --sombra:rgba(0,0,0,.75);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--hueso);color:var(--tinta);font-family:var(--fd);font-size:16px;
+  line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3{margin:0;line-height:1.05;font-stretch:112%}
+p{margin:0}
+:focus-visible{outline:2px solid var(--punto);outline-offset:3px}
+.wrap{max-width:1000px;margin:0 auto;padding:0 16px 40px}
+
+/* cabecera */
+header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0 14px}
+.marca{font-family:var(--fm);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--apagado)}
+.marca i{font-style:normal;color:var(--punto)}
+.idioma{margin-left:auto;display:flex;border:2px solid var(--tinta)}
+.idioma button{border:0;background:transparent;color:var(--tinta);font-family:var(--fm);
+  font-size:11px;font-weight:600;letter-spacing:.12em;padding:6px 11px;cursor:pointer}
+.idioma button[aria-pressed="true"]{background:var(--tinta);color:var(--hueso)}
+
+/* tablero */
+.marco{border:3px solid var(--tinta);box-shadow:8px 8px 0 var(--sombra);background:#E7E0CE;
+  position:relative;overflow:hidden}
+canvas{display:block;width:100%;height:auto;touch-action:none}
+
+/* marcador */
+.marcador{border:3px solid var(--tinta);border-bottom:0;background:var(--tinta);color:#F2EFE9;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:12px 18px 13px;
+  box-shadow:8px 0 0 var(--sombra)}
+.mk{display:flex;align-items:center;gap:16px}
+.mk .eq{display:flex;align-items:baseline;gap:11px}
+.mk .eq.rv{flex-direction:row}
+.mk .eq span{font-family:var(--fm);font-size:11px;letter-spacing:.17em;text-transform:uppercase;
+  opacity:.72}
+.mk .eq b{font-family:var(--fd);font-weight:800;font-stretch:118%;
+  font-size:clamp(38px,6.4vw,56px);line-height:.82;letter-spacing:-.04em;
+  font-variant-numeric:tabular-nums;display:inline-block}
+.mk .eq.yo b{color:var(--punto)}
+.mk .gui{font-family:var(--fd);font-weight:800;font-size:30px;opacity:.4;line-height:.82}
+.mk b.sube{animation:sube .42s ease-out}
+@keyframes sube{0%{transform:scale(1)}32%{transform:scale(1.42)}100%{transform:scale(1)}}
+.extra{margin-left:auto;display:flex;gap:20px;font-family:var(--fm);font-size:10.5px;
+  letter-spacing:.14em;text-transform:uppercase;opacity:.78}
+.extra div{display:flex;align-items:baseline;gap:8px}
+.extra b{font-family:var(--fd);font-size:19px;font-weight:800;letter-spacing:0;
+  font-variant-numeric:tabular-nums}
+
+/* HUD */
+.hud{position:absolute;inset:0;pointer-events:none;font-family:var(--fm)}
+.aviso{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%) rotate(-2deg);
+  background:var(--punto);color:#fff;border:3px solid var(--tinta);padding:9px 18px 11px;
+  font-family:var(--fd);font-weight:800;font-size:clamp(15px,2.6vw,22px);letter-spacing:.06em;
+  text-transform:uppercase;box-shadow:5px 5px 0 rgba(0,0,0,.35);opacity:0;visibility:hidden;transition:opacity .18s}
+.aviso.on{opacity:1;visibility:visible}
+
+/* pantallas */
+.pant{position:absolute;inset:0;background:rgba(20,26,31,.94);color:#F2EFE9;
+  display:flex;align-items:center;justify-content:center;padding:22px;text-align:center}
+.pant[hidden]{display:none}
+.pant .in{max-width:44ch}
+.pant .et{font-family:var(--fm);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--punto);font-weight:600}
+.pant h2{font-size:clamp(34px,6.5vw,58px);font-weight:800;font-stretch:120%;letter-spacing:-.03em;
+  text-transform:uppercase;margin:9px 0 0}
+.pant p{margin:12px 0 0;font-size:14.5px;opacity:.92}
+.pant .reglas{margin:16px auto 0;text-align:left;font-size:13.5px;opacity:.9;max-width:38ch;
+  display:flex;flex-direction:column;gap:5px}
+.pant .reglas span{padding-left:16px;position:relative}
+.pant .reglas span::before{content:"";position:absolute;left:0;top:.62em;width:8px;height:2px;
+  background:var(--punto)}
+.btn{margin-top:20px;border:3px solid #F2EFE9;background:var(--punto);color:#fff;
+  font-family:var(--fd);font-weight:800;font-size:14px;letter-spacing:.12em;text-transform:uppercase;
+  padding:13px 26px;cursor:pointer}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 rgba(0,0,0,.4)}
+.btn.sec{background:transparent;margin-left:8px}
+.rec{margin-top:13px;font-family:var(--fm);font-size:11px;letter-spacing:.13em;
+  text-transform:uppercase;opacity:.72}
+
+/* mandos táctiles */
+.mandos{display:none;gap:9px;margin-top:12px}
+.mandos button{flex:1;border:3px solid var(--tinta);background:var(--papel);color:var(--tinta);
+  font-family:var(--fd);font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase;
+  padding:16px 8px;cursor:pointer;box-shadow:4px 4px 0 var(--sombra);touch-action:manipulation}
+.mandos button.gol{background:var(--punto);color:#fff;flex:1.5}
+@media (hover:none) and (pointer:coarse){ .mandos{display:flex} }
+.mandos button.gol{flex:1}
+/* En el teléfono el marco mide ~250 px de alto: la pantalla de inicio no entra
+   adentro. Pasa a cubrir toda la ventana, que además es la regla de «un juego,
+   una sola pantalla». */
+@media (max-width:700px){
+  .pant{position:fixed;z-index:50;overflow-y:auto;align-items:flex-start;padding:26px 20px 40px}
+  .pant .in{margin:auto}
+}
+
+/* pie */
+.pie{margin-top:22px;display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  border-top:1px solid var(--linea);padding-top:18px}
+.pie h4{font-family:var(--fm);font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--punto);font-weight:600;margin-bottom:7px}
+.pie p{font-size:13px;color:var(--apagado);line-height:1.6}
+.pie a{color:var(--apagado)}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="marca">FirstPlace<i>.</i>games &nbsp;·&nbsp; <span id="mDelMundo"></span> &nbsp;·&nbsp; Italia</span>
+    <div class="idioma" role="group">
+      <button type="button" data-l="es">ES</button><button type="button" data-l="en">EN</button>
+    </div>
+  </header>
+
+  <div class="marcador">
+    <div class="mk">
+      <div class="eq yo"><span id="lYo"></span><b id="pYo">0</b></div>
+      <span class="gui">–</span>
+      <div class="eq rv"><b id="pRival">0</b><span id="lRival"></span></div>
+    </div>
+    <div class="extra">
+      <div><span id="lRally"></span><b id="pRally">0</b></div>
+      <div><span id="lMejor"></span><b id="pMejor">—</b></div>
+    </div>
+  </div>
+
+  <div class="marco">
+    <canvas id="cv" width="960" height="382" aria-label="Camino"></canvas>
+    <div class="hud"><div class="aviso" id="aviso"></div></div>
+
+    <section class="pant" id="pInicio"><div class="in">
+      <p class="et" id="iEt"></p>
+      <h2>Ruzzola</h2>
+      <p id="iTxt"></p>
+      <div class="reglas" id="iReglas"></div>
+      <button class="btn" id="bJugar"></button>
+      <p class="rec" id="iRec"></p>
+    </div></section>
+
+    <section class="pant" id="pFin" hidden><div class="in">
+      <p class="et" id="fEt"></p>
+      <h2 id="fTit"></h2>
+      <p id="fTxt"></p>
+      <button class="btn" id="bOtra"></button>
+      <p class="rec" id="fRec"></p>
+    </div></section>
+  </div>
+
+  <div class="mandos">
+    <button type="button" class="gol" id="mGol"></button>
+  </div>
+
+  <div class="pie" id="pie"></div>
+</div>
+
+<script>
+/* ══════════ idioma ══════════ */
+var LANG = 'es';
+try { var g0 = localStorage.getItem('fp-lang'); if (g0 === 'es' || g0 === 'en') LANG = g0; } catch(e){}
+
+var T = {
+ es:{
+  mundo:'Del mundo',
+  yo:'Tiros', rival:'Par', rally:'Tramo', mejor:'Récord',
+  et:'Apeninos, Italia · se juega hoy',
+  txt:'Se lanza rodando una rueda de queso curado —o un disco de madera, el ruzzolone— por un camino de campo, con un cordel enrollado que le da giro. Gana quien recorre el treppo con menos lanzamientos. No es quien llega más lejos: es quien llega con menos tiros.',
+  reglas:['Un toque para fijar el ángulo, otro para la fuerza. Espacio o el botón',
+          'Cinco tramos. El par total es 21',
+          'La cuesta te frena y te puede devolver la rueda',
+          'Si la rueda se para en un grippo —la cuneta del costado— es un tiro de castigo',
+          'El récord es el total de lanzamientos: cuanto menos, mejor'],
+  jugar:'Jugar', golpear:'Tirar', otra:'Otra vez',
+  rec:function(n){ return n ? 'Tu mejor vuelta: ' + n + ' lanzamientos' : 'Todavía no jugaste'; },
+  ganaste:'Vuelta terminada',
+  finEt:'Los cinco tramos',
+  finTxt:function(t,p){
+    var d = t - p;
+    return t + ' lanzamientos, par ' + p + '. ' +
+      (d < 0 ? (-d) + ' bajo el par.' : d === 0 ? 'Justo el par.' : d + ' sobre el par.');
+  },
+  apunta:'Ángulo', fuerza:'Fuerza',
+  avMeta:'¡Meta!', avGrippo:'¡Al grippo! Tiro de castigo', avTramo:'Tramo ',
+  pie:[['Qué es de verdad','La ruzzola se juega en caminos de campo de los Apeninos. Se lanza un disco de madera dura —unos 13 cm en la ruzzola, más grande en el ruzzolone, de algunos kilos— o directamente una rueda de queso curado, haciéndolo girar con un cordel enrollado. El recorrido se llama <i>treppo</i> y tiene cunetas laterales, los <i>grippi</i>. <b>Gana quien lo recorre con menos lanzamientos</b>, no quien llega más lejos.'],
+       ['Qué cambiamos para que entre en una pantalla','Está de perfil y el camino es recto: no hay curvas ni picchetti. El cordel no se enrolla, el giro va en la fuerza. Lo que sí respetamos: el terreno con cuestas, los grippi, y que lo que se cuenta sean los lanzamientos.'],
+       ['Fuentes','Contrastado con <a href="https://it.wikipedia.org/wiki/Ruzzola" target="_blank" rel="noopener">Ruzzola (Wikipedia it)</a> y con la <a href="https://figest.it/lancio-del-ruzzolone-2/" target="_blank" rel="noopener">FIGeST</a>, la federación italiana de juegos tradicionales.']]
+ },
+ en:{
+  mundo:'Around the world',
+  yo:'Throws', rival:'Par', rally:'Leg', mejor:'Record',
+  et:'Apennines, Italy · still played today',
+  txt:'You roll a wheel of aged cheese — or a hardwood disc, the ruzzolone — down a country road, spinning it with a wound cord. Whoever covers the treppo in the fewest throws wins. Not whoever goes furthest: whoever gets there in fewer throws.',
+  reglas:['One tap sets the angle, another sets the power. Space or the button',
+          'Five legs. Total par is 21',
+          'Slopes slow you down and can roll the wheel back at you',
+          'Stopping in a grippo — the side ditch — costs a penalty throw',
+          'The record is your total throws: the fewer the better'],
+  jugar:'Play', golpear:'Throw', otra:'Again',
+  rec:function(n){ return n ? 'Your best round: ' + n + ' throws' : 'You have not played yet'; },
+  ganaste:'Round complete',
+  finEt:'All five legs',
+  finTxt:function(t,p){
+    var d = t - p;
+    return t + ' throws, par ' + p + '. ' +
+      (d < 0 ? (-d) + ' under par.' : d === 0 ? 'Level par.' : d + ' over par.');
+  },
+  apunta:'Angle', fuerza:'Power',
+  avMeta:'Finish!', avGrippo:'In the grippo! Penalty throw', avTramo:'Leg ',
+  pie:[['What is real','Ruzzola is played on country roads in the Apennines. You throw a hardwood disc — about 13 cm for the ruzzola, larger for the ruzzolone, weighing a few kilos — or an actual wheel of aged cheese, spinning it with a wound cord. The course is called a <i>treppo</i> and has side ditches, the <i>grippi</i>. <b>Whoever covers it in the fewest throws wins</b>, not whoever throws furthest.'],
+       ['What we changed to fit a screen','It is shown from the side and the road runs straight: no bends, no picchetti. The cord is not wound; the spin lives in the power. What we kept: the hills, the grippi, and that what counts is throws.'],
+       ['Sources','Checked against <a href="https://it.wikipedia.org/wiki/Ruzzola" target="_blank" rel="noopener">Ruzzola (Italian Wikipedia)</a> and <a href="https://figest.it/lancio-del-ruzzolone-2/" target="_blank" rel="noopener">FIGeST</a>, the Italian traditional games federation.']]
+ }
+};
+
+/* ══════════ marcas · acá menos es mejor ══════════ */
+var Marcas = (function(){
+  var CLAVE = 'fp-marcas-bajo';
+  var d = {};
+  try { d = JSON.parse(localStorage.getItem(CLAVE) || '{}'); } catch(e){ d = {}; }
+  return {
+    mejor:function(j){ return d[j] || 0; },
+    anotar:function(j,p){
+      if (d[j] && p >= d[j]) return false;
+      d[j] = p;
+      try { localStorage.setItem(CLAVE, JSON.stringify(d)); } catch(e){}
+      return true;
+    }
+  };
+})();
+
+/* ══════════ el camino ══════════ */
+var ANGOSTO = (typeof matchMedia === 'function') && matchMedia('(max-width:700px)').matches;
+var W = ANGOSTO ? 620 : 960;
+var H = ANGOSTO ? 392 : 382;
+var K = W / 960;
+var BASE = H - 108;              // altura media del camino
+var G = 1500 * K;
+var RAD = 15 * K;                // radio de la rueda
+var PAR_TOTAL = 21;
+
+var cv = document.getElementById('cv'), cx = cv.getContext('2d');
+cv.width = W; cv.height = H;
+var $ = function(id){ return document.getElementById(id); };
+
+function azarFijo(semilla){                        // mulberry32
+  var s = semilla >>> 0;
+  return function(){
+    s = (s + 0x6D2B79F5) >>> 0;
+    var t = s;
+    t = Math.imul(t ^ (t>>>15), t | 1);
+    t ^= t + Math.imul(t ^ (t>>>7), t | 61);
+    return ((t ^ (t>>>14)) >>> 0) / 4294967296;
+  };
+}
+
+var TRAMOS = [
+  { semilla:1011, largo:3200, par:4, amp:20 },
+  { semilla:2022, largo:3800, par:4, amp:26 },
+  { semilla:3033, largo:3600, par:4, amp:32 },
+  { semilla:4044, largo:4400, par:4, amp:28 },
+  { semilla:5055, largo:4200, par:5, amp:36 }
+];
+
+function armarTramo(t){
+  var az = azarFijo(t.semilla);
+  var c = {
+    largo: t.largo * K, par: t.par, amp: t.amp * K,
+    f1: az()*6.3, f2: az()*6.3, f3: az()*6.3,
+    grippos: []
+  };
+  var n = 2 + Math.floor(az() * 3);
+  for (var i = 0; i < n; i++){
+    var x = (0.18 + 0.62 * (i + az()*0.7) / n) * c.largo;
+    c.grippos.push({ x:x, w:(70 + az()*55) * K });
+  }
+  return c;
+}
+
+function sueloY(x, c){
+  return BASE
+    - ( c.amp * Math.sin(x * 0.0022 / K + c.f1)
+      + c.amp * 0.55 * Math.sin(x * 0.0048 / K + c.f2)
+      + c.amp * 0.32 * Math.sin(x * 0.0098 / K + c.f3) );
+}
+function pendiente(x, c){
+  var d = 2 * K;
+  return (sueloY(x + d, c) - sueloY(x - d, c)) / (2 * d);
+}
+function enGrippo(x, c){
+  for (var i = 0; i < c.grippos.length; i++){
+    var g = c.grippos[i];
+    if (x > g.x && x < g.x + g.w) return true;
+  }
+  return false;
+}
+
+/* ══════════ estado ══════════ */
+var S = null;
+function nuevaVuelta(){
+  S = { tramo:0, tiros:0, total:0, fin:null, aviso:0,
+        c:null, fase:'apuntar', ang:0, angDir:1, pot:0, potDir:1, rodando:0,
+        r:{ x:0, y:0, v:0, vx:0, vy:0, vuela:false, gira:0, quieta:0 },
+        cam:0, t:0 };
+  cargarTramo();
+}
+function cargarTramo(){
+  S.c = armarTramo(TRAMOS[S.tramo]);
+  S.tiros = 0;
+  S.r.x = 30 * K;
+  S.r.y = sueloY(S.r.x, S.c) - RAD;
+  S.r.v = 0; S.r.vx = 0; S.r.vy = 0; S.r.vuela = false; S.r.quieta = 0;
+  S.fase = 'apuntar'; S.ang = 6; S.angDir = 1; S.pot = 0; S.potDir = 1;
+  S.cam = 0;
+  msg(T[LANG].avTramo + (S.tramo + 1));
+  refrescarHud();
+}
+
+function refrescarHud(){
+  $('pYo').textContent = S.total + S.tiros;
+  $('pRival').textContent = PAR_TOTAL;
+  $('pRally').textContent = (S.tramo + 1) + '/5';
+  $('pMejor').textContent = Marcas.mejor('ruzzola') || '—';
+}
+
+function msg(txt){
+  var a = $('aviso');
+  a.textContent = txt;
+  a.classList.toggle('on', !!txt);
+  S.aviso = txt ? 1.3 : 0;
+}
+
+/* ══════════ mandos ══════════ */
+addEventListener('keydown', function(e){
+  if (e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); accion(); }
+});
+$('mGol').addEventListener('pointerdown', function(e){ e.preventDefault(); accion(); });
+cv.addEventListener('pointerdown', function(e){ e.preventDefault(); accion(); });
+
+function accion(){
+  if (!S || S.fin) return;
+  if (S.fase === 'apuntar'){ S.fase = 'fuerza'; S.pot = 0; S.potDir = 1; return; }
+  if (S.fase === 'fuerza'){ lanzar(); return; }
+}
+
+function lanzar(){
+  var a = S.ang * Math.PI / 180;
+  var v = (340 + 760 * S.pot) * K;
+  S.r.vx = Math.cos(a) * v;
+  S.r.vy = -Math.sin(a) * v;
+  S.r.vuela = true;
+  S.r.quieta = 0;
+  S.fase = 'rueda';
+  S.rodando = 0;
+  S.tiros++;
+  refrescarHud();
+  msg('');
+}
+
+/* ══════════ física ══════════ */
+function paso(dt){
+  if (!S || S.fin) return;
+  S.t += dt;
+  if (S.aviso > 0){ S.aviso -= dt; if (S.aviso <= 0) msg(''); }
+
+  if (S.fase === 'apuntar'){
+    S.ang += S.angDir * 34 * dt;
+    if (S.ang > 40){ S.ang = 40; S.angDir = -1; }
+    if (S.ang < 3){ S.ang = 3; S.angDir = 1; }
+    return;
+  }
+  if (S.fase === 'fuerza'){
+    S.pot += S.potDir * 1.25 * dt;
+    if (S.pot > 1){ S.pot = 1; S.potDir = -1; }
+    if (S.pot < 0){ S.pot = 0; S.potDir = 1; }
+    return;
+  }
+  if (S.fase !== 'rueda') return;
+
+  var r = S.r, c = S.c;
+
+  if (r.vuela){
+    r.vy += G * dt;
+    r.x  += r.vx * dt;
+    r.y  += r.vy * dt;
+    r.gira += r.vx * dt / RAD;
+    var sy = sueloY(r.x, c) - RAD;
+    if (r.y >= sy){
+      // aterriza: se queda con la componente a lo largo de la cuesta
+      r.y = sy;
+      var p = pendiente(r.x, c);
+      var nrm = Math.sqrt(1 + p*p);
+      var a_lo = (r.vx + r.vy * p) / nrm;          // proyección sobre la cuesta
+      r.v = a_lo / nrm * 0.62;                      // el golpe contra el piso cuesta caro
+      r.vuela = false;
+    }
+  } else {
+    var p2 = pendiente(r.x, c);
+    var nrm2 = Math.sqrt(1 + p2*p2);
+    var aG = G * (p2 / nrm2) * 0.62;                // rodar, no deslizar
+    var mu = 0.072;
+    var aF = -mu * G * (1 / nrm2) * (r.v > 0 ? 1 : r.v < 0 ? -1 : 0);
+    if (enGrippo(r.x, c)) aF *= 4.2;                // la cuneta frena mucho
+    var vAnt = r.v;
+    r.v += (aG + aF) * dt;
+    if (vAnt !== 0 && Math.sign(vAnt) !== Math.sign(r.v) && Math.abs(aG) < Math.abs(aF)) r.v = 0;
+    r.x += r.v * dt / nrm2;
+    r.y = sueloY(r.x, c) - RAD;
+    r.gira += r.v * dt / RAD;
+    if (r.x < 10 * K){ r.x = 10 * K; r.v = Math.abs(r.v) * 0.3; }
+  }
+
+  // meta
+  if (r.x >= c.largo){ terminarTramo(); return; }
+
+  // ¿se paró?
+  if (!r.vuela && (Math.abs(r.v) < 26 * K || S.rodando > 7)){
+    r.quieta += dt;
+    if (r.quieta > 0.3 || S.rodando > 7){
+      r.v = 0;
+      if (enGrippo(r.x, c)){
+        S.tiros++;                                   // castigo
+        msg(T[LANG].avGrippo);
+      }
+      S.fase = 'apuntar'; S.ang = 6; S.angDir = 1;
+      refrescarHud();
+    }
+  } else r.quieta = 0;
+  S.rodando += dt;
+
+  // cámara
+  var obj = Math.max(0, Math.min(c.largo - W + 120*K, r.x - W * 0.34));
+  S.cam += (obj - S.cam) * Math.min(1, dt * 6);
+}
+
+function terminarTramo(){
+  S.total += S.tiros;
+  msg(T[LANG].avMeta);
+  S.tramo++;
+  if (S.tramo >= TRAMOS.length){ terminar(); return; }
+  S.fase = 'pausa';
+  setTimeout(function(){ if (S && !S.fin) cargarTramo(); }, 900);
+}
+
+function terminar(){
+  S.fin = true;
+  var t = T[LANG];
+  var nuevo = Marcas.anotar('ruzzola', S.total);
+  $('fEt').textContent   = t.finEt;
+  $('fTit').textContent  = t.ganaste;
+  $('fTxt').textContent  = t.finTxt(S.total, PAR_TOTAL);
+  $('bOtra').textContent = t.otra;
+  $('fRec').textContent  = (nuevo ? '★ ' : '') + t.rec(Marcas.mejor('ruzzola'));
+  refrescarHud();
+  $('pFin').hidden = false;
+}
+
+/* ══════════ dibujo ══════════ */
+function dibujar(){
+  cx.fillStyle = '#E7E0CE'; cx.fillRect(0, 0, W, H);
+  if (!S) return;
+  var c = S.c, cam = S.cam;
+
+  // cerros lejanos
+  cx.fillStyle = '#CFC4A8';
+  cx.beginPath(); cx.moveTo(-10, H);
+  for (var ax = -10; ax <= W + 10; ax += 22){
+    var ux = ax + cam * 0.20;
+    cx.lineTo(ax, BASE - 96*K - 44*K * Math.sin(ux * 0.0011 / K + 0.4) - 16*K * Math.sin(ux * 0.0029 / K));
+  }
+  cx.lineTo(W + 10, H); cx.closePath(); cx.fill();
+
+  // cerros de adelante
+  cx.fillStyle = '#B9AB88';
+  cx.beginPath(); cx.moveTo(-10, H);
+  var hcol = function(wx){ return BASE - 52*K - 34*K * Math.sin(wx * 0.0016 / K + 1.2) - 18*K * Math.sin(wx * 0.0041 / K); };
+  for (var bx = -10; bx <= W + 10; bx += 16){
+    cx.lineTo(bx, hcol(bx + cam * 0.42));
+  }
+  cx.lineTo(W + 10, H); cx.closePath(); cx.fill();
+
+  // cipreses, plantados sobre esa loma
+  cx.fillStyle = '#6E7A5C';
+  for (var t0 = -1; t0 < 28; t0++){
+    var paso0 = 176 * K;
+    var cxx = t0 * paso0 - (cam * 0.42) % paso0;
+    if (cxx < -30 || cxx > W + 30) continue;
+    var cy = hcol(cxx + cam * 0.42);
+    cx.beginPath(); cx.ellipse(cxx, cy - 21*K, 6.5*K, 23*K, 0, 0, 6.3); cx.fill();
+    cx.fillRect(cxx - 1.5*K, cy - 4*K, 3*K, 6*K);
+  }
+
+  // camino
+  cx.beginPath();
+  cx.moveTo(-10, H);
+  for (var sx = -10; sx <= W + 10; sx += 5){
+    cx.lineTo(sx, sueloY(sx + cam, c));
+  }
+  cx.lineTo(W + 10, H); cx.closePath();
+  cx.fillStyle = '#C6A876'; cx.fill();
+  cx.strokeStyle = '#141A1F'; cx.lineWidth = 3.5;
+  cx.beginPath();
+  for (var sx2 = -10; sx2 <= W + 10; sx2 += 5){
+    var yy = sueloY(sx2 + cam, c);
+    if (sx2 === -10) cx.moveTo(sx2, yy); else cx.lineTo(sx2, yy);
+  }
+  cx.stroke();
+
+  // grippi
+  c.grippos.forEach(function(g){
+    var x0 = g.x - cam, x1 = g.x + g.w - cam;
+    if (x1 < -20 || x0 > W + 20) return;
+    cx.fillStyle = 'rgba(14,143,99,.30)';
+    cx.beginPath();
+    cx.moveTo(x0, sueloY(g.x, c));
+    for (var gx = g.x; gx <= g.x + g.w; gx += 5) cx.lineTo(gx - cam, sueloY(gx, c));
+    cx.lineTo(x1, H); cx.lineTo(x0, H); cx.closePath(); cx.fill();
+    cx.strokeStyle = '#0E8F63'; cx.lineWidth = 2.5;
+    cx.beginPath();
+    for (var gx2 = g.x; gx2 <= g.x + g.w; gx2 += 5){
+      var gy = sueloY(gx2, c);
+      if (gx2 === g.x) cx.moveTo(gx2 - cam, gy); else cx.lineTo(gx2 - cam, gy);
+    }
+    cx.stroke();
+  });
+
+  // meta
+  var mx = c.largo - cam;
+  if (mx > -40 && mx < W + 40){
+    var my = sueloY(c.largo, c);
+    cx.strokeStyle = '#141A1F'; cx.lineWidth = 4;
+    cx.beginPath(); cx.moveTo(mx, my); cx.lineTo(mx, my - 62*K); cx.stroke();
+    for (var f = 0; f < 4; f++){
+      cx.fillStyle = f % 2 ? '#141A1F' : '#F2EFE9';
+      cx.fillRect(mx + 2, my - 62*K + f * 9*K, 30*K, 9*K);
+    }
+    cx.strokeStyle = '#141A1F'; cx.lineWidth = 2;
+    cx.strokeRect(mx + 2, my - 62*K, 30*K, 36*K);
+  }
+
+  // la rueda
+  var r = S.r, rx = r.x - cam, ry = r.y;
+  cx.save();
+  cx.fillStyle = 'rgba(20,26,31,.16)';
+  cx.beginPath(); cx.ellipse(rx, sueloY(r.x, c) + 3, RAD * 0.95, 4.5*K, 0, 0, 6.3); cx.fill();
+  cx.translate(rx, ry); cx.rotate(r.gira);
+  cx.fillStyle = '#E3B23C';
+  cx.beginPath(); cx.arc(0, 0, RAD, 0, 6.3); cx.fill();
+  cx.strokeStyle = '#141A1F'; cx.lineWidth = 3;
+  cx.beginPath(); cx.arc(0, 0, RAD, 0, 6.3); cx.stroke();
+  cx.strokeStyle = 'rgba(20,26,31,.55)'; cx.lineWidth = 2;
+  cx.beginPath(); cx.arc(0, 0, RAD * 0.58, 0, 6.3); cx.stroke();
+  cx.beginPath(); cx.moveTo(-RAD*0.58, 0); cx.lineTo(RAD*0.58, 0); cx.stroke();
+  cx.restore();
+
+  // mira y barra de fuerza
+  if (S.fase === 'apuntar' || S.fase === 'fuerza'){
+    var a = S.ang * Math.PI / 180;
+    cx.strokeStyle = '#F4551D'; cx.lineWidth = 4; cx.lineCap = 'round';
+    cx.beginPath(); cx.moveTo(rx, ry);
+    cx.lineTo(rx + Math.cos(a) * 62*K, ry - Math.sin(a) * 62*K); cx.stroke();
+    cx.beginPath();
+    cx.moveTo(rx + Math.cos(a) * 72*K, ry - Math.sin(a) * 72*K);
+    cx.lineTo(rx + Math.cos(a + 0.34) * 56*K, ry - Math.sin(a + 0.34) * 56*K);
+    cx.lineTo(rx + Math.cos(a - 0.34) * 56*K, ry - Math.sin(a - 0.34) * 56*K);
+    cx.closePath(); cx.fillStyle = '#F4551D'; cx.fill();
+    cx.lineCap = 'butt';
+  }
+  if (S.fase === 'fuerza'){
+    var bw = 190*K, bh = 15*K, bx0 = rx - bw/2, by0 = ry - 92*K;
+    cx.fillStyle = '#F2EFE9'; cx.fillRect(bx0, by0, bw, bh);
+    cx.fillStyle = '#F4551D'; cx.fillRect(bx0, by0, bw * S.pot, bh);
+    cx.strokeStyle = '#141A1F'; cx.lineWidth = 3; cx.strokeRect(bx0, by0, bw, bh);
+  }
+
+  // etiqueta de fase
+  var t = T[LANG];
+  if (S.fase === 'apuntar' || S.fase === 'fuerza'){
+    cx.fillStyle = '#141A1F';
+    cx.font = '600 ' + (11*K|0) + 'px "IBM Plex Mono", monospace';
+    cx.textAlign = 'center';
+    cx.fillText((S.fase === 'apuntar' ? t.apunta : t.fuerza).toUpperCase(), rx, ry - 108*K);
+    cx.textAlign = 'start';
+  }
+
+  // distancia a la meta
+  cx.fillStyle = 'rgba(20,26,31,.6)';
+  cx.font = '600 ' + (11*K|0) + 'px "IBM Plex Mono", monospace';
+  cx.fillText(Math.max(0, Math.round((c.largo - r.x) / (7*K))) + ' m', 12*K, H - 12*K);
+}
+
+/* ══════════ bucle ══════════ */
+var ant = 0, corriendo = false;
+function bucle(ms){
+  if (!ant) ant = ms;
+  var dt = Math.min(0.033, (ms - ant) / 1000);
+  ant = ms;
+  if (corriendo) paso(dt);
+  dibujar();
+  requestAnimationFrame(bucle);
+}
+requestAnimationFrame(bucle);
+
+/* ══════════ interfaz ══════════ */
+function pintarTextos(){
+  var t = T[LANG];
+  document.documentElement.lang = LANG;
+  $('mDelMundo').textContent = t.mundo;
+  $('lYo').textContent = t.yo;
+  $('lRival').textContent = t.rival;
+  $('lRally').textContent = t.rally;
+  $('lMejor').textContent = t.mejor;
+  $('iEt').textContent = t.et;
+  $('iTxt').textContent = t.txt;
+  $('iReglas').innerHTML = t.reglas.map(function(r){ return '<span>'+r+'</span>'; }).join('');
+  $('bJugar').textContent = t.jugar;
+  $('iRec').textContent = t.rec(Marcas.mejor('ruzzola'));
+  $('mGol').textContent = t.golpear;
+  $('pie').innerHTML = t.pie.map(function(p){
+    return '<div><h4>'+p[0]+'</h4><p>'+p[1]+'</p></div>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('.idioma button'), function(b){
+    b.setAttribute('aria-pressed', b.getAttribute('data-l') === LANG ? 'true' : 'false');
+  });
+  if (S) refrescarHud();
+}
+document.querySelector('.idioma').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if (!b) return;
+  LANG = b.getAttribute('data-l');
+  try { localStorage.setItem('fp-lang', LANG); } catch(err){}
+  pintarTextos();
+});
+
+function arrancar(){
+  nuevaVuelta();
+  $('pInicio').hidden = true;
+  $('pFin').hidden = true;
+  corriendo = true;
+}
+$('bJugar').addEventListener('click', arrancar);
+$('bOtra').addEventListener('click', arrancar);
+
+pintarTextos();
+nuevaVuelta();
+corriendo = false;
+</script>

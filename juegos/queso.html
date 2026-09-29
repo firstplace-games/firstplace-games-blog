@@ -1,0 +1,614 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>El Queso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --hueso:#F2EFE9; --tinta:#141A1F; --punto:#F4551D; --ambar:#C98A16; --verde:#0E8F63;
+  --papel:#FBFAF7; --linea:#DCD7CD; --apagado:#6B7480; --sombra:rgba(20,26,31,.9);
+  --fd:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --fm:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --hueso:#12171C; --tinta:#F2EFE9; --papel:#1B2229; --linea:#2C343D; --apagado:#98A2AE;
+  --punto:#FF7034; --ambar:#DFA53B; --verde:#28B183; --sombra:rgba(0,0,0,.75);
+}}
+:root[data-theme="dark"]{
+  --hueso:#12171C; --tinta:#F2EFE9; --papel:#1B2229; --linea:#2C343D; --apagado:#98A2AE;
+  --punto:#FF7034; --ambar:#DFA53B; --verde:#28B183; --sombra:rgba(0,0,0,.75);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--hueso);color:var(--tinta);font-family:var(--fd);font-size:16px;
+  line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3{margin:0;line-height:1.05;font-stretch:112%}
+p{margin:0}
+:focus-visible{outline:2px solid var(--punto);outline-offset:3px}
+.wrap{max-width:1000px;margin:0 auto;padding:0 16px 40px}
+
+/* cabecera */
+header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0 14px}
+.marca{font-family:var(--fm);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--apagado)}
+.marca i{font-style:normal;color:var(--punto)}
+.idioma{margin-left:auto;display:flex;border:2px solid var(--tinta)}
+.idioma button{border:0;background:transparent;color:var(--tinta);font-family:var(--fm);
+  font-size:11px;font-weight:600;letter-spacing:.12em;padding:6px 11px;cursor:pointer}
+.idioma button[aria-pressed="true"]{background:var(--tinta);color:var(--hueso)}
+
+/* tablero */
+.marco{border:3px solid var(--tinta);box-shadow:8px 8px 0 var(--sombra);background:#DDE6DA;
+  position:relative;overflow:hidden}
+canvas{display:block;width:100%;height:auto;touch-action:none}
+
+/* marcador */
+.marcador{border:3px solid var(--tinta);border-bottom:0;background:var(--tinta);color:#F2EFE9;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:12px 18px 13px;
+  box-shadow:8px 0 0 var(--sombra)}
+.mk{display:flex;align-items:center;gap:16px}
+.mk .eq{display:flex;align-items:baseline;gap:11px}
+.mk .eq.rv{flex-direction:row}
+.mk .eq span{font-family:var(--fm);font-size:11px;letter-spacing:.17em;text-transform:uppercase;
+  opacity:.72}
+.mk .eq b{font-family:var(--fd);font-weight:800;font-stretch:118%;
+  font-size:clamp(38px,6.4vw,56px);line-height:.82;letter-spacing:-.04em;
+  font-variant-numeric:tabular-nums;display:inline-block}
+.mk .eq.yo b{color:var(--punto)}
+.mk .gui{font-family:var(--fd);font-weight:800;font-size:30px;opacity:.4;line-height:.82}
+.mk b.sube{animation:sube .42s ease-out}
+@keyframes sube{0%{transform:scale(1)}32%{transform:scale(1.42)}100%{transform:scale(1)}}
+.extra{margin-left:auto;display:flex;gap:20px;font-family:var(--fm);font-size:10.5px;
+  letter-spacing:.14em;text-transform:uppercase;opacity:.78}
+.extra div{display:flex;align-items:baseline;gap:8px}
+.extra b{font-family:var(--fd);font-size:19px;font-weight:800;letter-spacing:0;
+  font-variant-numeric:tabular-nums}
+
+/* HUD */
+.hud{position:absolute;inset:0;pointer-events:none;font-family:var(--fm)}
+.aviso{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%) rotate(-2deg);
+  background:var(--punto);color:#fff;border:3px solid var(--tinta);padding:9px 18px 11px;
+  font-family:var(--fd);font-weight:800;font-size:clamp(15px,2.6vw,22px);letter-spacing:.06em;
+  text-transform:uppercase;box-shadow:5px 5px 0 rgba(0,0,0,.35);opacity:0;visibility:hidden;transition:opacity .18s}
+.aviso.on{opacity:1;visibility:visible}
+
+/* pantallas */
+.pant{position:absolute;inset:0;background:rgba(20,26,31,.94);color:#F2EFE9;
+  display:flex;align-items:center;justify-content:center;padding:22px;text-align:center}
+.pant[hidden]{display:none}
+.pant .in{max-width:44ch}
+.pant .et{font-family:var(--fm);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--punto);font-weight:600}
+.pant h2{font-size:clamp(34px,6.5vw,58px);font-weight:800;font-stretch:120%;letter-spacing:-.03em;
+  text-transform:uppercase;margin:9px 0 0}
+.pant p{margin:12px 0 0;font-size:14.5px;opacity:.92}
+.pant .reglas{margin:16px auto 0;text-align:left;font-size:13.5px;opacity:.9;max-width:38ch;
+  display:flex;flex-direction:column;gap:5px}
+.pant .reglas span{padding-left:16px;position:relative}
+.pant .reglas span::before{content:"";position:absolute;left:0;top:.62em;width:8px;height:2px;
+  background:var(--punto)}
+.btn{margin-top:20px;border:3px solid #F2EFE9;background:var(--punto);color:#fff;
+  font-family:var(--fd);font-weight:800;font-size:14px;letter-spacing:.12em;text-transform:uppercase;
+  padding:13px 26px;cursor:pointer}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 rgba(0,0,0,.4)}
+.btn.sec{background:transparent;margin-left:8px}
+.rec{margin-top:13px;font-family:var(--fm);font-size:11px;letter-spacing:.13em;
+  text-transform:uppercase;opacity:.72}
+
+/* mandos táctiles */
+.mandos{display:none;gap:9px;margin-top:12px}
+.mandos button{flex:1;border:3px solid var(--tinta);background:var(--papel);color:var(--tinta);
+  font-family:var(--fd);font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase;
+  padding:16px 8px;cursor:pointer;box-shadow:4px 4px 0 var(--sombra);touch-action:manipulation}
+.mandos button.gol{background:var(--punto);color:#fff;flex:1.5}
+@media (hover:none) and (pointer:coarse){ .mandos{display:flex} }
+.mandos button.gol{flex:1}
+/* En el teléfono el marco mide ~250 px de alto: la pantalla de inicio no entra
+   adentro. Pasa a cubrir toda la ventana, que además es la regla de «un juego,
+   una sola pantalla». */
+@media (max-width:700px){
+  .pant{position:fixed;z-index:50;overflow-y:auto;align-items:flex-start;padding:26px 20px 40px}
+  .pant .in{margin:auto}
+}
+
+/* pie */
+.pie{margin-top:22px;display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  border-top:1px solid var(--linea);padding-top:18px}
+.pie h4{font-family:var(--fm);font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--punto);font-weight:600;margin-bottom:7px}
+.pie p{font-size:13px;color:var(--apagado);line-height:1.6}
+.pie a{color:var(--apagado)}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="marca">FirstPlace<i>.</i>games &nbsp;·&nbsp; <span id="mDelMundo"></span> &nbsp;·&nbsp; Inglaterra</span>
+    <div class="idioma" role="group">
+      <button type="button" data-l="es">ES</button><button type="button" data-l="en">EN</button>
+    </div>
+  </header>
+
+  <div class="marcador">
+    <div class="mk">
+      <div class="eq yo"><span id="lYo"></span><b id="pYo">0</b></div>
+      <span class="gui">–</span>
+      <div class="eq rv"><b id="pRival">0</b><span id="lRival"></span></div>
+    </div>
+    <div class="extra">
+      <div><span id="lRally"></span><b id="pRally">0</b></div>
+      <div><span id="lMejor"></span><b id="pMejor">—</b></div>
+    </div>
+  </div>
+
+  <div class="marco">
+    <canvas id="cv" width="960" height="382" aria-label="El Queso"></canvas>
+    <div class="hud"><div class="aviso" id="aviso"></div></div>
+
+    <section class="pant" id="pInicio"><div class="in">
+      <p class="et" id="iEt"></p>
+      <h2>El Queso</h2>
+      <p id="iTxt"></p>
+      <div class="reglas" id="iReglas"></div>
+      <button class="btn" id="bJugar"></button>
+      <p class="rec" id="iRec"></p>
+    </div></section>
+
+    <section class="pant" id="pFin" hidden><div class="in">
+      <p class="et" id="fEt"></p>
+      <h2 id="fTit"></h2>
+      <p id="fTxt"></p>
+      <button class="btn" id="bOtra"></button>
+      <p class="rec" id="fRec"></p>
+    </div></section>
+  </div>
+
+  <div class="mandos">
+    <button type="button" class="gol" id="mGol"></button>
+  </div>
+
+  <div class="pie" id="pie"></div>
+</div>
+
+<script>
+/* ══════════ idioma ══════════ */
+var LANG = 'es';
+try { var g0 = localStorage.getItem('fp-lang'); if (g0 === 'es' || g0 === 'en') LANG = g0; } catch(e){}
+
+var T = {
+ es:{
+  mundo:'Del mundo',
+  yo:'Puesto', rival:'de 4', rally:'Tiempo', mejor:'Récord',
+  et:'Cooper’s Hill, Gloucestershire · cada mayo',
+  txt:'Tiran una rueda de queso por una cuesta casi vertical y la gente se tira detrás. El queso llega a 110 km/h y no lo alcanza nadie: gana el primero que llega abajo, casi siempre rodando y no corriendo.',
+  reglas:['Mantené espacio —o el botón— para rodar. Soltá para correr',
+          'Corriendo vas más rápido, pero cualquier badén te manda al suelo',
+          'Rodando sos más lento y no te caés nunca',
+          'Los badenes se ven venir. Ésa es toda la decisión',
+          'El récord es el tiempo hasta abajo'],
+  jugar:'Tirarse', golpear:'Rodar', otra:'Otra vez',
+  rec:function(n){ return n ? 'Tu mejor tiempo: ' + n.toFixed(2) + ' s' : 'Todavía no bajaste'; },
+  finEt:'Al pie de la cuesta',
+  fin:function(p){ return p === 1 ? 'Primero' : p === 2 ? 'Segundo' : p === 3 ? 'Tercero' : 'Cuarto'; },
+  finTxt:function(t,p){ return t.toFixed(2) + ' s. ' + (p===1 ? 'El queso llegó antes, como siempre.' : 'Te ganaron ' + (p-1) + '.'); },
+  avCaida:'¡Al suelo!', avSalida:'¡Vamos!', avCorre:'Corriendo', avRueda:'Rodando',
+  pie:[['Qué es de verdad','La rodada del queso de Cooper’s Hill se corre cada primavera en Gloucestershire, en una cuesta de unos 180 metros con tramos de casi 1:1. Se suelta una rueda de Double Gloucester de unos 3 a 4 kilos que llega a unos <b>110 km/h</b>: nadie la alcanza nunca. <b>Gana el primero que cruza la línea de abajo</b>, y la mayoría baja rodando porque correr esa pendiente es imposible.'],
+       ['Qué cambiamos para que entre en una pantalla','Está de perfil, son cuatro corredores y la cuesta es más corta. Lo que sí respetamos: que el queso siempre gane, que la decisión real sea correr o rodar, y que correr sea más rápido y mucho más peligroso.'],
+       ['Fuentes','Contrastado con <a href="https://en.wikipedia.org/wiki/Cooper%27s_Hill_Cheese-Rolling_and_Wake" target="_blank" rel="noopener">Cooper’s Hill Cheese-Rolling and Wake</a>.']]
+ },
+ en:{
+  mundo:'Around the world',
+  yo:'Place', rival:'of 4', rally:'Time', mejor:'Record',
+  et:'Cooper’s Hill, Gloucestershire · every May',
+  txt:'They roll a wheel of cheese down an almost vertical hill and people throw themselves after it. The cheese hits 110 km/h and nobody ever catches it: first one to the bottom wins, and almost everyone tumbles rather than runs.',
+  reglas:['Hold space — or the button — to tumble. Let go to run',
+          'Running is faster, but any ridge puts you on the ground',
+          'Tumbling is slower and you never fall',
+          'You can see the ridges coming. That is the whole decision',
+          'The record is your time to the bottom'],
+  jugar:'Go', golpear:'Tumble', otra:'Again',
+  rec:function(n){ return n ? 'Your best time: ' + n.toFixed(2) + ' s' : 'You have not run yet'; },
+  finEt:'At the bottom',
+  fin:function(p){ return p === 1 ? 'First' : p === 2 ? 'Second' : p === 3 ? 'Third' : 'Fourth'; },
+  finTxt:function(t,p){ return t.toFixed(2) + ' s. ' + (p===1 ? 'The cheese got there first, as always.' : (p-1) + ' beat you.'); },
+  avCaida:'Down you go!', avSalida:'Go!', avCorre:'Running', avRueda:'Tumbling',
+  pie:[['What is real','The Cooper’s Hill cheese roll is held every spring in Gloucestershire, on a slope of about 180 metres with sections close to 1:1. A 3–4 kg Double Gloucester is released and reaches around <b>110 km/h</b>: nobody ever catches it. <b>First across the line at the bottom wins</b>, and most people tumble because running that gradient is impossible.'],
+       ['What we changed to fit a screen','It is shown from the side, there are four runners and the hill is shorter. What we kept: the cheese always wins, the real decision is run or tumble, and running is faster and far more dangerous.'],
+       ['Sources','Checked against <a href="https://en.wikipedia.org/wiki/Cooper%27s_Hill_Cheese-Rolling_and_Wake" target="_blank" rel="noopener">Cooper’s Hill Cheese-Rolling and Wake</a>.']]
+ }
+};
+
+/* ══════════ marcas · menos es mejor ══════════ */
+var Marcas = (function(){
+  var CLAVE = 'fp-marcas-bajo';
+  var d = {};
+  try { d = JSON.parse(localStorage.getItem(CLAVE) || '{}'); } catch(e){ d = {}; }
+  return {
+    mejor:function(j){ return d[j] || 0; },
+    anotar:function(j,p){
+      if (d[j] && p >= d[j]) return false;
+      d[j] = p;
+      try { localStorage.setItem(CLAVE, JSON.stringify(d)); } catch(e){}
+      return true;
+    }
+  };
+})();
+
+/* ══════════ la cuesta ══════════ */
+var ANGOSTO = (typeof matchMedia === 'function') && matchMedia('(max-width:700px)').matches;
+var W = ANGOSTO ? 620 : 960;
+var H = ANGOSTO ? 392 : 382;
+var K = W / 960;
+var LARGO = 7400 * K;            // largo de la bajada (≈180 m, como la de verdad)
+var CAIDA = 0.46;                // cuánto baja por cada px de avance
+var CIMA = 74 * K;
+
+var cv = document.getElementById('cv'), cx = cv.getContext('2d');
+cv.width = W; cv.height = H;
+var $ = function(id){ return document.getElementById(id); };
+
+function azarFijo(semilla){
+  var s = semilla >>> 0;
+  return function(){
+    s = (s + 0x6D2B79F5) >>> 0;
+    var t = s;
+    t = Math.imul(t ^ (t>>>15), t | 1);
+    t ^= t + Math.imul(t ^ (t>>>7), t | 61);
+    return ((t ^ (t>>>14)) >>> 0) / 4294967296;
+  };
+}
+
+/* badenes fijos: la cuesta es siempre la misma, así se puede aprender */
+var BADENES = (function(){
+  var az = azarFijo(19650525), a = [], x = 420 * K;
+  while (x < LARGO - 300 * K){
+    a.push({ x:x, w:(52 + az()*44) * K, alto:(11 + az()*9) * K });
+    x += (250 + az() * 330) * K;
+  }
+  return a;
+})();
+
+function sueloY(x){
+  var y = CIMA + x * CAIDA;
+  for (var i = 0; i < BADENES.length; i++){
+    var b = BADENES[i], d = x - b.x;
+    if (d > -b.w && d < b.w) y -= b.alto * Math.cos(d / b.w * 1.5708);
+  }
+  return y;
+}
+function hayBaden(x){
+  for (var i = 0; i < BADENES.length; i++){
+    var b = BADENES[i];
+    if (x > b.x - b.w * 0.55 && x < b.x + b.w * 0.55) return true;
+  }
+  return false;
+}
+
+/* ══════════ estado ══════════ */
+var VMAX_C = 780 * K, VMAX_R = 430 * K;
+var S = null;
+
+function nuevaBajada(){
+  S = { t:0, fase:'salida', cuenta:1.1, fin:null, aviso:0, cam:0, tiempo:0,
+        yo:{ x:0, v:120*K, rueda:false, caido:0, giro:0, meta:0 },
+        queso:{ x:0, v:200*K },
+        rivales:[
+          { x:0, v:120*K, rueda:true,  caido:0, giro:0, meta:0, audacia:0.20, col:'#2B4C6F' },
+          { x:0, v:120*K, rueda:true,  caido:0, giro:0, meta:0, audacia:0.45, col:'#0E8F63' },
+          { x:0, v:120*K, rueda:true,  caido:0, giro:0, meta:0, audacia:0.72, col:'#C98A16' }
+        ] };
+  msg('');
+  refrescarHud();
+}
+
+function refrescarHud(){
+  var puesto = puestoActual();
+  $('pYo').textContent = puesto;
+  $('pRival').textContent = 4;
+  $('pRally').textContent = S.tiempo.toFixed(1) + ' s';
+  var m = Marcas.mejor('queso');
+  $('pMejor').textContent = m ? m.toFixed(2) : '—';
+}
+function puestoActual(){
+  var p = 1;
+  S.rivales.forEach(function(r){ if (r.x > S.yo.x) p++; });
+  return p;
+}
+
+function msg(txt){
+  var a = $('aviso');
+  a.textContent = txt;
+  a.classList.toggle('on', !!txt);
+  S.aviso = txt ? 0.9 : 0;
+}
+
+/* ══════════ mandos ══════════ */
+var apretado = false;
+addEventListener('keydown', function(e){
+  if (e.key === ' '){ e.preventDefault(); apretado = true; }
+});
+addEventListener('keyup', function(e){ if (e.key === ' ') apretado = false; });
+function abajo(e){ e.preventDefault(); apretado = true; }
+function arriba(){ apretado = false; }
+$('mGol').addEventListener('pointerdown', abajo);
+['pointerup','pointercancel','pointerleave'].forEach(function(ev){ $('mGol').addEventListener(ev, arriba); });
+cv.addEventListener('pointerdown', abajo);
+['pointerup','pointercancel','pointerleave'].forEach(function(ev){ cv.addEventListener(ev, arriba); });
+
+/* ══════════ física ══════════ */
+function correr(c, dt, quiereRodar){
+  if (c.meta) return;
+  if (c.caido > 0){
+    c.caido -= dt;
+    c.v += (90*K - c.v) * Math.min(1, dt * 3);
+    c.rueda = true;
+  } else {
+    c.rueda = quiereRodar;
+    var vmax = c.rueda ? VMAX_R : VMAX_C;
+    var acel = c.rueda ? 340*K : 950*K;
+    c.v += (vmax - c.v) * Math.min(1, dt * (acel / vmax));
+    if (!c.rueda && hayBaden(c.x)){
+      c.caido = 0.55;
+      c.v *= 0.42;
+      if (c === S.yo) { msg(T[LANG].avCaida); S.sacudon = 0.3; }
+    }
+  }
+  c.x += c.v * dt;
+  c.giro += c.v * dt / (16 * K);
+  if (c.x >= LARGO && !c.meta) c.meta = S.tiempo;
+}
+
+function paso(dt){
+  if (!S || S.fin) return;
+  if (S.aviso > 0){ S.aviso -= dt; if (S.aviso <= 0) msg(''); }
+
+  if (S.fase === 'salida'){
+    S.cuenta -= dt;
+    if (S.cuenta <= 0){ S.fase = 'baja'; msg(T[LANG].avSalida); }
+    return;
+  }
+  if (S.fase !== 'baja') return;
+
+  S.tiempo += dt;
+
+  // el queso: siempre gana
+  S.queso.v = Math.min(1150*K, S.queso.v + 420*K*dt);
+  S.queso.x += S.queso.v * dt;
+
+  correr(S.yo, dt, apretado);
+
+  S.rivales.forEach(function(r){
+    // mira si viene un badén; cuanto más audaz, más tarde se tira a rodar
+    var margen = (80 + 150 * (1 - r.audacia)) * K;
+    var viene = false;
+    for (var i = 0; i < BADENES.length; i++){
+      var b = BADENES[i];
+      if (b.x + b.w * 0.55 > r.x && b.x - b.w * 0.55 < r.x + margen) viene = true;
+    }
+    correr(r, dt, viene || Math.random() < 0.002);
+  });
+
+  S.tiempo = S.tiempo;
+  refrescarHud();
+
+  if (S.yo.meta){ terminar(); return; }
+  S.cam += (Math.max(0, S.yo.x - W * 0.3) - S.cam) * Math.min(1, dt * 7);
+}
+
+function terminar(){
+  var t = T[LANG];
+  /* El jugador llegó: hay que dejar que los rivales terminen la bajada para
+     saber el puesto de verdad. Sin esto el puesto sale de quién había llegado
+     antes, y el que gana siempre figura primero. */
+  var reloj = S.tiempo, guardia = 0;
+  while (S.rivales.some(function(r){ return !r.meta; }) && guardia < 60 * 120){
+    guardia++;
+    reloj += 1/60;
+    S.tiempo = reloj;
+    S.rivales.forEach(function(r){
+      if (r.meta) return;
+      var margen = (80 + 150 * (1 - r.audacia)) * K, viene = false;
+      for (var i = 0; i < BADENES.length; i++){
+        var b = BADENES[i];
+        if (b.x + b.w * 0.55 > r.x && b.x - b.w * 0.55 < r.x + margen) viene = true;
+      }
+      correr(r, 1/60, viene);
+    });
+  }
+  S.tiempo = reloj;
+  var puesto = 1;
+  S.rivales.forEach(function(r){ if (r.meta && r.meta < S.yo.meta) puesto++; });
+  S.fin = true;
+  var nuevo = Marcas.anotar('queso', S.yo.meta);
+  $('fEt').textContent   = t.finEt;
+  $('fTit').textContent  = t.fin(puesto);
+  $('fTxt').textContent  = t.finTxt(S.yo.meta, puesto);
+  $('bOtra').textContent = t.otra;
+  $('fRec').textContent  = (nuevo ? '★ ' : '') + t.rec(Marcas.mejor('queso'));
+  $('pMejor').textContent = Marcas.mejor('queso').toFixed(2);
+  $('pFin').hidden = false;
+}
+
+/* ══════════ dibujo ══════════ */
+function persona(x, y, col, rueda, giro, caido){
+  cx.save();
+  cx.translate(x, y);
+  cx.fillStyle = 'rgba(20,26,31,.15)';
+  cx.beginPath(); cx.ellipse(0, 3, 15*K, 4*K, 0, 0, 6.3); cx.fill();
+  cx.scale(K, K);
+  if (rueda || caido > 0){
+    cx.rotate(giro);
+    cx.fillStyle = col;
+    cx.beginPath(); cx.roundRect(-13, -26, 26, 26, 8); cx.fill();
+    cx.strokeStyle = '#141A1F'; cx.lineWidth = 3;
+    cx.beginPath(); cx.roundRect(-13, -26, 26, 26, 8); cx.stroke();
+    cx.fillStyle = '#141A1F';
+    cx.beginPath(); cx.arc(0, -13, 5, 0, 6.3); cx.fill();
+  } else {
+    cx.strokeStyle = '#141A1F'; cx.lineWidth = 5; cx.lineCap = 'round';
+    var f = Math.sin(giro * 2.2);
+    cx.beginPath(); cx.moveTo(-2, 0); cx.lineTo(-2 + f*9, -20); cx.stroke();
+    cx.beginPath(); cx.moveTo(4, 0);  cx.lineTo(-2 - f*9, -20); cx.stroke();
+    cx.fillStyle = col;
+    cx.beginPath(); cx.roundRect(-9, -42, 18, 24, 4); cx.fill();
+    cx.strokeStyle = '#141A1F'; cx.lineWidth = 3;
+    cx.beginPath(); cx.roundRect(-9, -42, 18, 24, 4); cx.stroke();
+    cx.lineWidth = 4;
+    cx.beginPath(); cx.moveTo(0, -38); cx.lineTo(-13 - f*7, -28); cx.stroke();
+    cx.beginPath(); cx.moveTo(0, -38); cx.lineTo(13 - f*7, -30); cx.stroke();
+    cx.fillStyle = '#141A1F';
+    cx.beginPath(); cx.arc(0, -50, 8, 0, 6.3); cx.fill();
+  }
+  cx.restore();
+}
+
+function dibujar(){
+  var sac = S && S.sacudon > 0 ? (Math.random()-0.5) * 9 : 0;
+  if (S && S.sacudon > 0) S.sacudon -= 0.016;
+  cx.save(); cx.translate(sac, 0);
+
+  cx.fillStyle = '#DDE6DA'; cx.fillRect(-20, 0, W+40, H);
+  if (!S){ cx.restore(); return; }
+  var cam = S.cam;
+
+  // la campiña del fondo
+  cx.fillStyle = '#C6D3C2';
+  cx.beginPath(); cx.moveTo(-10, H);
+  for (var ax = -10; ax <= W+10; ax += 20){
+    var ux = ax + cam * 0.18;
+    cx.lineTo(ax, 96*K + 26*K*Math.sin(ux*0.0013/K) + 14*K*Math.sin(ux*0.0037/K));
+  }
+  cx.lineTo(W+10, H); cx.closePath(); cx.fill();
+
+  // la cuesta
+  cx.beginPath(); cx.moveTo(-10, H);
+  for (var sx = -10; sx <= W+10; sx += 4) cx.lineTo(sx, sueloY(sx + cam) - cam * CAIDA);
+  cx.lineTo(W+10, H); cx.closePath();
+  cx.fillStyle = '#8FB06F'; cx.fill();
+  cx.strokeStyle = '#141A1F'; cx.lineWidth = 3.5;
+  cx.beginPath();
+  for (var sx2 = -10; sx2 <= W+10; sx2 += 4){
+    var yy = sueloY(sx2 + cam) - cam * CAIDA;
+    if (sx2 === -10) cx.moveTo(sx2, yy); else cx.lineTo(sx2, yy);
+  }
+  cx.stroke();
+
+  // badenes marcados, para que se vean venir
+  BADENES.forEach(function(b){
+    var bx = b.x - cam;
+    if (bx < -80 || bx > W + 80) return;
+    var by = sueloY(b.x) - cam * CAIDA;
+    cx.strokeStyle = 'rgba(192,57,43,.85)'; cx.lineWidth = 3;
+    cx.beginPath();
+    for (var k2 = -b.w; k2 <= b.w; k2 += 4){
+      var yy2 = sueloY(b.x + k2) - cam * CAIDA;
+      if (k2 === -b.w) cx.moveTo(bx + k2, yy2 - 2); else cx.lineTo(bx + k2, yy2 - 2);
+    }
+    cx.stroke();
+  });
+
+  // meta
+  var mx = LARGO - cam, my = sueloY(LARGO) - cam * CAIDA;
+  if (mx > -60 && mx < W + 60){
+    cx.strokeStyle = '#141A1F'; cx.lineWidth = 4;
+    cx.beginPath(); cx.moveTo(mx, my); cx.lineTo(mx, my - 74*K); cx.stroke();
+    for (var f2 = 0; f2 < 4; f2++){
+      cx.fillStyle = f2 % 2 ? '#141A1F' : '#F2EFE9';
+      cx.fillRect(mx + 2, my - 74*K + f2 * 10*K, 32*K, 10*K);
+    }
+  }
+
+  // el queso
+  var qx = S.queso.x - cam, qy = sueloY(S.queso.x) - cam * CAIDA;
+  if (qx > -40 && qx < W + 40){
+    cx.save(); cx.translate(qx, qy - 13*K); cx.rotate(S.queso.x / (13*K));
+    cx.fillStyle = '#E3B23C';
+    cx.beginPath(); cx.arc(0, 0, 13*K, 0, 6.3); cx.fill();
+    cx.strokeStyle = '#141A1F'; cx.lineWidth = 3;
+    cx.beginPath(); cx.arc(0, 0, 13*K, 0, 6.3); cx.stroke();
+    cx.beginPath(); cx.moveTo(-9*K, 0); cx.lineTo(9*K, 0); cx.stroke();
+    cx.restore();
+  } else if (qx >= W){
+    cx.fillStyle = '#E3B23C';
+    cx.beginPath(); cx.arc(W - 16*K, 34*K, 9*K, 0, 6.3); cx.fill();
+    cx.strokeStyle = '#141A1F'; cx.lineWidth = 2.5; cx.stroke();
+  }
+
+  // corredores
+  S.rivales.forEach(function(r){
+    var rx = r.x - cam;
+    if (rx > -50 && rx < W + 50) persona(rx, sueloY(r.x) - cam * CAIDA, r.col, r.rueda, r.giro, r.caido);
+  });
+  persona(S.yo.x - cam, sueloY(S.yo.x) - cam * CAIDA, '#F4551D', S.yo.rueda, S.yo.giro, S.yo.caido);
+
+  // estado y cuenta atrás
+  cx.font = '600 ' + (11*K|0) + 'px "IBM Plex Mono", monospace';
+  cx.fillStyle = S.yo.rueda ? '#0E8F63' : '#C0392B';
+  cx.fillText((S.yo.rueda ? T[LANG].avRueda : T[LANG].avCorre).toUpperCase(), 12*K, H - 14*K);
+  cx.fillStyle = 'rgba(20,26,31,.6)';
+  cx.fillText(Math.max(0, Math.round((LARGO - S.yo.x) / (41*K))) + ' m', 12*K, H - 30*K);
+  if (S.fase === 'salida'){
+    cx.fillStyle = '#141A1F'; cx.textAlign = 'center';
+    cx.font = '800 ' + (54*K|0) + 'px Archivo, Arial, sans-serif';
+    cx.fillText(String(Math.ceil(S.cuenta)), W/2, H*0.42);
+    cx.textAlign = 'start';
+  }
+  cx.restore();
+}
+
+/* ══════════ bucle ══════════ */
+var ant = 0, corriendo = false;
+function bucle(ms){
+  if (!ant) ant = ms;
+  var dt = Math.min(0.033, (ms - ant) / 1000);
+  ant = ms;
+  if (corriendo) paso(dt);
+  dibujar();
+  requestAnimationFrame(bucle);
+}
+requestAnimationFrame(bucle);
+
+/* ══════════ interfaz ══════════ */
+function pintarTextos(){
+  var t = T[LANG];
+  document.documentElement.lang = LANG;
+  $('mDelMundo').textContent = t.mundo;
+  $('lYo').textContent = t.yo;
+  $('lRival').textContent = t.rival;
+  $('lRally').textContent = t.rally;
+  $('lMejor').textContent = t.mejor;
+  $('iEt').textContent = t.et;
+  $('iTxt').textContent = t.txt;
+  $('iReglas').innerHTML = t.reglas.map(function(r){ return '<span>'+r+'</span>'; }).join('');
+  $('bJugar').textContent = t.jugar;
+  $('iRec').textContent = t.rec(Marcas.mejor('queso'));
+  $('mGol').textContent = t.golpear;
+  $('pie').innerHTML = t.pie.map(function(p){
+    return '<div><h4>'+p[0]+'</h4><p>'+p[1]+'</p></div>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('.idioma button'), function(b){
+    b.setAttribute('aria-pressed', b.getAttribute('data-l') === LANG ? 'true' : 'false');
+  });
+  if (S) refrescarHud();
+}
+document.querySelector('.idioma').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if (!b) return;
+  LANG = b.getAttribute('data-l');
+  try { localStorage.setItem('fp-lang', LANG); } catch(err){}
+  pintarTextos();
+});
+
+function arrancar(){
+  nuevaBajada();
+  $('pInicio').hidden = true;
+  $('pFin').hidden = true;
+  corriendo = true;
+}
+$('bJugar').addEventListener('click', arrancar);
+$('bOtra').addEventListener('click', arrancar);
+
+pintarTextos();
+nuevaBajada();
+corriendo = false;
+</script>

@@ -1,0 +1,1092 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>La Cancha · México</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --hueso:#F2EFE9; --tinta:#141A1F; --punto:#F4551D; --ambar:#C98A16; --verde:#0E8F63;
+  --papel:#FBFAF7; --linea:#DCD7CD; --apagado:#6B7480; --sombra:rgba(20,26,31,.9);
+  --rosa:#D6167A; --talavera:#1F4E9C;
+  --fd:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --fm:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --hueso:#12171C; --tinta:#F2EFE9; --papel:#1B2229; --linea:#2C343D; --apagado:#98A2AE;
+  --punto:#FF7034; --ambar:#DFA53B; --verde:#28B183; --sombra:rgba(0,0,0,.75);
+  --rosa:#F0479B; --talavera:#6F9BE0;
+}}
+:root[data-theme="dark"]{
+  --hueso:#12171C; --tinta:#F2EFE9; --papel:#1B2229; --linea:#2C343D; --apagado:#98A2AE;
+  --punto:#FF7034; --ambar:#DFA53B; --verde:#28B183; --sombra:rgba(0,0,0,.75);
+  --rosa:#F0479B; --talavera:#6F9BE0;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:var(--hueso);color:var(--tinta);font-family:var(--fd);font-size:16px;
+  line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3{margin:0;line-height:1.05;font-stretch:112%}
+p{margin:0}
+:focus-visible{outline:2px solid var(--punto);outline-offset:3px}
+
+/* ── la decoración del país ─────────────────────────────────────────────
+   Todo dibujado en código: papel picado arriba, azulejo a los costados,
+   cempasúchil en las esquinas del tablero y el tejido del país de marco. */
+.picado{height:78px;background-repeat:repeat-x;background-position:center top;
+  background-size:auto 78px;pointer-events:none}
+.azulejo{position:fixed;top:0;bottom:0;width:92px;background-size:46px 46px;
+  pointer-events:none;display:none;border-color:var(--tinta);border-style:solid;border-width:0}
+.azulejo.iz{left:0;border-right-width:3px}
+.azulejo.de{right:0;border-left-width:3px}
+@media(min-width:1260px){ .azulejo{display:block} }
+.cinta-azulejo{height:23px;background-size:23px 23px;border-top:3px solid var(--tinta);
+  border-bottom:3px solid var(--tinta);margin-top:34px}
+
+.wrap{max-width:560px;margin:0 auto;padding:0 16px 40px}
+
+header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px 0 8px}
+.marca{font-family:var(--fm);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--apagado)}
+.marca i{font-style:normal;color:var(--punto)}
+.idioma{margin-left:auto;display:flex;border:2px solid var(--tinta)}
+.idioma button{border:0;background:transparent;color:var(--tinta);font-family:var(--fm);
+  font-size:11px;font-weight:600;letter-spacing:.12em;padding:6px 11px;cursor:pointer}
+.idioma button[aria-pressed="true"]{background:var(--tinta);color:var(--hueso)}
+
+.titulo{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin:6px 0 4px}
+h1{font-size:clamp(40px,9vw,58px);font-weight:800;font-stretch:120%;letter-spacing:-.03em;
+  text-transform:uppercase}
+.sello-pais{background:var(--rosa);color:#fff;font-weight:800;font-size:12px;letter-spacing:.17em;
+  text-transform:uppercase;padding:6px 12px 7px;transform:rotate(-2deg);margin-bottom:9px;
+  border:2px solid var(--tinta);box-shadow:3px 3px 0 var(--sombra)}
+.bajada{color:var(--apagado);font-size:15px;max-width:48ch}
+
+.paises{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 16px}
+.paises button{font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;border:2px solid var(--tinta);background:var(--papel);color:var(--tinta);
+  padding:6px 10px;cursor:pointer}
+.paises button[aria-pressed="true"]{background:var(--tinta);color:var(--hueso)}
+.paises button[disabled]{border-style:dashed;opacity:.55;cursor:default}
+.paises button small{font-weight:500;opacity:.8;margin-left:4px}
+
+.barra{display:flex;gap:10px;margin-bottom:14px}
+.ficha{flex:1 1 0;border:3px solid var(--tinta);background:var(--papel);padding:7px 12px 8px;
+  box-shadow:5px 5px 0 var(--sombra)}
+.ficha span{display:block;font-family:var(--fm);font-size:10px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--apagado)}
+.ficha b{display:block;font-weight:800;font-stretch:118%;font-size:28px;line-height:1.05;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+
+.marco{position:relative;border:3px solid var(--tinta);box-shadow:8px 8px 0 var(--sombra);
+  padding:12px;background-color:#1E7F4E;background-size:300px 300px;background-position:center}
+.marco canvas{display:block;margin:0 auto;border:3px solid #141A1F;touch-action:none;cursor:crosshair;
+  -webkit-user-select:none;user-select:none;background:#F4EDDD}
+.flor{position:absolute;width:58px;height:58px;pointer-events:none;z-index:2}
+.flor.a{left:-20px;top:-22px}
+.flor.b{right:-18px;bottom:-20px;width:50px;height:50px}
+
+/* ── la cinta del dato: acá aparece lo que dice la cancha que se dio vuelta ── */
+.dato{margin-top:18px;border:3px solid var(--tinta);background:var(--papel);
+  box-shadow:5px 5px 0 var(--sombra);display:flex;gap:12px;padding:11px 13px 12px;
+  min-height:92px;align-items:flex-start;perspective:600px}
+.dato .ic{flex:0 0 46px;width:46px;height:46px}
+.dato .ic img,.dato .ic svg{width:46px;height:46px;display:block}
+.dato .rot{font-family:var(--fm);font-size:10px;letter-spacing:.17em;text-transform:uppercase;
+  color:var(--rosa);font-weight:600;margin-bottom:2px}
+.dato .tx{font-size:15px;line-height:1.4}
+.dato .tx b{font-weight:800}
+.dato.gira{animation:gira .55s ease-out}
+@keyframes gira{0%{transform:rotateX(90deg);opacity:.2}60%{transform:rotateX(-12deg);opacity:1}100%{transform:none}}
+.iconos{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.iconos span{display:flex;align-items:center;gap:5px;font-family:var(--fm);font-size:10px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--apagado)}
+.iconos img{width:22px;height:22px}
+
+.mando{display:flex;gap:10px;margin-top:16px}
+.btn{flex:1 1 0;border:3px solid var(--tinta);background:var(--papel);color:var(--tinta);
+  font-family:var(--fd);font-weight:800;font-stretch:112%;font-size:15px;text-transform:uppercase;
+  letter-spacing:.02em;padding:12px 10px;cursor:pointer;box-shadow:5px 5px 0 var(--sombra)}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--sombra)}
+.btn:active{transform:none;box-shadow:3px 3px 0 var(--sombra)}
+.btn.lleno{background:var(--tinta);color:var(--hueso)}
+.ayuda{margin-top:14px;text-align:center;font-size:13px;color:var(--apagado);line-height:1.55}
+
+/* ── fin ── */
+.fin{border:3px solid var(--tinta);background:var(--papel);box-shadow:8px 8px 0 var(--sombra);
+  padding:20px 18px 22px}
+.fin[hidden],#juego[hidden]{display:none}
+.fin .et{font-family:var(--fm);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--rosa);margin-bottom:6px}
+.fin h2{font-size:clamp(28px,7vw,40px);font-weight:800;letter-spacing:-.02em;margin-bottom:8px}
+.fin .msj{color:var(--apagado);font-size:15px}
+.fin .nums{display:flex;gap:10px;margin:16px 0 4px}
+.fin h3{font-family:var(--fm);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--apagado);margin:20px 0 10px;font-weight:600}
+.aprendido{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+.aprendido li{display:flex;gap:11px;align-items:flex-start;border-top:2px solid var(--linea);
+  padding-top:9px;font-size:14.5px;line-height:1.4}
+.aprendido img{width:30px;height:30px;flex:0 0 30px}
+.aprendido small{display:block;font-family:var(--fm);font-size:9.5px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--apagado)}
+.fin .mando{margin-top:20px}
+.fin .manana{margin-top:14px;font-family:var(--fm);font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--apagado);text-align:center}
+.fin .manana b{color:var(--punto);font-weight:600}
+.prueba{display:inline-block;margin-left:8px;background:var(--punto);color:#fff;font-family:var(--fm);
+  font-size:9.5px;letter-spacing:.14em;padding:2px 7px;text-transform:uppercase;vertical-align:middle}
+
+.pie{margin-top:26px;border-top:2px solid var(--linea);padding-top:16px;font-size:14.5px;
+  color:var(--apagado)}
+.pie b{color:var(--tinta)}
+.volver{display:inline-block;margin-top:16px;font-family:var(--fm);font-size:11px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--apagado);text-decoration:none;
+  border-bottom:2px solid var(--linea);padding-bottom:2px}
+.volver:hover{color:var(--punto);border-color:var(--punto)}
+
+@media(max-width:420px){
+  .picado{height:58px;background-size:auto 58px}
+  .marco{padding:8px}
+  .ficha b{font-size:24px}
+  .btn{font-size:13.5px;padding:11px 6px}
+  .flor.a{left:-12px;top:-16px;width:46px;height:46px}
+  .flor.b{right:-10px;bottom:-14px;width:40px;height:40px}
+}
+</style>
+
+<div class="picado" id="picado" aria-hidden="true"></div>
+<div class="azulejo iz" id="azIz" aria-hidden="true"></div>
+<div class="azulejo de" id="azDe" aria-hidden="true"></div>
+
+<div class="wrap">
+  <header>
+    <span class="marca">FirstPlace<i>.</i>games &nbsp;·&nbsp; <span id="mDia"></span><span id="mPrueba"></span></span>
+    <div class="idioma" role="group">
+      <button type="button" id="bEs" aria-pressed="true">ES</button><button type="button" id="bEn" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <div class="titulo"><h1>La Cancha</h1><span class="sello-pais" id="sPais"></span></div>
+  <p class="bajada" id="bajada"></p>
+
+  <div class="paises" id="paises" role="group"></div>
+
+  <div class="barra">
+    <p class="ficha"><span id="lCanchas"></span><b id="fCanchas">0</b></p>
+    <p class="ficha"><span id="lTiempo"></span><b id="fTiempo">0:00</b></p>
+  </div>
+
+  <div id="juego">
+    <div class="marco" id="marco">
+      <svg class="flor a" id="florA" viewBox="0 0 64 64" aria-hidden="true"></svg>
+      <canvas id="cv" aria-label=""></canvas>
+      <svg class="flor b" id="florB" viewBox="0 0 64 64" aria-hidden="true"></svg>
+    </div>
+
+    <div class="dato" id="dato" aria-live="polite"></div>
+
+    <div class="mando">
+      <button type="button" class="btn" id="bBorrar"></button>
+      <button type="button" class="btn" id="bVaciar"></button>
+    </div>
+    <p class="ayuda" id="ayuda"></p>
+  </div>
+
+  <section class="fin" id="fin" hidden></section>
+
+  <div class="pie" id="pie"></div>
+  <a class="volver" href="../juegos.html" id="lVolver"></a>
+</div>
+<div class="cinta-azulejo" id="cintaAz" aria-hidden="true"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   LA CANCHA · del día · una piel por país
+   El motor es el de El Corralón (Perros Charrúas): repartir el tablero en
+   rectángulos, cada número dice cuántas casillas tiene el suyo. Acá cada
+   rectángulo es una cancha y se llena con el objeto de un deporte del país.
+   Al marcarla, la cancha se da vuelta y deja un dato en la cinta de abajo.
+   Al terminar, la pantalla final junta todos los datos del día.
+
+   Un país nuevo = una entrada en PAISES (colores, deportes, datos) y sus
+   dibujos en ICONOS. El motor no se toca.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+var LANG = 'es';
+try { var g0 = localStorage.getItem('fp-lang'); if (g0 === 'es' || g0 === 'en') LANG = g0; } catch(e){}
+var PRUEBA = /[?&]prueba=1/.test(location.search);
+var JUEGO = 'cancha';
+
+var T = {
+  es:{
+    dia:'Del día', prueba:'Modo prueba',
+    bajada:'Repartí toda la cancha en rectángulos. Cada número dice cuántas casillas tiene el suyo. Cuando lo cerrás, se llena y se da vuelta con un dato.',
+    canchas:'Canchas', tiempo:'Tiempo', de:' de ',
+    borrar:'Borrar la última', vaciar:'Vaciar la cancha',
+    ayuda:'Arrastrá para marcar una cancha rectangular. Adentro tiene que quedar un solo número, y la cancha tiene que tener esas casillas justas. Tocá una cancha marcada para borrarla.',
+    datoIni:'<b>Cada cancha que marcás se da vuelta con un dato.</b> Hoy se juega con cinco deportes:',
+    pronto:'pronto',
+    finEt:'Cancha marcada', finTit:'Listo en ', mejor:'Tu mejor', hoy:'Hoy',
+    msjRapido:'Rapidísimo. Ni una casilla suelta.',
+    msjBien:'Todas las canchas marcadas. Mañana hay tablero nuevo.',
+    msjLento:'Te llevó su tiempo, pero salió. El truco: empezá por los números grandes, que entran de menos maneras.',
+    aprendiste:'Lo que aprendiste hoy',
+    practica:'Jugar de práctica', todos:'Todos los juegos',
+    manana:'Tablero nuevo a medianoche · faltan ',
+    yaJugaste:'Ya jugaste la de hoy',
+    noSeArmo:'No se pudo armar el tablero de hoy. Probá recargar.',
+    volver:'← Todos los juegos',
+    lienzo:'Tablero de La Cancha'
+  },
+  en:{
+    dia:'Daily', prueba:'Test mode',
+    bajada:'Split the whole pitch into rectangles. Each number says how many squares its own has. Close one and it fills up and flips over with a fact.',
+    canchas:'Pitches', tiempo:'Time', de:' of ',
+    borrar:'Undo last', vaciar:'Clear the pitch',
+    ayuda:'Drag to mark a rectangular pitch. It must hold exactly one number and exactly that many squares. Tap a marked pitch to remove it.',
+    datoIni:'<b>Every pitch you mark flips over with a fact.</b> Today’s five sports:',
+    pronto:'soon',
+    finEt:'Pitch marked', finTit:'Done in ', mejor:'Your best', hoy:'Today',
+    msjRapido:'Lightning fast. Not a square left over.',
+    msjBien:'Every pitch marked. New board tomorrow.',
+    msjLento:'It took a while, but you got there. Tip: start with the big numbers, they fit in fewer ways.',
+    aprendiste:'What you learned today',
+    practica:'Practice round', todos:'All games',
+    manana:'New board at midnight · in ',
+    yaJugaste:'You already played today’s',
+    noSeArmo:'Today’s board could not be built. Try reloading.',
+    volver:'← All games',
+    lienzo:'La Cancha board'
+  }
+};
+function t(k){ return T[LANG][k]; }
+
+/* ═══════ dibujos · un objeto por deporte, 64×64 ═══════
+   Se usan como SVG en la cinta y la pantalla final, y convertidos a imagen
+   dentro del tablero: una sola fuente para los dos. */
+var ICONOS = {
+  guante:
+    '<g stroke="#3A0D12" stroke-width="2.6" stroke-linejoin="round">'+
+    '<path d="M21 43C12 40 10 24 19 15C27 7 45 8 51 19C56 29 53 40 46 44Z" fill="#D7263D"/>'+
+    '<path d="M21 43C13 41 9 33 13 28C16 24 22 26 23 31L25 41Z" fill="#B01A30"/>'+
+    '<rect x="21" y="42" width="27" height="13" rx="3" fill="#F6EEDD"/></g>'+
+    '<path d="M27 18C33 14 42 15 46 21" stroke="#fff" stroke-opacity=".5" stroke-width="3.2" fill="none" stroke-linecap="round"/>'+
+    '<path d="M27 47h15M27 51h15" stroke="#3A0D12" stroke-width="1.8"/>',
+  balon:
+    '<circle cx="32" cy="32" r="23" fill="#FBF8F2" stroke="#1B1B1B" stroke-width="2.6"/>'+
+    '<path d="M32 23.5l8.1 5.9-3.1 9.5H27l-3.1-9.5z" fill="#1B1B1B"/>'+
+    '<path d="M32 23.5V14M40.1 29.4l9-2.9M37 38.9l5.6 7.6M27 38.9l-5.6 7.6M23.9 29.4l-9-2.9" stroke="#1B1B1B" stroke-width="2"/>'+
+    '<path d="M27 11l5 3 5-3-1-1.6a23 23 0 00-8 0z" fill="#1B1B1B"/>'+
+    '<path d="M49.5 22l-.5 5.5 5 1.9a23 23 0 00-2-8.6z" fill="#1B1B1B"/>'+
+    '<path d="M14.5 22l.5 5.5-5 1.9a23 23 0 012-8.6z" fill="#1B1B1B"/>'+
+    '<path d="M41 50l2-4.6 5.2 1a23 23 0 01-6.1 5.3z" fill="#1B1B1B"/>'+
+    '<path d="M23 50l-2-4.6-5.2 1a23 23 0 006.1 5.3z" fill="#1B1B1B"/>',
+  beisbol:
+    '<circle cx="32" cy="32" r="23" fill="#FBF8F2" stroke="#2A2A2A" stroke-width="2.6"/>'+
+    '<path d="M18 14C26 24 26 40 18 50M46 14C38 24 38 40 46 50" stroke="#C8102E" stroke-width="2.2" fill="none"/>'+
+    '<path d="M18 14C26 24 26 40 18 50M46 14C38 24 38 40 46 50" stroke="#C8102E" stroke-width="6.5" fill="none" stroke-dasharray="1.4 3.6"/>',
+  hule:
+    '<ellipse cx="32" cy="55" rx="17" ry="3.5" fill="#000" opacity=".18"/>'+
+    '<circle cx="32" cy="31" r="23" fill="#3E2A1F" stroke="#1A110C" stroke-width="2.6"/>'+
+    '<path d="M16 38c5 6 14 9 24 6M18 22c6-5 16-6 24-1" stroke="#5C4131" stroke-width="2.2" fill="none" stroke-linecap="round"/>'+
+    '<ellipse cx="24" cy="21" rx="7" ry="4.5" fill="#B08A6C" opacity=".75" transform="rotate(-28 24 21)"/>',
+  clavado:
+    '<circle cx="32" cy="32" r="23" fill="#1F6FB2" stroke="#0D2F4D" stroke-width="2.6"/>'+
+    '<path d="M11 45q5.3-4 10.5 0t10.5 0 10.5 0 10.5 0" stroke="#CFEAFF" stroke-width="2.6" fill="none" stroke-linecap="round"/>'+
+    '<path d="M29.5 29.5L44 15.5M44 15.5l4.5-3.5" stroke="#fff" stroke-width="5.4" stroke-linecap="round"/>'+
+    '<circle cx="26.3" cy="32.7" r="3.8" fill="#fff"/>'+
+    '<path d="M28 34.5l-7.5 7.5M30.5 31.5l-8 9" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>'+
+    '<path d="M16 47l-3 3M20 45.5l-1.5 4M24.5 47l2 3" stroke="#CFEAFF" stroke-width="2" stroke-linecap="round"/>'
+};
+function svgIcono(k, px){
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="'+(px||64)+'" height="'+(px||64)+'">'+ICONOS[k]+'</svg>';
+}
+function urlIcono(k){ return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svgIcono(k, 128)); }
+
+/* ═══════ los países ═══════ */
+var PAISES = {
+  mx:{
+    nombre:{es:'México', en:'Mexico'}, semilla:1, listo:true,
+    tejido:'../banderas/mx.jpg',
+    /* rosa mexicano, verde, cempasúchil, azul talavera, morado, maíz, turquesa, chile */
+    colores:['#D6167A','#0E8F63','#F08A0B','#1F4E9C','#7B3FA0','#C9A10E','#0F9AA8','#C0392B','#5E8C2B','#B8527A','#3D6FB6'],
+    deportes:[
+      { id:'box', icono:'guante', nombre:{es:'Box', en:'Boxing'},
+        datos:[
+          {es:'México es el segundo país con más campeones mundiales de boxeo, solo detrás de Estados Unidos: <b>más de 150</b>.',
+           en:'Mexico has produced more boxing world champions than any country except the United States: <b>over 150</b>.'},
+          {es:'El Consejo Mundial de Boxeo nació en la Ciudad de México el <b>14 de febrero de 1963</b>, y su sede sigue ahí.',
+           en:'The World Boxing Council was founded in Mexico City on <b>14 February 1963</b>, and it is still based there.'},
+          {es:'El 20 de febrero de 1993, <b>132.274 personas</b> vieron a Julio César Chávez contra Greg Haugen en el Estadio Azteca. Es el récord de público del box.',
+           en:'On 20 February 1993, <b>132,274 people</b> watched Julio César Chávez fight Greg Haugen at the Estadio Azteca. It is boxing’s attendance record.'},
+          {es:'Julio César Chávez llegó a <b>90 peleas sin perder</b> —89 triunfos y un empate— antes de su primera derrota, en 1994.',
+           en:'Julio César Chávez went <b>90 fights unbeaten</b> — 89 wins and a draw — before his first loss, in 1994.'},
+          {es:'En los Juegos de México 1968, Ricardo Delgado y Antonio Roldán ganaron <b>los dos únicos oros olímpicos</b> del box mexicano.',
+           en:'At the 1968 Mexico City Games, Ricardo Delgado and Antonio Roldán won <b>the only two Olympic golds</b> in Mexican boxing.'},
+          {es:'México suma <b>14 medallas olímpicas</b> en boxeo: 2 de oro, 4 de plata y 8 de bronce.',
+           en:'Mexico has <b>14 Olympic boxing medals</b>: 2 gold, 4 silver and 8 bronze.'},
+          {es:'En 2021, Saúl «Canelo» Álvarez fue el <b>primer campeón indiscutido</b> de la historia del peso supermediano.',
+           en:'In 2021, Saúl “Canelo” Álvarez became the <b>first undisputed champion</b> in super middleweight history.'},
+          {es:'Ricardo «Finito» López se retiró <b>invicto</b>: 52 peleas, 51 triunfos y un empate.',
+           en:'Ricardo “Finito” López retired <b>unbeaten</b>: 52 fights, 51 wins and one draw.'}
+        ]},
+      { id:'futbol', icono:'balon', nombre:{es:'Fútbol', en:'Football'},
+        datos:[
+          {es:'México fue el <b>primer país en organizar tres Copas del Mundo</b>: 1970, 1986 y 2026.',
+           en:'Mexico was the <b>first country to host three World Cups</b>: 1970, 1986 and 2026.'},
+          {es:'El Estadio Azteca es el único que <b>inauguró tres Mundiales</b> y el único que vio <b>dos finales</b>: 1970 y 1986.',
+           en:'The Estadio Azteca is the only stadium to <b>open three World Cups</b> and to host <b>two finals</b>: 1970 and 1986.'},
+          {es:'«La ola» no se inventó en México, pero <b>se hizo famosa en todo el mundo</b> en el Mundial de 1986. En inglés le dicen <i>the Mexican wave</i>.',
+           en:'The wave was not invented in Mexico, but it <b>went global</b> at the 1986 World Cup. That is why English calls it the <i>Mexican wave</i>.'},
+          {es:'El «Gol del Siglo» de Maradona contra Inglaterra se hizo en el <b>Estadio Azteca</b>, en los cuartos de final de 1986.',
+           en:'Maradona’s “Goal of the Century” against England was scored at the <b>Estadio Azteca</b>, in the 1986 quarter-finals.'},
+          {es:'En Londres 2012, México le ganó <b>2 a 1 a Brasil</b> en la final, en Wembley, y se llevó el oro olímpico.',
+           en:'At London 2012, Mexico beat <b>Brazil 2–1</b> in the final at Wembley and took Olympic gold.'},
+          {es:'México fue <b>campeón del mundo Sub-17 dos veces</b>: en Perú 2005 y en casa, en 2011.',
+           en:'Mexico has been <b>Under-17 world champion twice</b>: in Peru in 2005 and at home in 2011.'},
+          {es:'En 1999 México ganó la Copa Confederaciones: le ganó <b>4 a 3 a Brasil</b> en la final, en el Azteca.',
+           en:'In 1999 Mexico won the Confederations Cup, beating <b>Brazil 4–3</b> in the final at the Azteca.'}
+        ]},
+      { id:'beisbol', icono:'beisbol', nombre:{es:'Béisbol', en:'Baseball'},
+        datos:[
+          {es:'La Liga Mexicana de Béisbol se fundó en <b>1925</b>. La armaron el periodista Alejandro Aguilar Reyes y el pelotero Ernesto Carmona.',
+           en:'The Mexican Baseball League was founded in <b>1925</b> by journalist Alejandro Aguilar Reyes and ballplayer Ernesto Carmona.'},
+          {es:'En 1981, Fernando Valenzuela ganó el <b>Novato del Año y el Cy Young en la misma temporada</b>. Nadie más lo logró.',
+           en:'In 1981, Fernando Valenzuela won <b>Rookie of the Year and the Cy Young in the same season</b>. Nobody else has done it.'},
+          {es:'Los equipos mexicanos ganaron <b>10 veces la Serie del Caribe</b>. Solo República Dominicana y Puerto Rico tienen más.',
+           en:'Mexican teams have won the <b>Caribbean Series 10 times</b>. Only the Dominican Republic and Puerto Rico have more.'},
+          {es:'En 1957, los «Pequeños Gigantes» de Monterrey fueron el <b>primer equipo de fuera de Estados Unidos</b> en ganar la Serie Mundial de Pequeñas Ligas.',
+           en:'In 1957, Monterrey’s “Little Giants” became the <b>first team from outside the US</b> to win the Little League World Series.'},
+          {es:'En esa final, Ángel Macías lanzó un <b>juego perfecto</b>: nadie le llegó a primera base.',
+           en:'In that final, Ángel Macías pitched a <b>perfect game</b>: not a single batter reached first base.'},
+          {es:'En 1946, el empresario Jorge Pasquel se llevó a <b>22 peloteros de Grandes Ligas</b> a jugar a México, a veces con sueldos más altos que allá.',
+           en:'In 1946, businessman Jorge Pasquel lured <b>22 major leaguers</b> to play in Mexico, sometimes for more money than they made at home.'},
+          {es:'La liga mexicana fue <b>Triple A</b> de las ligas menores desde 1967, y en 2021 volvió a ser independiente.',
+           en:'The Mexican League was a <b>Triple-A</b> minor league from 1967, and went independent again in 2021.'}
+        ]},
+      { id:'ulama', icono:'hule', nombre:{es:'Ulama', en:'Ulama'},
+        datos:[
+          {es:'El ulama es heredero del juego de pelota mesoamericano, que tiene <b>unos 3.400 años</b>.',
+           en:'Ulama descends from the Mesoamerican ballgame, which is <b>about 3,400 years old</b>.'},
+          {es:'La cancha más antigua que se conoce está en <b>Paso de la Amada, Chiapas</b>, y es de alrededor del 1400 antes de Cristo.',
+           en:'The oldest known ballcourt is at <b>Paso de la Amada, Chiapas</b>, dating to around 1400 BC.'},
+          {es:'Ya se encontraron <b>más de 1.300 canchas</b> de juego de pelota en Mesoamérica.',
+           en:'<b>More than 1,300 ballcourts</b> have been found across Mesoamerica.'},
+          {es:'La pelota es de hule macizo y puede pesar <b>hasta 4 kilos</b>. Solo se le pega con la cadera.',
+           en:'The ball is solid rubber and can weigh <b>up to 4 kilos</b>. You may only strike it with your hip.'},
+          {es:'Mezclando el látex del árbol de hule con el jugo de una enredadera, los mesoamericanos hacían <b>hule que rebotaba</b>, muchos siglos antes que en Europa.',
+           en:'By mixing rubber-tree latex with the sap of a vine, Mesoamericans made <b>bouncing rubber</b> centuries before Europe did.'},
+          {es:'En <b>1528</b>, Hernán Cortés mandó jugadores de pelota a España para que jugaran ante el emperador Carlos V.',
+           en:'In <b>1528</b>, Hernán Cortés sent ballplayers to Spain to perform for Emperor Charles V.'},
+          {es:'Hoy se sigue jugando en <b>Sinaloa</b>, en pueblos como El Quelite, cerca de Mazatlán.',
+           en:'It is still played today in <b>Sinaloa</b>, in villages such as El Quelite, near Mazatlán.'},
+          {es:'La cancha se llama <b>taste</b>, y la línea que la parte al medio, <b>analco</b>.',
+           en:'The court is called the <b>taste</b>, and the line splitting it in half is the <b>analco</b>.'}
+        ]},
+      { id:'clavados', icono:'clavado', nombre:{es:'Clavados', en:'Diving'},
+        datos:[
+          {es:'Los clavados son el deporte que <b>más medallas olímpicas</b> le dio a México: 17.',
+           en:'Diving is Mexico’s <b>top Olympic medal sport</b>: 17 medals.'},
+          {es:'Joaquín Capilla es el mexicano con <b>más medallas olímpicas</b>: cuatro, entre 1948 y 1956.',
+           en:'Joaquín Capilla is Mexico’s <b>most decorated Olympian</b>: four medals, between 1948 and 1956.'},
+          {es:'En Melbourne 1956, Capilla ganó en plataforma el <b>único oro olímpico</b> de los clavados mexicanos.',
+           en:'At Melbourne 1956, Capilla won platform gold — <b>the only Olympic gold</b> in Mexican diving.'},
+          {es:'En La Quebrada, Acapulco, los clavadistas se tiran al mar desde <b>más de 30 metros</b> de acantilado.',
+           en:'At La Quebrada in Acapulco, divers leap into the sea from <b>more than 30 metres</b> of cliff.'},
+          {es:'Abajo, el agua tiene entre <b>4,8 y 5,8 metros</b> de hondo según entren las olas. Hay que saltar en el momento justo.',
+           en:'The water below is <b>4.8 to 5.8 metres</b> deep depending on the waves. Timing is everything.'},
+          {es:'Los clavadistas de La Quebrada se organizaron como grupo en <b>1934</b>.',
+           en:'The La Quebrada cliff divers organised as a group in <b>1934</b>.'},
+          {es:'Guinness registró La Quebrada como el lugar de los <b>clavados de cabeza más altos</b> que se hacen con regularidad.',
+           en:'Guinness listed La Quebrada for <b>the highest regularly performed headfirst dives</b> in the world.'}
+        ]}
+    ],
+    pie:{
+      es:'<b>Cinco deportes, una cancha.</b> El box, el fútbol, el béisbol, el ulama y los clavados son cinco maneras de ser campeón en México: con los puños, en el estadio más famoso del mundo, en la liga que se fundó en 1925, con la cadera como hace 3.400 años y desde un acantilado de Acapulco. Cada cancha que marcás se da vuelta con un dato verificado, y los datos rotan: mañana salen otros.',
+      en:'<b>Five sports, one pitch.</b> Boxing, football, baseball, ulama and diving are five ways to be a champion in Mexico: with your fists, in the world’s most famous stadium, in a league founded in 1925, with your hip as people did 3,400 years ago, and off a cliff in Acapulco. Every pitch you mark flips over with a checked fact, and the facts rotate: tomorrow brings new ones.'
+    }
+  },
+  us:{ nombre:{es:'Estados Unidos', en:'United States'}, listo:false },
+  fr:{ nombre:{es:'Francia', en:'France'}, listo:false }
+};
+var CODIGO = (function(){
+  var m = /[?&]pais=([a-z]{2})/.exec(location.search);
+  return (m && PAISES[m[1]] && PAISES[m[1]].listo) ? m[1] : 'mx';
+})();
+var PAIS = PAISES[CODIGO];
+
+/* ═══════ el día: huso del sitio, no el del navegador ═══════ */
+function fechaDeHoy(){ return new Date(Date.now() - 3*3600*1000).toISOString().slice(0,10); }
+function numeroDeDia(){ return Math.floor(Date.parse(fechaDeHoy()+'T00:00:00Z')/86400000); }
+function restoDelDia(){
+  var a = new Date(Date.now() - 3*3600*1000);
+  var min = (23 - a.getUTCHours())*60 + (60 - a.getUTCMinutes());
+  var h = Math.floor(min/60), m = min%60;
+  return (h ? h+' h ' : '') + m + ' min';
+}
+function reloj(s){ s = Math.floor(s); return Math.floor(s/60)+':'+('0'+(s%60)).slice(-2); }
+
+/* ═══════ jugado hoy · récord · resultado del día ═══════ */
+var HOY_CLAVE = 'juegos-jugado-hoy';
+function leer(k){ try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch(e){ return null; } }
+function guardar(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+function marcarJugadoHoy(){
+  var d = leer(HOY_CLAVE) || {};
+  if (d.fecha !== fechaDeHoy() || !Array.isArray(d.juegos)) d = { fecha:fechaDeHoy(), juegos:[] };
+  if (d.juegos.indexOf(JUEGO) === -1) d.juegos.push(JUEGO);
+  guardar(HOY_CLAVE, d);
+}
+function resultadoDeHoy(){
+  var r = leer('cancha-hoy-'+CODIGO);
+  return (r && r.fecha === fechaDeHoy()) ? r : null;
+}
+function mejorTiempo(){ var m = leer('cancha-mejor-'+CODIGO); return (typeof m === 'number') ? m : 0; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   EL MOTOR — portado tal cual de El Corralón
+   1. Se reparte el tablero en rectángulos (backtracking desde la primera
+      casilla libre). 2. Se descartan los repartos feos. 3. Se pone el
+      número en una casilla al azar de cada rectángulo. 4. Tiene que tener
+      una sola solución y salir razonando, sin adivinar.
+   ══════════════════════════════════════════════════════════════════════ */
+function coAzar(semilla){
+  var s = semilla >>> 0;
+  return function(){
+    s = (s + 0x6D2B79F5) >>> 0;
+    var x = s;
+    x = Math.imul(x ^ (x >>> 15), x | 1);
+    x ^= x + Math.imul(x ^ (x >>> 7), x | 61);
+    return ((x ^ (x >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function coReparto(N, az, maxArea){
+  var total = N*N, tomado = new Uint8Array(total), piezas = [];
+  function primeraLibre(){ for (var i=0;i<total;i++) if (!tomado[i]) return i; return -1; }
+  function paso(){
+    var i = primeraLibre();
+    if (i === -1) return true;
+    var r0 = (i/N)|0, c0 = i%N, opciones = [];
+    for (var h=1; r0+h<=N; h++){
+      for (var w=1; c0+w<=N; w++){
+        if (w*h > maxArea) break;
+        var libre = true;
+        for (var r=r0; r<r0+h && libre; r++) for (var c=c0; c<c0+w; c++) if (tomado[r*N+c]) { libre=false; break; }
+        if (!libre) break;
+        opciones.push([w,h]);
+      }
+    }
+    if (!opciones.length) return false;
+    var peso = opciones.map(function(o){ var a=o[0]*o[1]; return a===1?0.10:a===2?0.45:(a<=6?1:0.62); });
+    var orden = [], quedan = opciones.map(function(_,k){ return k; });
+    while (quedan.length){
+      var suma = 0; quedan.forEach(function(k){ suma += peso[k]; });
+      var n = az()*suma, elegido = quedan.length-1;
+      for (var j=0;j<quedan.length;j++){ n -= peso[quedan[j]]; if (n<=0){ elegido=j; break; } }
+      orden.push(quedan[elegido]); quedan.splice(elegido,1);
+    }
+    for (var k=0;k<orden.length;k++){
+      var W = opciones[orden[k]][0], H = opciones[orden[k]][1], rr, cc;
+      for (rr=r0; rr<r0+H; rr++) for (cc=c0; cc<c0+W; cc++) tomado[rr*N+cc] = 1;
+      piezas.push({ r0:r0, c0:c0, w:W, h:H });
+      if (paso()) return true;
+      piezas.pop();
+      for (rr=r0; rr<r0+H; rr++) for (cc=c0; cc<c0+W; cc++) tomado[rr*N+cc] = 0;
+    }
+    return false;
+  }
+  return paso() ? piezas : null;
+}
+
+function coCandidatos(N, pistas, conCoords){
+  var esPista = new Int32Array(N*N).fill(-1);
+  pistas.forEach(function(p,k){ esPista[p.celda] = k; });
+  return pistas.map(function(p,k){
+    var pr = (p.celda/N)|0, pc = p.celda%N, out = [];
+    for (var h=1; h<=p.area; h++){
+      if (p.area % h) continue;
+      var w = p.area/h;
+      if (w > N || h > N) continue;
+      for (var r0=Math.max(0,pr-h+1); r0<=pr && r0+h<=N; r0++){
+        for (var c0=Math.max(0,pc-w+1); c0<=pc && c0+w<=N; c0++){
+          var sirve = true, celdas = [];
+          for (var r=r0; r<r0+h && sirve; r++){
+            for (var c=c0; c<c0+w; c++){
+              var i = r*N+c;
+              if (esPista[i] !== -1 && esPista[i] !== k){ sirve=false; break; }
+              celdas.push(i);
+            }
+          }
+          if (sirve) out.push(conCoords ? { pista:k, r0:r0, c0:c0, w:w, h:h, celdas:celdas } : { pista:k, celdas:celdas });
+        }
+      }
+    }
+    return out;
+  });
+}
+
+function coResolver(N, pistas, limite, presupuesto){
+  var total = N*N;
+  var cands = coCandidatos(N, pistas, true);
+  if (cands.some(function(c){ return c.length === 0; })) return { soluciones:[], cortado:false };
+  var porCelda = [];
+  for (var i=0;i<total;i++) porCelda.push([]);
+  cands.forEach(function(lista){ lista.forEach(function(rect){ rect.celdas.forEach(function(i){ porCelda[i].push(rect); }); }); });
+  var cubierta = new Int32Array(total).fill(-1), usada = new Uint8Array(pistas.length);
+  var puestos = [], sols = [], nodos = 0, cortado = false;
+  function cabe(rect){
+    if (usada[rect.pista]) return false;
+    for (var i=0;i<rect.celdas.length;i++) if (cubierta[rect.celdas[i]] !== -1) return false;
+    return true;
+  }
+  function paso(faltan){
+    if (nodos++ > presupuesto){ cortado = true; return true; }
+    if (faltan === 0){
+      sols.push(puestos.map(function(r){ return { pista:r.pista, r0:r.r0, c0:r.c0, w:r.w, h:r.h }; }));
+      return sols.length >= limite;
+    }
+    var mejor = -1, mejorN = 1e9, opciones = null;
+    for (var i=0;i<total;i++){
+      if (cubierta[i] !== -1) continue;
+      var posibles = porCelda[i].filter(cabe);
+      if (posibles.length < mejorN){ mejorN = posibles.length; mejor = i; opciones = posibles; }
+      if (mejorN === 0) return false;
+      if (mejorN === 1) break;
+    }
+    if (mejor === -1) return false;
+    for (var k=0;k<opciones.length;k++){
+      var rect = opciones[k];
+      if (!cabe(rect)) continue;
+      rect.celdas.forEach(function(i){ cubierta[i] = rect.pista; });
+      usada[rect.pista] = 1; puestos.push(rect);
+      var corta = paso(faltan - rect.celdas.length);
+      puestos.pop(); usada[rect.pista] = 0;
+      rect.celdas.forEach(function(i){ cubierta[i] = -1; });
+      if (corta) return true;
+    }
+    return false;
+  }
+  paso(total);
+  return { soluciones:sols, cortado:cortado, nodos:nodos };
+}
+
+function coPorLogica(N, pistas){
+  var total = N*N, cands = coCandidatos(N, pistas, false);
+  var cubierta = new Int32Array(total).fill(-1), usada = new Uint8Array(pistas.length);
+  var faltan = total, pasos = 0;
+  function cabe(rect){
+    if (usada[rect.pista]) return false;
+    for (var i=0;i<rect.celdas.length;i++) if (cubierta[rect.celdas[i]] !== -1) return false;
+    return true;
+  }
+  while (faltan > 0){
+    var puesto = false;
+    for (var i=0; i<total && !puesto; i++){
+      if (cubierta[i] !== -1) continue;
+      var unico = null, cuantos = 0;
+      for (var k=0; k<cands.length && cuantos<2; k++){
+        var lista = cands[k];
+        for (var j=0;j<lista.length;j++){
+          var rect = lista[j];
+          if (rect.celdas.indexOf(i) === -1 || !cabe(rect)) continue;
+          cuantos++; unico = rect;
+          if (cuantos >= 2) break;
+        }
+      }
+      if (cuantos === 0) return { ok:false, pasos:pasos };
+      if (cuantos === 1){
+        unico.celdas.forEach(function(c){ cubierta[c] = unico.pista; });
+        usada[unico.pista] = 1; faltan -= unico.celdas.length; puesto = true; pasos++;
+      }
+    }
+    if (!puesto) return { ok:false, pasos:pasos };
+  }
+  return { ok:true, pasos:pasos };
+}
+
+function coArmar(N, semilla, o){
+  o = o || {};
+  var maxArea = o.maxArea || 9, minC = o.minCorrales || 8, maxC = o.maxCorrales || 11;
+  var presupuesto = o.presupuesto || 260000;
+  for (var intento=0; intento<90; intento++){
+    var az = coAzar(semilla*6151 + intento*77747);
+    var piezas = coReparto(N, az, maxArea);
+    if (!piezas) continue;
+    if (piezas.length < minC || piezas.length > maxC) continue;
+    if (piezas.filter(function(p){ return p.w*p.h === 1; }).length > 1) continue;
+    if (piezas.filter(function(p){ return p.w*p.h <= 2; }).length > 3) continue;
+    for (var tiro=0; tiro<14; tiro++){
+      var pistas = piezas.map(function(p){
+        var dr = (az()*p.h)|0, dc = (az()*p.w)|0;
+        return { celda:(p.r0+dr)*N + (p.c0+dc), area:p.w*p.h };
+      });
+      var r = coResolver(N, pistas, 2, presupuesto);
+      if (r.cortado) break;
+      if (r.soluciones.length === 1){
+        if (!coPorLogica(N, pistas).ok) continue;
+        return { N:N, pistas:pistas, piezas:piezas, az:az };
+      }
+    }
+  }
+  return null;
+}
+
+/* ═══════ decoración ═══════ */
+function papelPicado(){
+  var cols = ['#D6167A','#F5B000','#0F9AA8','#7B3FA0','#F26B1D','#1FA34A'];
+  var W = 62, out = '';
+  cols.forEach(function(c,i){
+    var x = i*W + 4, w = W - 8;
+    /* la bandera con el borde de abajo en zigzag; los huecos van por evenodd */
+    var borde = 'M'+x+' 8H'+(x+w)+'V58';
+    for (var z=0; z<6; z++){ var zx = x+w - z*(w/6); borde += 'L'+(zx - w/12)+' 64L'+(zx - w/6)+' 58'; }
+    borde += 'Z';
+    var cx = x + w/2, huecos = '';
+    /* flor del centro */
+    for (var p=0;p<6;p++){
+      var a = p*Math.PI/3, px = cx + Math.cos(a)*7.5, py = 34 + Math.sin(a)*7.5;
+      huecos += 'M'+(px+3.2)+' '+py+'a3.2 3.2 0 1 0 -6.4 0a3.2 3.2 0 1 0 6.4 0Z';
+    }
+    huecos += 'M'+(cx+2.6)+' 34a2.6 2.6 0 1 0 -5.2 0a2.6 2.6 0 1 0 5.2 0Z';
+    /* rombos arriba y triangulitos abajo */
+    [x+9, x+w-9].forEach(function(dx){ huecos += 'M'+dx+' 15l3 4-3 4-3-4Z'; });
+    for (var q=0;q<4;q++){ var tx = x+8+q*((w-16)/3); huecos += 'M'+(tx-2.5)+' 50h5l-2.5 4Z'; }
+    out += '<path fill="'+c+'" fill-rule="evenodd" d="'+borde+huecos+'"/>';
+  });
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+(W*6)+'" height="70" viewBox="0 0 '+(W*6)+' 70">'+
+    '<path d="M0 7.5Q'+(W*3)+' 12 '+(W*6)+' 7.5" stroke="#6B5A45" stroke-width="1.6" fill="none"/>'+out+'</svg>';
+  document.getElementById('picado').style.backgroundImage = 'url("data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)+'")';
+}
+function azulejo(){
+  var a = '#1F4E9C', b = '#F2A900';
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60">'+
+    '<rect width="60" height="60" fill="#F6F1E6"/>'+
+    '<path d="M0 0h14a14 14 0 0 1-14 14zM60 0v14a14 14 0 0 1-14-14zM0 60v-14a14 14 0 0 1 14 14zM60 60h-14a14 14 0 0 1 14-14z" fill="'+a+'"/>'+
+    '<path d="M30 12c5 7 5 11 0 18c-5-7-5-11 0-18zM30 48c5-7 5-11 0-18c-5 7-5 11 0 18zM12 30c7-5 11-5 18 0c-7 5-11 5-18 0zM48 30c-7-5-11-5-18 0c7 5 11 5 18 0z" fill="'+a+'"/>'+
+    '<circle cx="30" cy="30" r="4" fill="'+b+'"/>'+
+    '<path d="M30 3l3 3-3 3-3-3zM30 51l3 3-3 3-3-3zM3 30l3-3 3 3-3 3zM51 30l3-3 3 3-3 3z" fill="'+b+'"/>'+
+    '<rect x=".5" y=".5" width="59" height="59" fill="none" stroke="#C9BFAE"/></svg>';
+  var url = 'url("data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)+'")';
+  ['azIz','azDe','cintaAz'].forEach(function(id){ document.getElementById(id).style.backgroundImage = url; });
+}
+function cempasuchil(el){
+  var s = '';
+  var capas = [['#E9690C',25,16],['#F08A0B',20,14],['#F7A81B',14,12],['#FFC53D',8,10]];
+  capas.forEach(function(c){
+    for (var i=0;i<c[2];i++){
+      var a = (i/c[2])*Math.PI*2 + c[1]*0.03;
+      var px = 32 + Math.cos(a)*c[1]*0.62, py = 32 + Math.sin(a)*c[1]*0.62;
+      s += '<ellipse cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" rx="'+(c[1]*0.42).toFixed(1)+'" ry="'+(c[1]*0.26).toFixed(1)+
+           '" transform="rotate('+(a*180/Math.PI).toFixed(0)+' '+px.toFixed(1)+' '+py.toFixed(1)+')" fill="'+c[0]+'" stroke="#9A3D06" stroke-width=".7"/>';
+    }
+  });
+  s += '<circle cx="32" cy="32" r="4.5" fill="#B5500A"/>';
+  el.innerHTML = s;
+}
+
+/* ═══════ el juego ═══════ */
+var N = 7;
+var $ = function(id){ return document.getElementById(id); };
+var cv = $('cv'), g = cv.getContext('2d');
+var IMG = {};
+var P = null, esPista = null, tapa = null, canchas = [], deporteDe = [], datoDe = [];
+var arrastre = null, bajo = -1, movio = false;
+var corriendo = false, ganado = false, arrancoEn = 0, latido = null;
+var errorT = 0, errorRect = null, animando = false;
+var lado = 420, cel = 58, dpr = 1;
+var BORDE = 0;
+
+function precargar(listo){
+  var keys = Object.keys(ICONOS), faltan = keys.length;
+  keys.forEach(function(k){
+    var im = new Image();
+    im.onload = im.onerror = function(){ if (--faltan === 0) listo(); };
+    im.src = urlIcono(k);
+    IMG[k] = im;
+  });
+}
+
+function armar(){
+  var DIA = numeroDeDia();
+  P = coArmar(N, DIA*7 + PAIS.semilla);
+  if (!P) return false;
+  esPista = new Int32Array(N*N).fill(-1);
+  P.pistas.forEach(function(p,k){ esPista[p.celda] = k; });
+  tapa = new Int32Array(N*N).fill(-1);
+  canchas = [];
+
+  /* qué deporte le toca a cada cancha: se barajan los cinco, se reparten
+     de a tandas (así están todos antes de que se repita uno) */
+  var az = coAzar(DIA*2654435761 + PAIS.semilla*97);
+  var D = PAIS.deportes.length, bolsa = [];
+  while (bolsa.length < P.pistas.length){
+    var tanda = PAIS.deportes.map(function(_,i){ return i; });
+    for (var i=tanda.length-1;i>0;i--){ var j=Math.floor(az()*(i+1)); var x=tanda[i]; tanda[i]=tanda[j]; tanda[j]=x; }
+    bolsa = bolsa.concat(tanda);
+  }
+  deporteDe = bolsa.slice(0, P.pistas.length);
+
+  /* qué dato le toca: el n-ésimo de ese deporte hoy, rotando con el día */
+  var cuenta = {};
+  datoDe = deporteDe.map(function(d){
+    var n = PAIS.deportes[d].datos.length;
+    var k = cuenta[d] = (cuenta[d] || 0) + 1;
+    return (DIA*3 + d + (k-1)) % n;
+  });
+  return true;
+}
+
+function medir(){
+  var marco = $('marco');
+  var disp = Math.min((marco.clientWidth || 420) - 30, 470);
+  lado = Math.max(240, Math.floor(disp));
+  dpr = Math.min(2.5, window.devicePixelRatio || 1);
+  cv.width = Math.round(lado*dpr); cv.height = Math.round(lado*dpr);
+  cv.style.width = lado+'px'; cv.style.height = lado+'px';
+  g.setTransform(dpr,0,0,dpr,0,0);
+  cel = lado / N;
+  pintar();
+}
+
+function xy(r,c){ return [BORDE + c*cel, BORDE + r*cel]; }
+function casillaEn(x,y,pegar){
+  var c = Math.floor((x-BORDE)/cel), r = Math.floor((y-BORDE)/cel);
+  if (pegar){ c = Math.max(0,Math.min(N-1,c)); r = Math.max(0,Math.min(N-1,r)); }
+  else if (c<0 || r<0 || c>=N || r>=N) return -1;
+  return r*N + c;
+}
+function color(k){ return PAIS.colores[k % PAIS.colores.length]; }
+
+function rectRedondo(x,y,w,h,r){
+  g.beginPath();
+  g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r);
+  g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath();
+}
+
+function pintar(){
+  if (!P) return;
+  var ahora = performance.now();
+  g.clearRect(0,0,lado,lado);
+  g.fillStyle = '#F4EDDD'; g.fillRect(0,0,lado,lado);
+  /* líneas de cal punteadas, como una cancha de barrio */
+  g.strokeStyle = '#D6C9AE'; g.lineWidth = 1.2; g.setLineDash([4,4]);
+  for (var k=1;k<N;k++){
+    var p = k*cel;
+    g.beginPath(); g.moveTo(p,0); g.lineTo(p,lado); g.stroke();
+    g.beginPath(); g.moveTo(0,p); g.lineTo(lado,p); g.stroke();
+  }
+  g.setLineDash([]);
+
+  animando = false;
+  canchas.forEach(function(c){ dibujarCancha(c, ahora); });
+  if (arrastre) dibujarPreview();
+  if (errorRect && ahora - errorT < 460) dibujarError(ahora);
+  dibujarPistas();
+  if (animando) requestAnimationFrame(pintar);
+}
+
+/* La vuelta de figurita: 1,5 s. Se achica de costado, aparece el dorso
+   (color lleno, el objeto grande y el nombre del deporte), se queda un
+   momento y vuelve a mostrar los objetos. */
+var VUELTA = 1500;
+function dibujarCancha(k, ahora){
+  var col = color(k.pista);
+  var x = xy(k.r0,k.c0)[0], y = xy(k.r0,k.c0)[1], w = k.w*cel, h = k.h*cel;
+  var e = k.t0 ? (ahora - k.t0)/VUELTA : 1, sx = 1, dorso = false;
+  if (e < 1){
+    animando = true;
+    if (e < .16){ sx = 1 - e/.16; }
+    else if (e < .32){ sx = (e-.16)/.16; dorso = true; }
+    else if (e < .76){ sx = 1; dorso = true; }
+    else if (e < .88){ sx = 1 - (e-.76)/.12; dorso = true; }
+    else { sx = (e-.88)/.12; }
+    sx = Math.max(.02, sx);
+  } else if (k.t0) { k.t0 = 0; }
+
+  g.save();
+  var cx = x + w/2;
+  g.translate(cx,0); g.scale(sx,1); g.translate(-cx,0);
+
+  var ic = IMG[PAIS.deportes[deporteDe[k.pista]].icono];
+  if (dorso){
+    g.fillStyle = col; rectRedondo(x+2,y+2,w-4,h-4,5); g.fill();
+    g.strokeStyle = '#141A1F'; g.lineWidth = 2.6; rectRedondo(x+2,y+2,w-4,h-4,5); g.stroke();
+    var tam = Math.min(w,h)*0.62;
+    var nombre = PAIS.deportes[deporteDe[k.pista]].nombre[LANG].toUpperCase();
+    var conTexto = w >= cel*2 && h >= cel*1.6;
+    var dy = conTexto ? -cel*0.16 : 0;
+    if (ic && ic.complete) g.drawImage(ic, cx - tam/2, y + h/2 - tam/2 + dy, tam, tam);
+    if (conTexto){
+      g.fillStyle = '#FFFFFF';
+      var fs = Math.round(cel*0.24);
+      g.font = '800 ' + fs + 'px Archivo, Arial, sans-serif';
+      while (fs > 8 && g.measureText(nombre).width > w - 12){ fs--; g.font = '800 ' + fs + 'px Archivo, Arial, sans-serif'; }
+      g.textAlign = 'center'; g.textBaseline = 'top';
+      g.fillText(nombre, cx, y + h/2 + tam/2 + dy + 2);
+    }
+  } else {
+    g.fillStyle = col; g.globalAlpha = .2; rectRedondo(x+2,y+2,w-4,h-4,5); g.fill(); g.globalAlpha = 1;
+    g.strokeStyle = col; g.lineWidth = 3; rectRedondo(x+2,y+2,w-4,h-4,5); g.stroke();
+    /* un objeto por casilla: se pueden contar */
+    var s = cel*0.66;
+    for (var r=0;r<k.h;r++) for (var c=0;c<k.w;c++){
+      if (ic && ic.complete) g.drawImage(ic, x + c*cel + (cel-s)/2, y + r*cel + (cel-s)/2, s, s);
+    }
+  }
+  g.restore();
+}
+
+function limites(a,b){
+  return { r0:Math.min((a/N)|0,(b/N)|0), r1:Math.max((a/N)|0,(b/N)|0),
+           c0:Math.min(a%N,b%N), c1:Math.max(a%N,b%N) };
+}
+function dibujarPreview(){
+  var L = limites(arrastre.desde, arrastre.hasta);
+  var x = xy(L.r0,L.c0)[0], y = xy(L.r0,L.c0)[1];
+  var w = (L.c1-L.c0+1)*cel, h = (L.r1-L.r0+1)*cel;
+  var val = valida(L.r0, L.c0, L.c1-L.c0+1, L.r1-L.r0+1);
+  var col = val ? color(val.pista) : '#141A1F';
+  g.fillStyle = col; g.globalAlpha = val ? .18 : .07; rectRedondo(x+2,y+2,w-4,h-4,5); g.fill(); g.globalAlpha = 1;
+  g.strokeStyle = col; g.lineWidth = 3; g.setLineDash(val ? [] : [6,5]);
+  rectRedondo(x+2,y+2,w-4,h-4,5); g.stroke(); g.setLineDash([]);
+  var n = (L.c1-L.c0+1)*(L.r1-L.r0+1);
+  g.fillStyle = col; g.font = '800 ' + Math.round(cel*0.3) + 'px Archivo, Arial, sans-serif';
+  g.textAlign = 'right'; g.textBaseline = 'bottom';
+  g.fillText(String(n), x + w - 7, y + h - 4);
+}
+function dibujarError(ahora){
+  var e = errorRect, x = xy(e.r0,e.c0)[0], y = xy(e.r0,e.c0)[1];
+  g.strokeStyle = '#C0392B'; g.lineWidth = 3.5;
+  g.globalAlpha = Math.max(0, 1 - (ahora-errorT)/460);
+  rectRedondo(x+2,y+2,e.w*cel-4,e.h*cel-4,5); g.stroke(); g.globalAlpha = 1;
+  animando = true;
+}
+function dibujarPistas(){
+  P.pistas.forEach(function(p,k){
+    var r = (p.celda/N)|0, c = p.celda%N, x = xy(r,c)[0], y = xy(r,c)[1], col = color(k);
+    if (tapa[p.celda] !== -1){
+      var q = canchas[tapa[p.celda]];
+      if (q.t0) return;                            /* dando vuelta: no se ve la chapita */
+      var ex = xy(q.r0,q.c0)[0], ey = xy(q.r0,q.c0)[1], rr = Math.max(9, cel*0.2);
+      g.fillStyle = col; g.strokeStyle = '#141A1F'; g.lineWidth = 2;
+      g.beginPath(); g.arc(ex+rr+5, ey+rr+5, rr, 0, 7); g.fill(); g.stroke();
+      g.fillStyle = '#FFF8EC'; g.font = '800 ' + Math.round(rr*1.2) + 'px Archivo, Arial, sans-serif';
+      g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.fillText(String(p.area), ex+rr+5, ey+rr+5.5);
+    } else {
+      var R = Math.max(13, cel*0.34);
+      g.fillStyle = '#FFFBF2';
+      g.beginPath(); g.arc(x+cel/2, y+cel/2, R, 0, 7); g.fill();
+      g.strokeStyle = col; g.lineWidth = 3.5;
+      g.beginPath(); g.arc(x+cel/2, y+cel/2, R, 0, 7); g.stroke();
+      g.fillStyle = '#141A1F'; g.font = '800 ' + Math.round(R*1.2) + 'px Archivo, Arial, sans-serif';
+      g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.fillText(String(p.area), x+cel/2, y+cel/2 + R*0.06);
+    }
+  });
+}
+
+/* ── reglas ── */
+function valida(r0,c0,w,h){
+  var cual = -1;
+  for (var r=r0;r<r0+h;r++) for (var c=c0;c<c0+w;c++){
+    var k = esPista[r*N+c];
+    if (k === -1) continue;
+    if (cual !== -1) return null;
+    cual = k;
+  }
+  if (cual === -1 || P.pistas[cual].area !== w*h) return null;
+  return { pista:cual, r0:r0, c0:c0, w:w, h:h };
+}
+function recalcularTapa(){
+  tapa.fill(-1);
+  canchas.forEach(function(k,i){ for (var r=k.r0;r<k.r0+k.h;r++) for (var c=k.c0;c<k.c0+k.w;c++) tapa[r*N+c] = i; });
+}
+function poner(rect){
+  for (var r=rect.r0;r<rect.r0+rect.h;r++) for (var c=rect.c0;c<rect.c0+rect.w;c++){
+    var q = tapa[r*N+c]; if (q !== -1){ canchas.splice(q,1); recalcularTapa(); }
+  }
+  rect.t0 = performance.now();
+  canchas.push(rect); recalcularTapa();
+  if (!corriendo) arrancar();
+  mostrarDato(rect.pista, true);
+  refrescar(); revisar();
+}
+function sacar(i){ canchas.splice(i,1); recalcularTapa(); refrescar(); }
+function refrescar(){ $('fCanchas').textContent = canchas.length + t('de') + P.pistas.length; pintar(); }
+function revisar(){
+  if (canchas.length !== P.pistas.length) return;
+  for (var i=0;i<N*N;i++) if (tapa[i] === -1) return;
+  ganar();
+}
+
+/* ── la cinta del dato ── */
+var ultimoDato = -1;
+function mostrarDato(k, girar){
+  var el = $('dato');
+  if (k < 0){
+    el.innerHTML = '<div><p class="tx">'+t('datoIni')+'</p><div class="iconos">'+
+      PAIS.deportes.map(function(d){ return '<span><img alt="" src="'+urlIcono(d.icono)+'">'+d.nombre[LANG]+'</span>'; }).join('')+
+      '</div></div>';
+    ultimoDato = -1; return;
+  }
+  var d = PAIS.deportes[deporteDe[k]], x = d.datos[datoDe[k]];
+  el.innerHTML = '<span class="ic">'+svgIcono(d.icono,46)+'</span><div><p class="rot">'+d.nombre[LANG]+' · '+PAIS.nombre[LANG]+'</p><p class="tx">'+x[LANG]+'</p></div>';
+  ultimoDato = k;
+  if (girar){ el.classList.remove('gira'); void el.offsetWidth; el.classList.add('gira'); }
+}
+
+/* ── reloj ── */
+function arrancar(){
+  corriendo = true; arrancoEn = performance.now();
+  latido = setInterval(function(){ if (corriendo) $('fTiempo').textContent = reloj((performance.now()-arrancoEn)/1000); }, 250);
+}
+
+function ganar(){
+  ganado = true; corriendo = false; clearInterval(latido);
+  var seg = (performance.now()-arrancoEn)/1000;
+  $('fTiempo').textContent = reloj(seg);
+  var lista = P.pistas.map(function(_,k){ return [deporteDe[k], datoDe[k]]; });
+  if (!PRUEBA){
+    marcarJugadoHoy();
+    guardar('cancha-hoy-'+CODIGO, { fecha:fechaDeHoy(), seg:Math.round(seg), n:P.pistas.length, datos:lista });
+    var m = mejorTiempo();
+    if (!m || seg < m) guardar('cancha-mejor-'+CODIGO, Math.round(seg));
+  }
+  setTimeout(function(){ pantallaFinal({ seg:Math.round(seg), n:P.pistas.length, datos:lista }, false); }, VUELTA + 300);
+}
+
+var ultimoFin = null;
+function pantallaFinal(res, yaJugado){
+  ultimoFin = [res, yaJugado];
+  var seg = res.seg;
+  var msj = seg <= 75 ? t('msjRapido') : seg <= 170 ? t('msjBien') : t('msjLento');
+  /* sin repetir: si dos canchas del mismo deporte trajeran el mismo dato */
+  var vistos = {}, items = [];
+  res.datos.forEach(function(p){
+    var key = p[0]+'-'+p[1]; if (vistos[key]) return; vistos[key] = 1;
+    var d = PAIS.deportes[p[0]]; if (!d || !d.datos[p[1]]) return;
+    items.push('<li><img alt="" src="'+urlIcono(d.icono)+'"><div><small>'+d.nombre[LANG]+'</small>'+d.datos[p[1]][LANG]+'</div></li>');
+  });
+  var m = mejorTiempo();
+  $('fin').innerHTML =
+    '<p class="et">'+(yaJugado ? t('yaJugaste') : t('finEt'))+' · '+PAIS.nombre[LANG]+'</p>'+
+    '<h2>'+t('finTit')+reloj(seg)+'</h2>'+
+    '<p class="msj">'+msj+'</p>'+
+    '<div class="nums"><p class="ficha"><span>'+t('hoy')+'</span><b>'+reloj(seg)+'</b></p>'+
+    '<p class="ficha"><span>'+t('canchas')+'</span><b>'+res.n+'</b></p>'+
+    (m ? '<p class="ficha"><span>'+t('mejor')+'</span><b>'+reloj(m)+'</b></p>' : '')+'</div>'+
+    '<h3>'+t('aprendiste')+'</h3><ul class="aprendido">'+items.join('')+'</ul>'+
+    '<div class="mando"><button type="button" class="btn" id="bPractica">'+t('practica')+'</button>'+
+    '<a class="btn lleno" href="../juegos.html" style="text-align:center;text-decoration:none">'+t('todos')+'</a></div>'+
+    '<p class="manana">'+t('manana')+'<b>'+restoDelDia()+'</b></p>';
+  $('juego').hidden = true; $('fin').hidden = false;
+  $('bPractica').onclick = function(){ PRUEBA = true; nuevaPartida(); };
+  window.scrollTo(0, 0);
+}
+
+/* ── dedo y mouse ── */
+function donde(ev, pegar){
+  var r = cv.getBoundingClientRect();
+  return casillaEn((ev.clientX-r.left)/(r.width||1)*lado, (ev.clientY-r.top)/(r.height||1)*lado, pegar);
+}
+cv.addEventListener('pointerdown', function(ev){
+  if (ganado || !P) return;
+  ev.preventDefault();
+  var c = donde(ev,false); if (c === -1) return;
+  cv.setPointerCapture(ev.pointerId);
+  bajo = c; movio = false; arrastre = { desde:c, hasta:c }; pintar();
+});
+cv.addEventListener('pointermove', function(ev){
+  if (!arrastre || ganado) return;
+  ev.preventDefault();
+  var c = donde(ev,true);
+  if (c !== arrastre.hasta){ arrastre.hasta = c; movio = true; pintar(); }
+});
+cv.addEventListener('pointerup', function(){
+  if (!arrastre || ganado){ arrastre = null; return; }
+  var L = limites(arrastre.desde, arrastre.hasta); arrastre = null;
+  if (!movio){
+    var q = tapa[bajo];
+    if (q !== -1){ sacar(q); return; }
+  }
+  var rect = valida(L.r0, L.c0, L.c1-L.c0+1, L.r1-L.r0+1);
+  if (rect){ poner(rect); return; }
+  errorRect = { r0:L.r0, c0:L.c0, w:L.c1-L.c0+1, h:L.r1-L.r0+1 }; errorT = performance.now();
+  pintar();
+});
+cv.addEventListener('pointercancel', function(){ arrastre = null; pintar(); });
+$('bBorrar').addEventListener('click', function(){ if (!ganado && canchas.length) sacar(canchas.length-1); });
+$('bVaciar').addEventListener('click', function(){ if (!ganado && canchas.length){ canchas = []; recalcularTapa(); refrescar(); } });
+
+/* ── textos ── */
+function textos(){
+  document.documentElement.lang = LANG;
+  $('bEs').setAttribute('aria-pressed', LANG === 'es'); $('bEn').setAttribute('aria-pressed', LANG === 'en');
+  $('mDia').textContent = t('dia');
+  $('mPrueba').innerHTML = PRUEBA ? '<span class="prueba">'+t('prueba')+'</span>' : '';
+  $('sPais').textContent = PAIS.nombre[LANG];
+  $('bajada').textContent = t('bajada');
+  $('lCanchas').textContent = t('canchas'); $('lTiempo').textContent = t('tiempo');
+  $('bBorrar').textContent = t('borrar'); $('bVaciar').textContent = t('vaciar');
+  $('ayuda').textContent = t('ayuda');
+  $('pie').innerHTML = PAIS.pie[LANG];
+  $('lVolver').textContent = t('volver');
+  cv.setAttribute('aria-label', t('lienzo'));
+  $('paises').innerHTML = Object.keys(PAISES).map(function(c){
+    var p = PAISES[c];
+    return '<button type="button" data-p="'+c+'" aria-pressed="'+(c===CODIGO)+'"'+(p.listo?'':' disabled')+'>'+
+      p.nombre[LANG]+(p.listo?'':'<small>· '+t('pronto')+'</small>')+'</button>';
+  }).join('');
+  if (P) $('fCanchas').textContent = canchas.length + t('de') + P.pistas.length;
+  if (!$('fin').hidden){
+    if (ultimoFin) pantallaFinal(ultimoFin[0], ultimoFin[1]);
+  } else if (P) {
+    mostrarDato(ultimoDato, false);
+    pintar();
+  }
+}
+function cambiarIdioma(l){ LANG = l; try { localStorage.setItem('fp-lang', l); } catch(e){} textos(); }
+$('bEs').onclick = function(){ cambiarIdioma('es'); };
+$('bEn').onclick = function(){ cambiarIdioma('en'); };
+$('paises').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if (!b || b.disabled) return;
+  var c = b.getAttribute('data-p'); if (c === CODIGO) return;
+  location.search = '?pais=' + c;
+});
+
+function nuevaPartida(){
+  clearInterval(latido);
+  corriendo = false; ganado = false; arrastre = null;
+  $('fTiempo').textContent = '0:00';
+  $('fin').hidden = true; $('juego').hidden = false;
+  if (!armar()){ $('dato').innerHTML = '<p class="tx">'+t('noSeArmo')+'</p>'; return; }
+  textos();
+  mostrarDato(-1, false);
+  medir();
+}
+
+/* ── arranque ── */
+papelPicado(); azulejo(); cempasuchil($('florA')); cempasuchil($('florB'));
+if (PAIS.tejido) $('marco').style.backgroundImage = 'url("'+PAIS.tejido+'")';
+textos();
+precargar(function(){
+  var hoy = PRUEBA ? null : resultadoDeHoy();
+  if (hoy){ armar(); textos(); pantallaFinal(hoy, true); }
+  else nuevaPartida();
+});
+window.addEventListener('resize', function(){ if (!$('juego').hidden) medir(); });
+
+/* para las pruebas automáticas */
+window.__cancha = {
+  estado:function(){ return { canchas:canchas.length, total:P && P.pistas.length, ganado:ganado }; },
+  resolver:function(){
+    var r = coResolver(N, P.pistas, 1, 2000000);
+    if (!r.soluciones.length) return 'sin solución';
+    r.soluciones[0].forEach(function(x){ poner({ pista:x.pista, r0:x.r0, c0:x.c0, w:x.w, h:x.h }); });
+    return 'listo';
+  },
+  datos:function(){ return deporteDe.map(function(d,k){ return PAIS.deportes[d].id+':'+datoDe[k]; }); }
+};
+</script>
