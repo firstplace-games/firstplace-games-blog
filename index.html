@@ -158,7 +158,7 @@ body.home-map:not(.inwin) #btBuscar{display:inline-flex}
 @media(max-width:860px){
   body.home-map:not(.inwin) #btBuscar{display:none}
   .buscador{top:auto;left:12px;right:12px;transform:none;width:auto;
-    top:calc(56px + var(--reelh) - 6px)}
+    top:calc(56px + var(--cintah) + var(--reelh) - 6px)}
 }
 /* va con #homebar delante: la regla #homebar button, que quedó del viejo
    conmutador Mapa/Rueda, le gana en especificidad y lo hacía visible siempre */
@@ -212,12 +212,34 @@ body.home-map:not(.inwin) #btBuscar{display:inline-flex}
   position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:6px;
   opacity:0;transform:scale(1.06);
 }
-.reel-slide.on{animation:reelIn 2.6s cubic-bezier(.16,.84,.3,1) forwards}
+.reel-slide.on{animation:reelIn 1.25s cubic-bezier(.16,.84,.3,1) forwards}
 @keyframes reelIn{
-  0%{opacity:0;transform:scale(1.09) translateY(14px);filter:blur(10px)}
-  16%{opacity:1;transform:scale(1) translateY(0);filter:blur(0)}
-  78%{opacity:1;transform:scale(1.015)}
-  100%{opacity:0;transform:scale(1.02) translateY(-10px);filter:blur(6px)}
+  0%{opacity:0;transform:scale(1.14) translateY(26px);filter:blur(14px)}
+  22%{opacity:1;transform:scale(1) translateY(0);filter:blur(0)}
+  74%{opacity:1;transform:scale(1.03)}
+  100%{opacity:0;transform:scale(1.06) translateY(-18px);filter:blur(8px)}
+}
+/* Cada pieza entra por su cuenta y escalonada. Con la tarjeta entera moviéndose
+   en bloque se leía como un pase de diapositivas; lo que da sensación de reel
+   es que el emoji rebote antes de que llegue el título. */
+.reel-slide.on .reel-glyph {animation:reelPop .62s cubic-bezier(.2,1.5,.4,1) both}
+.reel-slide.on .reel-kicker{animation:reelUp .50s .05s ease both}
+.reel-slide.on .reel-title {animation:reelUp .55s .12s cubic-bezier(.16,.9,.3,1) both}
+.reel-slide.on .reel-sub   {animation:reelUp .50s .20s ease both}
+@keyframes reelPop{from{opacity:0;transform:scale(.55) rotate(-12deg)}to{opacity:1;transform:none}}
+@keyframes reelUp {from{opacity:0;transform:translateY(22px)}  to{opacity:1;transform:none}}
+/* la tarjeta de cierre no se va: el reel termina y espera el clic */
+.reel-slide.hold{animation:reelHold .8s cubic-bezier(.16,.84,.3,1) forwards}
+@keyframes reelHold{
+  0%{opacity:0;transform:scale(1.10);filter:blur(14px)}
+  100%{opacity:1;transform:none;filter:blur(0)}
+}
+.reel-fin .reel-title{font-size:clamp(34px,7.4vw,92px)}
+.reel-fin .reel-glyph{font-size:clamp(40px,8vw,86px)}
+@media(prefers-reduced-motion:reduce){
+  .reel-slide.on,.reel-slide.hold,
+  .reel-slide.on .reel-glyph,.reel-slide.on .reel-kicker,
+  .reel-slide.on .reel-title,.reel-slide.on .reel-sub{animation-duration:.01ms!important}
 }
 .reel-kicker{font-family:var(--f-mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--muted)}
 .reel-title{
@@ -264,6 +286,23 @@ body.home-map:not(.inwin) #btBuscar{display:inline-flex}
 .tick{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:var(--ink-2);display:flex;gap:8px;align-items:center}
 .tick i{font-style:normal;color:var(--faint)}
 
+/* ══ la cinta del mapa ═══════════════════════════════════════════════════
+   La misma cinta de la portada, ahora también sobre el mapa: va entre la
+   barra de arriba y la ruleta, y el mapa baja solo porque su top es un calc.
+   --cintah es la única medida: quien la cambie mueve las tres cosas a la vez.
+   Con «Todos» pasan los 23 deportes; con un deporte elegido, la cinta se
+   rehace con sus competencias y sus fechas. */
+:root{ --cintah:30px }
+#cinta{
+  position:fixed;top:56px;left:0;right:0;height:var(--cintah);z-index:60;
+  overflow:hidden;background:rgba(6,9,16,.82);
+  border-bottom:1px solid var(--line);
+}
+#cinta .ticker-track{padding:0;height:100%;align-items:center;gap:30px}
+#cinta .tick b{font-weight:600}
+@media(max-width:700px){ :root{ --cintah:26px } #cinta .ticker-track{gap:22px} #cinta .tick{font-size:10px} }
+@media(prefers-reduced-motion:reduce){ .ticker-track{animation:none} }
+
 /* ---------- hub ---------- */
 #hub{
   position:relative;min-height:100vh;padding:112px 16px 16px;
@@ -277,7 +316,7 @@ body.home-map #hub{display:none}
    mapa con los países que tienen ese deporte, y tocarla otra vez entra. */
 :root{ --reelh:158px }
 #homebar{
-  position:fixed;top:56px;left:0;right:0;height:var(--reelh);z-index:60;
+  position:fixed;top:calc(56px + var(--cintah));left:0;right:0;height:var(--reelh);z-index:60;
   background:linear-gradient(180deg,#0A1120,#0C1524 62%,#080D18);
   border-bottom:1px solid var(--line);
   overflow:hidden;cursor:grab;touch-action:pan-y;user-select:none;
@@ -399,7 +438,7 @@ body:not(.home-map) #homebar #wheelFilter.on{display:flex}
 @media(max-width:900px){ #homeCustom span[data-t]{display:none} #homeCustom{padding:8px 11px} }
 
 /* ---------- mapa mundial plano (portada) ---------- */
-#worldmap{position:fixed;top:calc(56px + var(--reelh));left:0;right:0;bottom:0;z-index:5;display:none;overflow:hidden}
+#worldmap{position:fixed;top:calc(56px + var(--cintah) + var(--reelh));left:0;right:0;bottom:0;z-index:5;display:none;overflow:hidden}
 body.home-map #worldmap{display:block}
 #wmCv{display:block;width:100%;height:100%;cursor:grab;touch-action:none}
 #wmCv.drag{cursor:grabbing}
@@ -2258,8 +2297,6 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:none;border-ra
       <button class="tool-btn" id="probBtn" title="Probabilidad y estadística"><span>📊</span></button>
     </div>
     <button class="nav-btn" id="todayBtn"><span class="blink"></span><span data-t="todayBtn">Hoy</span></button>
-    <a class="nav-btn" id="blogBtn" href="blog/" style="text-decoration:none">Blog</a>
-    <style>@media (max-width:860px){.topbar #blogBtn{display:none}}</style>
     </div>
 
     <button id="btBuscar" aria-expanded="false" aria-controls="buscador">
@@ -2268,6 +2305,8 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:none;border-ra
 
     <div class="der">
     <button id="homeCustom"><span class="em">⚙️</span><span data-t="ctaCustom">Personalizado</span></button>
+    <a class="nav-btn" id="blogBtn" href="blog/" style="text-decoration:none">Blog</a>
+    <style>@media (max-width:860px){.topbar #blogBtn{display:none}}</style>
     <button class="acct-btn out" id="acctBtn"><span class="nm">Entrar</span></button>
     <div class="lang" role="group" aria-label="Language">
       <button id="langEs" aria-pressed="true">ES</button>
@@ -2285,6 +2324,8 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:none;border-ra
       <div class="pista"><span data-t="bscMover">↑↓ moverse</span><span data-t="bscElegir">↵ elegir</span><span id="bscN"></span></div>
     </div>
   </header>
+
+  <div id="cinta" aria-label="Competencias"><div class="ticker-track" id="cintaTrack"></div></div>
 
   <!-- ============ PORTADA: MAPA / RUEDA ============ -->
   <div id="homebar" aria-label="Deportes">
@@ -4332,37 +4373,93 @@ const REEL = [
   {em:"🏄",c:"#7B5BE6",k:{es:"Ventana abierta",en:"Window open"},t:{es:"BIG WAVE",en:"BIG WAVE"},s:{es:"Marejada de 8 m prevista",en:"8 m swell forecast"}}
 ];
 let reelTimer=null, reelIdx=0;
+/* ── el reel de entrada ────────────────────────────────────────
+   Las mismas competencias reales de antes, pero a 1,25 s por tarjeta en vez
+   de 2,6: seis tarjetas son 7,5 s, que es lo que dura un reel y no una sala
+   de espera. Termina en una tarjeta de cierre que NO se va — el reel para
+   ahí y espera el clic, en vez de repetirse para siempre.
+   La barra de abajo es una sola pasada de punta a punta: sirve de reloj, y
+   al llenarse dice «esto se terminó» sin una palabra. */
+const REEL_MS = 1250;
+const REEL_FIN = {
+  em:"\uD83C\uDF0D", c:"#FF7C3F",
+  k:{es:"23 deportes · 177 países", en:"23 sports · 177 countries"},
+  t:{es:"TODO EL DEPORTE", en:"ALL GAME SPORTS"},
+  s:{es:"en un solo lugar", en:"in one place"}
+};
 function buildReel(){
   const host=$("#reel"); host.innerHTML="";
-  REEL.forEach((r,i)=>{
-    const d=el("div","reel-slide");
+  const tarjeta=(r,cls)=>{
+    const d=el("div","reel-slide"+(cls?" "+cls:""));
     d.innerHTML=`<span class="reel-glyph" style="color:${r.c}">${r.em}</span>
       <span class="reel-kicker">${L(r.k)}</span>
       <span class="reel-title" style="color:${r.c}">${L(r.t)}</span>
       <span class="reel-sub">${L(r.s)}</span>`;
     host.appendChild(d);
-  });
+  };
+  REEL.forEach(r=>tarjeta(r));
+  tarjeta(REEL_FIN, "reel-fin");
+
   if($("#intro").style.display==="none") return;
-  clearInterval(reelTimer);
+  clearInterval(reelTimer); reelTimer=null;
+  const bar=$("#reelBar"), wash=$("#reelWash");
+  const total=REEL.length*REEL_MS;
+  bar.style.transition="none"; bar.style.width="0";
+  requestAnimationFrame(()=>{
+    bar.style.transition=`width ${total}ms linear`; bar.style.width="100%";
+  });
   const step=()=>{
     const slides=$$(".reel-slide");
-    slides.forEach(s=>s.classList.remove("on"));
-    const cur=slides[reelIdx%slides.length]; if(!cur) return;
-    cur.classList.add("on");
-    $("#reelWash").style.background=`radial-gradient(900px 620px at 50% 45%, ${REEL[reelIdx%REEL.length].c}33, transparent 65%)`;
-    $("#reelBar").style.transition="none"; $("#reelBar").style.width="0";
-    requestAnimationFrame(()=>{$("#reelBar").style.transition="width 2.6s linear";$("#reelBar").style.width="100%"});
+    slides.forEach(s=>s.classList.remove("on","hold"));
+    const cur=slides[reelIdx]; if(!cur){ clearInterval(reelTimer); reelTimer=null; return; }
+    const ultima = (reelIdx === slides.length-1);
+    const col = ultima ? REEL_FIN.c : REEL[reelIdx].c;
+    cur.classList.add(ultima ? "hold" : "on");
+    wash.style.background=`radial-gradient(900px 620px at 50% 45%, ${col}33, transparent 65%)`;
+    if(ultima){ clearInterval(reelTimer); reelTimer=null; return; }
     reelIdx++;
   };
-  reelIdx=0; step(); reelTimer=setInterval(step,2600);
+  reelIdx=0; step(); reelTimer=setInterval(step, REEL_MS);
 }
-function buildTicker(){
+/* ── la cinta ──────────────────────────────────────────────────
+   Dos cintas con el mismo motor: la de la portada, que siempre pasa los 23
+   deportes, y la del mapa, que sigue a la ruleta.
+   El bucle sin costura es duplicar la lista y correrla -50%. Eso funciona
+   mientras la lista sea más ancha que la pantalla; con un deporte de tres
+   competencias queda un hueco enorme dando vueltas, así que primero se
+   repite hasta tener bulto y recién después se duplica. La velocidad se
+   ata al largo para que siempre pase a la misma velocidad aparente. */
+function tickTodos(){
   const items=[];
   SECTIONS.forEach(sec=>sec.sports.forEach(sp=>{
     const d=SPORTDATA[sp.id];
     items.push(`<span class="tick">${sp.em} <b>${L(sp.n)}</b> <i>·</i> ${L(d.comps[0].n)}</span>`);
   }));
-  $("#tickerTrack").innerHTML=items.join("")+items.join("");
+  return items;
+}
+function tickDeporte(id){
+  const d=SPORTDATA[id], sp=SPORTBY[id];
+  if(!d || !d.comps || !d.comps.length) return [];
+  const ms=I18N[STATE.lang].monthsShort, em=sp?sp.em:"";
+  return d.comps.map(c=>{
+    const f=`${c.from[1]} ${ms[c.from[0]]}`, t=`${c.to[1]} ${ms[c.to[0]]}`;
+    const cuando = (f===t) ? f : `${f} — ${t}`;
+    return `<span class="tick">${em} <b style="color:${c.c||(sp&&sp.hue)||"inherit"}">${L(c.n)}</b> <i>·</i> ${cuando}</span>`;
+  });
+}
+function pintarCinta(host, id){
+  if(!host) return;
+  let items = id ? tickDeporte(id) : [];
+  if(!items.length) items = tickTodos();
+  if(!items.length) return;
+  const base=items.slice();
+  while(items.length<14) items=items.concat(base);
+  host.innerHTML=items.join("")+items.join("");
+  host.style.animationDuration=Math.max(26,Math.round(items.length*2.4))+"s";
+}
+function buildTicker(){
+  pintarCinta($("#tickerTrack"), null);
+  pintarCinta($("#cintaTrack"), (typeof WM!=="undefined" && WM) ? WM.sport : null);
 }
 function closeIntro(){ clearInterval(reelTimer); reelTimer=null; $("#intro").style.display="none"; }
 /* the FirstPlace.games mark returns to the opening reel from anywhere */
@@ -11690,6 +11787,7 @@ function rlSync(forzar){
   if(it === rlUltimo && !forzar) return;
   rlUltimo = it;
   WM.sport = it.todos ? null : it.id;
+  pintarCinta($("#cintaTrack"), WM.sport);
   const rb = $("#homebar"); if(rb) rb.classList.toggle("elegido", !it.todos);
   const sw = $("#wmSwatch"), tx = $("#wmSwatchTxt");
   if(sw && tx){
