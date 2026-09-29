@@ -1,0 +1,32 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FirstPlace.games//Agenda//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:FirstPlace.games · MMA
+X-WR-CALDESC:Agenda de FirstPlace.games — https://firstplace.games
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:mma-ufcnum-20261114@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261114
+DTEND;VALUE=DATE:20261115
+SUMMARY:🥋 UFC 334 · UFC · Eventos numerados
+LOCATION:Madison Square Garden\, Nueva York
+DESCRIPTION:Agenda de FirstPlace.games — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:mma-ufcnum-20261212@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261212
+DTEND;VALUE=DATE:20261213
+SUMMARY:🥋 UFC 335 · UFC · Eventos numerados
+LOCATION:T-Mobile Arena\, Las Vegas
+DESCRIPTION:Agenda de FirstPlace.games — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR

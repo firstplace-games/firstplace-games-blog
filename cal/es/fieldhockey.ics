@@ -1,0 +1,30 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FirstPlace.games//Agenda//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:FirstPlace.games · Hockey hierba
+X-WR-CALDESC:Agenda de FirstPlace.games — https://firstplace.games
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:fieldhockey-pro-ini-20261208@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261208
+DTEND;VALUE=DATE:20261209
+SUMMARY:🏑 Arranca FIH Pro League
+DESCRIPTION:Agenda de FirstPlace.games — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:fieldhockey-pro-fin-20270628@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20270628
+DTEND;VALUE=DATE:20270629
+SUMMARY:🏑 Termina FIH Pro League
+DESCRIPTION:Agenda de FirstPlace.games — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR

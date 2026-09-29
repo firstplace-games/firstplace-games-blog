@@ -1,0 +1,52 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FirstPlace.games//Agenda//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:FirstPlace.games · Cricket
+X-WR-CALDESC:Agenda de FirstPlace.games — https://firstplace.games
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:cricket-ashes-ini-20261121@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261122
+SUMMARY:🏏 Arranca The Ashes
+LOCATION:Australia
+DESCRIPTION:Agenda de FirstPlace.games — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:cricket-bbl-ini-20261212@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261212
+DTEND;VALUE=DATE:20261213
+SUMMARY:🏏 Arranca Big Bash League
+DESCRIPTION:Agenda de FirstPlace.games — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:cricket-ashes-fin-20270108@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20270108
+DTEND;VALUE=DATE:20270109
+SUMMARY:🏏 Termina The Ashes
+LOCATION:Australia
+DESCRIPTION:Agenda de FirstPlace.games — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:cricket-bbl-fin-20270126@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20270126
+DTEND;VALUE=DATE:20270127
+SUMMARY:🏏 Termina Big Bash League
+DESCRIPTION:Agenda de FirstPlace.games — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR

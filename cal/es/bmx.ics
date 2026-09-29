@@ -1,0 +1,32 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FirstPlace.games//Agenda//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:FirstPlace.games · BMX
+X-WR-CALDESC:Agenda de FirstPlace.games — https://firstplace.games
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:bmx-freestyle-20261015@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261015
+DTEND;VALUE=DATE:20261016
+SUMMARY:🚵 Shanghái · Freestyle Park · Copa del Mundo
+LOCATION:China
+DESCRIPTION:Agenda de FirstPlace.games — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:bmx-freestyle-20261126@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261126
+DTEND;VALUE=DATE:20261127
+SUMMARY:🚵 Ronda final · Freestyle Park · Copa del Mundo
+LOCATION:Sede por confirmar
+DESCRIPTION:Agenda de FirstPlace.games — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR

@@ -1,0 +1,73 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FirstPlace.games//Agenda//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:FirstPlace.games · Pádel
+X-WR-CALDESC:Agenda de FirstPlace.games — https://firstplace.games
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:padel-milano-20261012@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261012
+DTEND;VALUE=DATE:20261019
+SUMMARY:P1 Milán
+DESCRIPTION:Agenda de FirstPlace.games — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:padel-kuwait-20261026@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261026
+DTEND;VALUE=DATE:20261101
+SUMMARY:P1 Kuwait
+DESCRIPTION:Agenda de FirstPlace.games — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:padel-fipwc-20261102@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261102
+DTEND;VALUE=DATE:20261108
+SUMMARY:Copa del Mundo FIP
+LOCATION:Doha\, Catar
+DESCRIPTION:Agenda de FirstPlace.games — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:padel-dubai-20261109@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261109
+DTEND;VALUE=DATE:20261116
+SUMMARY:P1 Dubái
+DESCRIPTION:Agenda de FirstPlace.games — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:padel-mexico-20261123@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261123
+DTEND;VALUE=DATE:20261130
+SUMMARY:Major de México
+LOCATION:Acapulco
+DESCRIPTION:Agenda de FirstPlace.games — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:padel-finals-20261207@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261207
+DTEND;VALUE=DATE:20261214
+SUMMARY:Tour Finals de Barcelona
+LOCATION:Barcelona
+DESCRIPTION:Agenda de FirstPlace.games — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR
