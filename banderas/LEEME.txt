@@ -1,0 +1,40 @@
+BANDERAS — qué va en esta carpeta
+=================================
+
+Un archivo por país, con el código ISO de dos letras EN MINÚSCULA:
+
+    fr.jpg    mx.jpg    us.jpg    it.jpg    br.jpg ...
+
+El sitio busca primero .jpg, después .png y, al final, .svg.
+
+FORMATO
+-------
+JPG cuadrado de 900x900, calidad ~84. Pesa unos 240 KB.
+El cuadrado importa: el código estira la imagen a la caja del país, así que
+una imagen 2:3 deforma el patrón (los círculos salen óvalos).
+Ojo con el peso: en PNG las mismas imágenes pesaban 3,5 MB cada una. Con 177
+países eso son 600 MB de sitio contra 40 MB en JPG.
+
+El SVG también sirve, pero solo si trae width y height propios; muchos packs
+de banderas traen solo viewBox y el navegador los dibuja mal dentro del mapa.
+
+Si un país no tiene su archivo NO PASA NADA: se pinta con el color de
+siempre. Se pueden ir agregando de a poco.
+
+QUÉ IMAGEN VA
+-------------
+No es la bandera oficial: es un TEJIDO inspirado en los colores y la
+artesanía del país, con motivos deportivos adentro. El porqué, la fórmula y
+los prompts están en el proyecto, en `firstplace-imagenes-de-pais.md`.
+Dos razones: la imagen se recorta a la silueta del país, así que cualquier
+foto o escena se ve como un recorte al azar; y varios países regulan la
+reproducción de su bandera.
+
+Hechas hasta ahora: mx, jp, fr, us.
+
+Los 46 países que hoy tienen datos son los que más se ven. Sus códigos:
+ar au at be br ca cl cn co hr cz dk eg fr de gr hu in id ie il it jp ke
+mx ma nl nz no pe pl pt qa sa za kr es se ch tr ae gb us uy
+
+Cómo comprobar que quedaron bien, antes de subir:
+    ls banderas/*.jpg | wc -l
