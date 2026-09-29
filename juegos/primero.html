@@ -45,6 +45,9 @@ header{padding:26px 0 18px;text-align:center}
 .marca{display:inline-flex;align-items:baseline;gap:3px;font-weight:800;font-stretch:118%;
   font-size:19px;letter-spacing:-.02em;text-transform:uppercase}
 .marca i{font-style:normal;color:var(--punto)}
+.idioma{float:right;display:inline-flex;border:1.5px solid var(--tinta);border-radius:3px;overflow:hidden}
+.idioma button{font-family:var(--fm);font-size:11px;font-weight:600;letter-spacing:.08em;padding:4px 9px;border:0;background:transparent;color:var(--tinta);cursor:pointer}
+.idioma button[aria-pressed="true"]{background:var(--tinta);color:var(--hueso)}
 h1{margin:14px 0 0;font-size:clamp(34px,10vw,46px);font-weight:800;font-stretch:120%;
   letter-spacing:-.03em;text-transform:uppercase;line-height:1}
 .hoy{margin:9px 0 0;font-family:var(--fm);font-size:11px;letter-spacing:.14em;
@@ -122,14 +125,15 @@ input[type=text]::placeholder{color:var(--apagado);font-weight:400}
 <div class="wrap">
   <header>
     <div class="marca">FirstPlace<i>.</i>games</div>
+    <div class="idioma" role="group" aria-label="Language"><button type="button" data-l="es">ES</button><button type="button" data-l="en">EN</button></div>
     <h1>Primero</h1>
     <p class="hoy" id="hoy">—</p>
     <p class="consigna" id="consigna">—</p>
   </header>
 
   <div class="cabec">
-    <span>País</span><span>1.<sup>er</sup> título</span><span>Último</span>
-    <span>Títulos</span><span>Años arriba</span>
+    <span id="hPais">País</span><span id="hPrimero">1.<sup>er</sup> título</span><span id="hUltimo">Último</span>
+    <span id="hTitulos">Títulos</span><span id="hAnios">Años arriba</span>
   </div>
   <div class="tablero" id="tablero"></div>
 
@@ -141,7 +145,7 @@ input[type=text]::placeholder{color:var(--apagado);font-weight:400}
 
   <div id="finalSlot"></div>
 
-  <p class="nota">
+  <p class="nota" id="nota">
     <b>Prototipo.</b> Los campeones de esta versión están cargados a mano, solo para poder jugar:
     seis deportes. Cada pozo pasa el validador de las cinco columnas antes de entrar,
     y el deporte del día rota entre todos. <b>Una partida por día</b>, guardada en este navegador.
@@ -349,6 +353,59 @@ const DEPORTES = [
 ];
 
 
+
+/* ───────── idioma · PRIMERO_I18N ─────────
+   Inglés por defecto (el público es anglosajón); español si el navegador está en
+   español o si la persona lo eligió (fp-lang, compartido con todo el sitio).
+   Los nombres internos (claves del estado guardado) no cambian: sólo cambia lo que se muestra. */
+var LANG = (function(){try{var g=localStorage.getItem('fp-lang');if(g==='es'||g==='en')return g;}catch(e){}
+  var n=((navigator.languages&&navigator.languages[0])||navigator.language||'').toLowerCase(); return n.indexOf('es')===0?'es':'en';})();
+var DEP_EN = {
+  futbol:{nombre:'Football', comp:'the European Cup', pista:'Clubs that won the European Cup and the Champions League, from 1956 to today. For those who don’t know: Real Madrid won the first five in a row, and nobody won three in a row again until Ajax in 1971.'},
+  basquet:{nombre:'Basketball', comp:'the NBA', pista:'NBA champions. Careful: here the country really is a clue.'},
+  tenis:{nombre:'Tennis', comp:'the Grand Slams', pista:'Grand Slam singles titles. Men’s and women’s draws together.'},
+  f1:{nombre:'Formula 1', comp:'the drivers’ championship', pista:'World drivers’ champions. The number is how many titles they won.'},
+  ciclismo:{nombre:'Cycling', comp:'the Tour de France', pista:'Tour de France winners. The number is how many Tours they won.'},
+  golf:{nombre:'Golf', comp:'the majors', pista:'Major winners. Almost all of them are from the same country here: the clue is in the years.'}
+};
+var NAME_EN = {'Bayern de Múnich':'Bayern Munich','Estrella Roja':'Red Star Belgrade','Hamburgo':'Hamburg','Marsella':'Marseille','Steaua de Bucarest':'Steaua Bucharest'};
+var COUNTRY_EN = {'Alemania':['Germany','GER'],'Argentina':['Argentina','ARG'],'Australia':['Australia','AUS'],'Austria':['Austria','AUT'],
+  'Brasil':['Brazil','BRA'],'Bélgica':['Belgium','BEL'],'Canadá':['Canada','CAN'],'Checoslovaquia':['Czechoslovakia','TCH'],'Colombia':['Colombia','COL'],
+  'Escocia':['Scotland','SCO'],'España':['Spain','ESP'],'Estados Unidos':['United States','USA'],'Finlandia':['Finland','FIN'],'Fiyi':['Fiji','FIJ'],
+  'Francia':['France','FRA'],'Grecia':['Greece','GRE'],'Inglaterra':['England','ENG'],'Irlanda':['Ireland','IRL'],'Italia':['Italy','ITA'],
+  'Japón':['Japan','JPN'],'Luxemburgo':['Luxembourg','LUX'],'Nigeria':['Nigeria','NGR'],'Países Bajos':['Netherlands','NED'],'Portugal':['Portugal','POR'],
+  'Reino Unido':['United Kingdom','GBR'],'Rumania':['Romania','ROU'],'Rusia':['Russia','RUS'],'Serbia':['Serbia','SRB'],'Sudáfrica':['South Africa','RSA'],
+  'Suecia':['Sweden','SWE'],'Suiza':['Switzerland','SUI'],'Yugoslavia':['Yugoslavia','YUG'],'México':['Mexico','MEX'],'Jamaica':['Jamaica','JAM'],
+  'Kenia':['Kenya','KEN'],'Etiopía':['Ethiopia','ETH'],'Uruguay':['Uruguay','URU'],'India':['India','IND'],'Noruega':['Norway','NOR'],'Dinamarca':['Denmark','DEN']};
+var TX = {
+  es:{hPais:'País', hPrimero:'1.<sup>er</sup> título', hUltimo:'Último', hTitulos:'Títulos', hAnios:'Años arriba',
+      ph:'Escribí un nombre…', restan:function(n){return n+(n===1?' intento':' intentos');},
+      hoy:function(d,r){return 'Deporte de hoy: <b>'+d+'</b><br>Se renueva a medianoche · faltan '+r;},
+      consigna:function(p){return '<strong>Alguien que fue primero.</strong> '+p+' Seis intentos; cada uno te devuelve cinco pistas.';},
+      jugado:'✓ Jugado hoy', gano:function(n){return 'Lo encontraste en '+n+(n===1?' intento':' intentos');}, perdio:'Se te escapó',
+      titulos:function(n){return n===1?'título':'títulos';}, en:'en', copiar:'Copiar resultado', copiado:'Copiado', manana:'Volvé mañana',
+      nota:'<b>Prototipo.</b> Los campeones de esta versión están cargados a mano, solo para poder jugar: seis deportes. Cada pozo pasa el validador de las cinco columnas antes de entrar, y el deporte del día rota entre todos. <b>Una partida por día</b>, guardada en este navegador.'},
+  en:{hPais:'Country', hPrimero:'1st title', hUltimo:'Last', hTitulos:'Titles', hAnios:'Years at top',
+      ph:'Type a name…', restan:function(n){return n+(n===1?' guess left':' guesses left');},
+      hoy:function(d,r){return 'Today’s sport: <b>'+d+'</b><br>New game at midnight · '+r+' to go';},
+      consigna:function(p){return '<strong>Someone who came first.</strong> '+p+' Six guesses; each one gives you five clues.';},
+      jugado:'✓ Played today', gano:function(n){return 'You found it in '+n+(n===1?' guess':' guesses');}, perdio:'It got away',
+      titulos:function(n){return n===1?'title':'titles';}, en:'in', copiar:'Copy result', copiado:'Copied', manana:'Come back tomorrow',
+      nota:'<b>Prototype.</b> The champions in this version were loaded by hand so the game can be played: six sports. Each pool passes the five-column check before going in, and the sport of the day rotates through all of them. <b>One game per day</b>, saved in this browser.'}
+};
+function tx(){ return TX[LANG]; }
+function nm(n){ return LANG==='en' && NAME_EN[n] ? NAME_EN[n] : n; }
+function code(c){ return LANG==='en' && COUNTRY_EN[c] ? COUNTRY_EN[c][1] : (PAIS[c]||c); }
+function cty(c){ return LANG==='en' && COUNTRY_EN[c] ? COUNTRY_EN[c][0] : c; }
+function dep(k){ return LANG==='en' && DEP_EN[DEP.id] ? DEP_EN[DEP.id][k] : DEP[k]; }
+function pintarEstatico(){
+  var t=tx(); document.documentElement.lang=LANG;
+  ['hPais','hPrimero','hUltimo','hTitulos','hAnios'].forEach(function(k){ var e=document.getElementById(k); if(e) e.innerHTML=t[k]; });
+  document.getElementById('campo').placeholder=t.ph;
+  document.getElementById('nota').innerHTML=t.nota;
+  Array.prototype.forEach.call(document.querySelectorAll('.idioma button'),function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-l')===LANG?'true':'false'); });
+}
+
 /* ───────── día ───────── */
 var URLQ = new URLSearchParams(location.search);
 var PRUEBA = URLQ.get('prueba') === '1';
@@ -445,9 +502,9 @@ function flecha(dif){ return dif > 0 ? '↑' : dif < 0 ? '↓' : ''; }
 function comparar(f){
   var out = [];
   // 1 · país
-  out.push(f[1] === OBJ[1] ? {t:PAIS[f[1]]||f[1], e:'ok'}
-        : CONTINENTE[f[1]] === CONTINENTE[OBJ[1]] ? {t:PAIS[f[1]]||f[1], e:'cerca'}
-        : {t:PAIS[f[1]]||f[1], e:''});
+  out.push(f[1] === OBJ[1] ? {t:code(f[1]), e:'ok'}
+        : CONTINENTE[f[1]] === CONTINENTE[OBJ[1]] ? {t:code(f[1]), e:'cerca'}
+        : {t:code(f[1]), e:''});
   // 2 · primer título   3 · último título
   [2,3].forEach(function(i){
     var dA = decada(f[i]), dB = decada(OBJ[i]), dif = OBJ[i]-f[i];
@@ -477,7 +534,7 @@ function pintarTablero(){
       continue;
     }
     var cs = comparar(it);
-    h += '<div class="fila"><p class="quien">' + it[0] + '</p><div class="celdas">';
+    h += '<div class="fila"><p class="quien">' + nm(it[0]) + '</p><div class="celdas">';
     cs.forEach(function(c){
       h += '<div class="c ' + c.e + '">' + c.t
          + (c.fl ? '<span class="fl">' + c.fl + '</span>' : '') + '</div>';
@@ -496,7 +553,7 @@ function grilla(){
 }
 function textoCompartible(){
   var n = numeroDeDia() - 20300;                 // numeración interna del juego
-  return 'Primero · #' + n + ' · ' + DEP.nombre + '\n'
+  return 'Primero · #' + n + ' · ' + dep('nombre') + '\n'
        + (S.fin === 'gano' ? S.intentos.length + '/' + MAX : 'X/' + MAX) + '\n'
        + grilla() + '\nfirstplace.games';
 }
@@ -506,32 +563,29 @@ function pintarFinal(){
   var gano = S.fin === 'gano';
   $('zona').style.display = 'none';
   $('finalSlot').innerHTML =
-    '<div class="final"><div class="sello">✓ Jugado hoy</div>'
-    + '<p class="veredicto">' + (gano ? 'Lo encontraste en ' + S.intentos.length
-        + (S.intentos.length === 1 ? ' intento' : ' intentos') : 'Se te escapó') + '</p>'
-    + '<h2>' + OBJ[0] + '</h2>'
-    + '<p class="quien2">' + OBJ[1] + ' · ' + OBJ[4] + ' '
-        + (OBJ[4] === 1 ? 'título' : 'títulos') + ' en ' + DEP.comp
+    '<div class="final"><div class="sello">' + tx().jugado + '</div>'
+    + '<p class="veredicto">' + (gano ? tx().gano(S.intentos.length) : tx().perdio) + '</p>'
+    + '<h2>' + nm(OBJ[0]) + '</h2>'
+    + '<p class="quien2">' + cty(OBJ[1]) + ' · ' + OBJ[4] + ' '
+        + tx().titulos(OBJ[4]) + ' ' + tx().en + ' ' + dep('comp')
         + ' · ' + OBJ[2] + '–' + OBJ[3] + '</p>'
     + '<div class="gr">' + grilla() + '</div>'
     + '<div class="acciones">'
-    + '<button class="btn" id="bCopiar">Copiar resultado</button>'
-    + '<button class="btn sec" id="bManana">Volvé mañana</button>'
+    + '<button class="btn" id="bCopiar">' + tx().copiar + '</button>'
+    + '<button class="btn sec" id="bManana">' + tx().manana + '</button>'
     + '</div></div>';
   $('bCopiar').onclick = function(){
     var t = textoCompartible();
     if (navigator.clipboard) navigator.clipboard.writeText(t).catch(function(){});
-    $('bCopiar').textContent = 'Copiado';
-    setTimeout(function(){ $('bCopiar').textContent = 'Copiar resultado'; }, 1600);
+    $('bCopiar').textContent = tx().copiado;
+    setTimeout(function(){ $('bCopiar').textContent = tx().copiar; }, 1600);
   };
   $('bManana').disabled = true;
 }
 
 function pintarCabecera(){
-  $('hoy').innerHTML = 'Deporte de hoy: <b>' + DEP.nombre + '</b><br>Se renueva a medianoche · faltan '
-                     + restoDelDia();
-  $('consigna').innerHTML = '<strong>Alguien que fue primero.</strong> ' + DEP.pista
-    + ' Seis intentos; cada uno te devuelve cinco pistas.';
+  $('hoy').innerHTML = tx().hoy(dep('nombre'), restoDelDia());
+  $('consigna').innerHTML = tx().consigna(dep('pista'));
 }
 
 /* ───────── jugar ───────── */
@@ -546,7 +600,7 @@ function intentar(nombre){
   else if (S.intentos.length >= MAX) S.fin = 'perdio';
   guardarEstado();
   pintarTablero();
-  $('restan').textContent = (MAX - S.intentos.length) + ' intentos';
+  $('restan').textContent = tx().restan(MAX - S.intentos.length);
   pintarFinal();
 }
 
@@ -559,13 +613,13 @@ function pintarSug(){
   var q = normal($('campo').value.trim());
   var usados = S.intentos.map(function(x){ return x[0]; });
   visibles = !q ? [] : POOL.filter(function(f){
-    return usados.indexOf(f[0]) === -1 && normal(f[0]).indexOf(q) !== -1;
+    return usados.indexOf(f[0]) === -1 && (normal(f[0]).indexOf(q) !== -1 || normal(nm(f[0])).indexOf(q) !== -1);
   }).slice(0, 6);
   sel = visibles.length ? 0 : -1;
   if (!visibles.length){ $('sug').hidden = true; $('sug').innerHTML = ''; return; }
   $('sug').innerHTML = visibles.map(function(f, i){
     return '<button type="button" data-n="' + f[0] + '"' + (i === sel ? ' class="sel"' : '') + '>'
-         + f[0] + '</button>';
+         + nm(f[0]) + '</button>';
   }).join('');
   $('sug').hidden = false;
 }
@@ -602,11 +656,19 @@ document.addEventListener('click', function(e){
     });
     S.fin = g.fin || null;
   }
+  pintarEstatico();
   pintarCabecera();
   pintarTablero();
-  $('restan').textContent = (MAX - S.intentos.length) + ' intentos';
+  $('restan').textContent = tx().restan(MAX - S.intentos.length);
   pintarFinal();
   setInterval(pintarCabecera, 60000);
+  Array.prototype.forEach.call(document.querySelectorAll('.idioma button'), function(b){
+    b.addEventListener('click', function(){
+      LANG = b.getAttribute('data-l'); try{ localStorage.setItem('fp-lang', LANG); }catch(e){}
+      pintarEstatico(); pintarCabecera(); pintarTablero(); pintarSug();
+      $('restan').textContent = tx().restan(MAX - S.intentos.length); pintarFinal();
+    });
+  });
 
   if (PRUEBA){
     var d = document.createElement('div');
