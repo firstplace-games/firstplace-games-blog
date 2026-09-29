@@ -539,6 +539,27 @@ body.home-map #worldmap{display:block}
 .rtile.vivo::after{content:"";position:absolute;left:6px;top:6px;width:6px;height:6px;border-radius:50%;
   background:#F0705E;box-shadow:0 0 7px #F0705E}
 
+/* ── el globo «Visitar» ────────────────────────────────────────────────
+   Aparece sobre el país elegido y lleva a su página. Va DENTRO del mapa y
+   no fijo a la pantalla, para que los dos paneles lo tapen si el país
+   queda debajo de uno: no tiene sentido ofrecer un botón que flota sobre
+   la lista de juegos. */
+#wmVis{position:absolute;z-index:6;display:none;transform:translate(-50%,-100%);
+  background:rgba(8,13,24,.96);border:1px solid var(--line-strong);border-radius:13px;
+  padding:11px 13px 12px;box-shadow:0 16px 40px rgba(0,0,0,.6);text-align:center;
+  animation:wmVisIn .22s cubic-bezier(.2,.8,.3,1)}
+@keyframes wmVisIn{from{opacity:0;transform:translate(-50%,-92%)}
+  to{opacity:1;transform:translate(-50%,-100%)}}
+#wmVis:after{content:"";position:absolute;left:50%;bottom:-6px;width:10px;height:10px;
+  margin-left:-5px;transform:rotate(45deg);background:rgba(8,13,24,.96);
+  border-right:1px solid var(--line-strong);border-bottom:1px solid var(--line-strong)}
+#wmVis b{display:block;font-family:var(--f-display);font-size:14.5px;font-weight:700;
+  white-space:nowrap;margin-bottom:9px}
+#wmVis a{display:block;text-decoration:none;font-family:var(--f-display);font-weight:700;
+  font-size:13.5px;color:#07101E;background:#31E0A0;border-radius:100px;padding:7px 20px;
+  transition:filter .15s}
+#wmVis a:hover{filter:brightness(1.08)}
+
 /* el globo de la cuadrícula va fijo: dentro del panel lo cortaría el borde */
 #wmPop{position:fixed;z-index:90;display:none;max-width:250px;pointer-events:none;
   background:rgba(8,13,24,.97);border:1px solid var(--line-strong);border-radius:12px;
@@ -2289,6 +2310,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:none;border-ra
       <button id="wmFit" aria-label="⤢" style="font-size:12px">⤢</button>
     </div>
     <div id="wmTip"></div>
+    <div id="wmVis"><b></b><a href="#" target="_blank" rel="noopener">Visitar</a></div>
 
     <aside class="wm-panel" id="wmL">
       <div class="wm-tabs"><button data-wmtab="games" aria-pressed="true" data-t="wmGames">Juegos</button><button data-wmtab="sports" aria-pressed="false" data-t="wmSports">Deportes</button></div>
@@ -10889,6 +10911,7 @@ function wmDibujar(){
     });
   }
 
+  const vEl=$("#wmVis"), visOn = !!(vEl && vEl.style.display==="block");
   if(WM.k>4.2){
     g.font="600 11.5px "+getComputedStyle(document.body).fontFamily;
     g.textAlign="center"; g.textBaseline="middle";
@@ -10901,6 +10924,7 @@ function wmDibujar(){
         if(q[0]<40||q[0]>w-40||q[1]<20||q[1]>h-20) return;
         const tw=g.measureText(p.nombre).width;
         if(!p.micro && (p.bb[2]-p.bb[0])*WM.k<tw*0.9) return;
+        if(p===WM.sel && visOn) return;   /* el globo ya dice el nombre */
         const bx={x:q[0]-tw/2-3,y:q[1]-8,w:tw+6,h:16};
         if(cajas.some(c=>!(bx.x>c.x+c.w||bx.x+bx.w<c.x||bx.y>c.y+c.h||bx.y+bx.h<c.y))) return;
         cajas.push(bx);
@@ -10912,6 +10936,29 @@ function wmDibujar(){
       });
     });
   }
+  wmVisPos();
+}
+
+/* El globo sigue al país en cada cuadro. Hacerlo acá y no una sola vez al
+   elegir es lo que hace que no se despegue mientras corre el zoom, ni
+   cuando se arrastra o se acerca el mapa después. */
+function wmVisPos(){
+  const v=$("#wmVis");
+  if(!v || v.style.display==="none" || !WM.sel) return;
+  const p=WM.sel;
+  const q=wmPx(p.micro?p.lon:p.anchor[0], p.micro?p.lat:p.anchor[1]);
+  const w=wmW(), h=wmH();
+  const aL=$("#wmL").offsetWidth||0, aR=$("#wmR").offsetWidth||0;
+  const abierto=$("#wmL").classList.contains("on");
+  const x0=(abierto?aL:0)+14, x1=w-(abierto?aR:0)-14;
+  const bw=v.offsetWidth||150, bh=v.offsetHeight||70;
+  let x=Math.max(x0+bw/2, Math.min(x1-bw/2, q[0]));
+  let y=q[1]-16;
+  if(y-bh<10) y=Math.min(h-12, q[1]+bh+30);   /* si arriba no entra, va abajo */
+  const a=v.querySelector("a"), t=STATE.lang==="en"?"Visit":"Visitar";
+  if(a.textContent!==t) a.textContent=t;      /* por si se cambia el idioma */
+  v.style.left=x.toFixed(0)+"px";
+  v.style.top=y.toFixed(0)+"px";
 }
 function wmBuscar(x,y){
   const gg=wmGeo(x,y), lon=wmEnv(gg[0]), lat=gg[1];
@@ -10944,6 +10991,12 @@ function wmPropio(j, p){
 }
 /* Stack: el juego de bloques con piel de cada país (29/09) */
 const STACK_PAIS={MX:"juegos/stack-mexico.html",US:"juegos/stack-usa.html",FR:"juegos/stack-france.html"};
+/* Los países que ya tienen su página propia. El globo «Visitar» sale sólo
+   para éstos: ofrecer el botón de un país sin ficha sería prometer algo que
+   no existe. Se agrega el código y aparece solo. */
+const PAIS_FICHA={MX:1,IT:1,JP:1};
+/* Página fija en inglés, para Google (la genera build-country.js). En inglés el globo lleva ahí; en español, a pais/?iso=. */
+const COUNTRY_URL={MX:"country/mexico/"};
 function wmJuegos(p){
   const con=[], sin=[];
   GAMES.forEach(j=>(wmPropio(j,p)?con:sin).push(j));
@@ -11381,7 +11434,15 @@ function wmElegir(p){
   $("#worldmap").classList.toggle("sel", !!p);
   const L1=$("#wmL"), R1=$("#wmR");
   const pp=$("#wmPop"); if(pp) pp.style.display="none";
+  const vis=$("#wmVis");
+  if(vis) vis.style.display="none";
   if(!p){ L1.classList.remove("on"); R1.classList.remove("on"); return; }
+  if(vis && PAIS_FICHA[p.iso]){
+    vis.querySelector("b").textContent=p.nombre;
+    vis.querySelector("a").href=(STATE.lang!=="es" && COUNTRY_URL[p.iso]) ? COUNTRY_URL[p.iso] : "pais/?iso="+p.iso.toLowerCase();
+    vis.querySelector("a").textContent = STATE.lang==="en" ? "Visit" : "Visitar";
+    vis.style.display="block";
+  }
   wmCentrar(p);
 
   /* izquierda: juegos, los propios del país arriba */
