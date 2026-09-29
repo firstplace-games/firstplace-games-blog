@@ -3,21 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<!-- seo:v1 -->
-<title>Stack México — Falling Blocks Game with Mexican Sports | FirstPlace.games</title>
-<meta name="description" content="A falling-blocks puzzle where every piece is a Mexican sport: boxing, lucha libre, ulama, charrería, frontón and more. Clear lines, learn facts.">
-<link rel="canonical" href="https://firstplace.games/juegos/stack-mexico">
-<meta property="og:site_name" content="FirstPlace.games">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Stack México — Falling Blocks Game with Mexican Sports | FirstPlace.games">
-<meta property="og:description" content="A falling-blocks puzzle where every piece is a Mexican sport: boxing, lucha libre, ulama, charrería, frontón and more. Clear lines, learn facts.">
-<meta property="og:url" content="https://firstplace.games/juegos/stack-mexico">
-<meta property="og:image" content="https://firstplace.games/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="FirstPlace.games — every sport, one place">
-<meta name="twitter:card" content="summary_large_image">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "VideoGame", "name": "Stack México", "description": "A falling-blocks puzzle where every piece is a Mexican sport: boxing, lucha libre, ulama, charrería, frontón and more. Clear lines, learn facts.", "url": "https://firstplace.games/juegos/stack-mexico", "genre": "Puzzle", "gamePlatform": "Web browser", "applicationCategory": "Game", "operatingSystem": "Any", "inLanguage": "en", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "publisher": {"@type": "Organization", "name": "FirstPlace.games", "url": "https://firstplace.games/"}}</script>
+<title>Stack México</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@500;600&display=swap">
@@ -53,7 +39,7 @@ button:focus-visible{outline:3px solid var(--cempa);outline-offset:2px}
 .tbtn{background:transparent;color:var(--papel);border:2px solid var(--papel);padding:4px 10px;font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
 .tbtn:hover{background:var(--papel);color:var(--tinta)}
 
-.stage{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,190px) auto minmax(0,190px);grid-template-areas:"left board right";justify-content:center;align-items:start;gap:22px;padding-block:6px 16px}
+.stage{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,190px) auto minmax(0,236px);grid-template-areas:"left board right";justify-content:center;align-items:start;gap:22px;padding-block:6px 16px}
 .left{grid-area:left;display:flex;flex-direction:column;gap:16px}
 .right{grid-area:right;display:flex;flex-direction:column;gap:16px}
 .boardcol{grid-area:board;position:relative}
@@ -84,11 +70,12 @@ button:focus-visible{outline:3px solid var(--cempa);outline-offset:2px}
 .stat.wide span{font-size:32px}
 .stat:last-child,.stat.nb{border-bottom:0}
 
-.lineup{padding:18px 10px 8px}
-.lineup ul{list-style:none;margin:0;padding:0;display:grid;gap:5px}
-.lineup li{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;line-height:1.15}
-.lineup li canvas{flex:none;border:2px solid var(--tinta)}
-.lineup li em{display:block;font-style:normal;font-family:var(--mono);font-weight:500;font-size:9.5px;color:var(--pizarra);letter-spacing:.04em}
+.lineup{padding:20px 12px 10px}
+.lineup ul{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.lineup li{display:flex;align-items:center;gap:10px;font-size:15.5px;font-weight:800;line-height:1.1}
+.lineup li canvas{flex:none;border:2.5px solid var(--tinta)}
+.lineup li em{display:block;font-style:normal;font-family:var(--mono);font-weight:500;font-size:11.5px;color:var(--pizarra);letter-spacing:.03em;margin-top:2px}
+@media (max-height:820px){.lineup li{font-size:14px}.lineup ul{gap:5px}.hint{display:none}}
 .hint{font-family:var(--mono);font-size:10.5px;line-height:1.6;color:var(--papel);opacity:.7}
 .hint kbd{font-family:var(--mono);border:1px solid rgba(243,233,210,.5);padding:0 4px;border-radius:2px}
 
@@ -136,11 +123,12 @@ button:focus-visible{outline:3px solid var(--cempa);outline-offset:2px}
 #cover.hasimg .cov{gap:18px}
 #cover.hasimg .cov-lineup canvas{box-shadow:3px 3px 0 rgba(0,0,0,.6)}
 #cover.hasimg .cov-lineup span,#cover.hasimg .cov-help,#cover.hasimg .tag{text-shadow:0 1px 3px rgba(0,0,0,.8)}
-.cov{width:min(760px,100%);margin:auto;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding-block:86px 18px}
+.cov{width:min(980px,100%);margin:auto;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding-block:86px 18px}
 .cov-top{display:flex;align-items:flex-end;justify-content:center;gap:10px}
-.letters{display:flex;gap:6px}
-.letters b{display:grid;place-items:center;width:clamp(48px,11vw,86px);height:clamp(48px,11vw,86px);border:3px solid var(--tinta);box-shadow:5px 5px 0 rgba(0,0,0,.5);font-weight:900;font-stretch:125%;font-size:clamp(30px,7.5vw,60px);color:#fff;text-shadow:2px 2px 0 var(--tinta);transform:rotate(var(--r,0deg))}
-.mx{display:inline-block;background:var(--papel);color:var(--tinta);border:3px solid var(--tinta);font-weight:900;font-stretch:125%;font-size:clamp(22px,5vw,34px);letter-spacing:.3em;padding:4px 10px 4px calc(10px + .3em);transform:rotate(-2deg);box-shadow:5px 5px 0 var(--rosa)}
+.letters{display:flex;gap:5px}
+#skullL,#skullR{width:78px!important;height:85px!important}
+.letters b{display:grid;place-items:center;width:clamp(32px,6vw,50px);height:clamp(32px,6vw,50px);border:2.5px solid var(--tinta);box-shadow:3px 3px 0 rgba(0,0,0,.5);font-weight:900;font-stretch:125%;font-size:clamp(19px,4vw,32px);color:#fff;text-shadow:1.5px 1.5px 0 var(--tinta);transform:rotate(var(--r,0deg))}
+.mx{display:inline-block;max-width:100%;box-sizing:border-box;background:var(--papel);color:var(--tinta);border:4px solid var(--tinta);font-weight:900;font-stretch:125%;font-size:clamp(34px,10vw,84px);line-height:1.05;letter-spacing:.05em;padding:.12em .3em .12em calc(.3em + .08em);transform:rotate(-2deg);box-shadow:8px 8px 0 var(--rosa);}
 .tag{font-size:clamp(15px,2.4vw,19px);font-weight:600;max-width:34ch;line-height:1.35;text-wrap:balance;margin:4px 0 0}
 .cov-lineup{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;width:100%;max-width:640px}
 .cov-lineup div{display:flex;flex-direction:column;align-items:center;gap:5px;font-family:var(--mono);font-size:10.5px;line-height:1.2;letter-spacing:.02em}
@@ -272,7 +260,7 @@ a.brand:hover{color:var(--cempa)}
     </div>
     <div class="cov-best" id="covBest"></div>
     <div class="cov-help" id="covHelp"></div>
-    <nav class="cov-nav" aria-label="Countries"><div><a href="stack-mexico.html" aria-current="page">México</a> <span>·</span> <a href="stack-usa.html">USA</a> <span>·</span> <a href="stack-france.html">France</a></div><div><a href="../juegos.html">← All games</a> <span>·</span> <a href="../index.html">Map</a></div></nav>
+    <nav class="cov-nav" aria-label="Countries"><div><a href="stack-mexico.html" aria-current="page">México</a> <span>·</span> <a href="stack-usa.html">USA</a> <span>·</span> <a href="stack-france.html">France</a> <span>·</span> <a href="stack-india.html">India</a> <span>·</span> <a href="stack-china.html">China</a> <span>·</span> <a href="stack-brasil.html">Brasil</a> <span>·</span> <a href="stack-indonesia.html">Indonesia</a> <span>·</span> <a href="stack-nigeria.html">Nigeria</a> <span>·</span> <a href="stack-pakistan.html">Pakistan</a> <span>·</span> <a href="stack-bangladesh.html">Bangladesh</a> <span>·</span> <a href="stack-russia.html">Russia</a></div><div><a href="../juegos.html">← All games</a> <span>·</span> <a href="../index.html">Map</a></div></nav>
   </div>
 </div>
 
@@ -769,7 +757,7 @@ function layout(){
   const pic=document.getElementById('picado').offsetHeight, top=document.querySelector('.top').offsetHeight;
   const touch=mobile?76:0, hud=mobile?84:0, frame=mobile?(6+3)*2+4:(10+3)*2+26;
   const availH=window.innerHeight-pic-top-touch-hud-frame-12;
-  const sideW=window.innerWidth>980?190*2+44:(mobile?0:160*2+32);
+  const sideW=window.innerWidth>980?190+236+44:(mobile?0:160*2+32);
   const availW=Math.min(window.innerWidth-32-sideW-frame, 600);
   CELL=Math.max(12,Math.min(36,Math.floor(Math.min(availH/ROWS, availW/COLS))));
   bc.width=CELL*COLS*DPR; bc.height=CELL*ROWS*DPR;
@@ -918,6 +906,9 @@ function buildCover(){
   const L=$('letters'); L.innerHTML='';
   const word='STACK', cols=THEME.letters, rs=[-4,3,-2,4,-3];
   [...word].forEach((ch,i)=>{ const b=document.createElement('b'); b.textContent=ch; b.style.background=cols[i]; b.style.setProperty('--r',rs[i]+'deg'); L.appendChild(b); });
+  const MX=document.querySelector('.mx'); MX.style.fontSize='';
+  requestAnimationFrame(()=>{ const lim=document.querySelector('.cov').clientWidth-12; let fs=parseFloat(getComputedStyle(MX).fontSize), k=0;
+    while(MX.getBoundingClientRect().width>lim && fs>18 && k++<40){ fs-=2; MX.style.fontSize=fs+'px'; } });
   const CL=$('covLineup'); CL.innerHTML='';
   const sz=window.innerWidth<=760?54:62;
   ORDER.forEach(t=>{ const d=document.createElement('div'); d.appendChild(iconCanvas(t,sz)); const s=document.createElement('span'); s.textContent=THEME.pieces[t].sport; d.appendChild(s); CL.appendChild(d); });
@@ -928,7 +919,7 @@ function buildCover(){
 }
 function buildLineup(){
   const ul=$('lineup'); ul.innerHTML='';
-  ORDER.forEach(t=>{ const li=document.createElement('li'); li.appendChild(iconCanvas(t,26)); const d=document.createElement('div'); d.innerHTML=THEME.pieces[t].sport+'<em>'+THEME.pieces[t].thing+'</em>'; li.appendChild(d); ul.appendChild(li); });
+  ORDER.forEach(t=>{ const li=document.createElement('li'); li.appendChild(iconCanvas(t,window.innerHeight<820?34:42)); const d=document.createElement('div'); d.innerHTML=THEME.pieces[t].sport+'<em>'+THEME.pieces[t].thing+'</em>'; li.appendChild(d); ul.appendChild(li); });
 }
 function statics(){
   const prep=(id,w,h)=>{ const k=$(id), c=k.getContext('2d'); k.width=w*DPR; k.height=h*DPR; k.style.width=w+'px'; k.style.height=h+'px'; c.scale(DPR,DPR); return c; };
@@ -939,7 +930,7 @@ function statics(){
 }
 
 let rt=null, lastW=0, lastH=0;
-function relayout(){ const w=window.innerWidth, h=window.innerHeight; if(w===lastW&&h===lastH) return; lastW=w; lastH=h; sizeFx(); buildPicado(); layout(); if(state==='menu') buildCover(); }
+function relayout(){ const w=window.innerWidth, h=window.innerHeight; if(w===lastW&&h===lastH) return; lastW=w; lastH=h; sizeFx(); buildPicado(); layout(); buildLineup(); if(state==='menu') buildCover(); }
 window.addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(relayout,120); });
 if(window.ResizeObserver) new ResizeObserver(()=>{ clearTimeout(rt); rt=setTimeout(relayout,60); }).observe(document.documentElement);
 window.addEventListener('load',relayout);
