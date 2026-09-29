@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>México — FirstPlace.games</title>
+<meta name="description" content="Qué se juega en México, qué mira su gente y qué juegos propios tiene. Datos públicos y las fuentes a la vista.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fondo:#0B1220; --panel:#0C1524F2; --linea:#2B3B56;
+  --tinta:#E8EFF8; --tinta2:#9DB0C9; --tinta3:#6B7F9B;
+  --verde:#31E0A0;
+  --c1:#3E8FD6; --c2:#C9831F; --c3:#1DA97C; --c4:#8271D2; --c5:#BF5286;
+  --r:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--fondo);color:var(--tinta);
+  font-family:Archivo,system-ui,-apple-system,Segoe UI,sans-serif;-webkit-font-smoothing:antialiased}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+a{color:inherit}
+
+/* ── el tejido del país, de fondo en toda la página ───────────────────
+   El mismo que rellena el país en el mapa. Va fijo —no acompaña al
+   scroll— y muy bajo de intensidad: tiene que reconocerse de reojo y
+   no pelearse ni un poco con el texto que va encima. */
+/* UNA sola copia del tejido, no un mosaico. Repetida, la bandera de México
+   salia verde-blanco-rojo-verde-blanco-rojo y dejaba de ser una bandera.
+   Con «cover» entra una copia entera de lado a lado: tres franjas y listo. */
+#tela{position:fixed;inset:0;z-index:0;background-size:cover;
+  background-position:center;background-repeat:no-repeat;
+  opacity:.92;filter:brightness(.52) saturate(1.34) contrast(1.04);pointer-events:none}
+#velo{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(180deg,#0B12203D 0%,#0B12201F 240px,#0B12202E 100%)}
+#capa{position:relative;z-index:1}
+
+.env{max-width:1400px;margin:0 auto;padding:0 22px}
+
+/* ── cabecera ─────────────────────────────────────────────────────────── */
+.cab{border-bottom:1px solid var(--linea);padding:30px 0 26px;position:relative;
+  background:linear-gradient(180deg,#0B1220D9 0%,#0B1220B0 55%,#0B122066 100%)}
+.volver{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font-size:12.5px;
+  letter-spacing:.08em;color:var(--tinta2);border:1px solid var(--linea);
+  background:#0B1220AA;border-radius:999px;padding:7px 13px}
+.volver:hover{color:var(--tinta);border-color:#33466A}
+h1{font-size:clamp(34px,5.4vw,56px);line-height:1.02;margin:15px 0 6px;letter-spacing:-.022em;font-weight:800;
+  text-shadow:0 2px 22px #0B1220}
+.bajada{margin:0;max-width:60ch;color:#B7C6DC;font-size:16.5px;line-height:1.55;
+  text-shadow:0 1px 14px #0B1220}
+
+/* ── las tres columnas ────────────────────────────────────────────────── */
+.tres{display:grid;grid-template-columns:288px minmax(0,1fr) 288px;gap:24px;
+  align-items:start;padding:30px 0 70px}
+.lado{position:sticky;top:20px;display:grid;gap:12px}
+/* Estos dos rotulos son el unico texto que queda apoyado directo sobre el
+   tejido, sin tarjeta debajo: necesitan su propia sombra o se pierden sobre
+   una banda clara. */
+h2{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#A9BBD3;
+  margin:0 0 4px;font-weight:600;font-family:"IBM Plex Mono",monospace;
+  text-shadow:0 1px 12px #0B1220,0 0 4px #0B1220,0 0 14px #0B1220}
+.caja{background:var(--panel);border:1px solid var(--linea);border-radius:var(--r);
+  padding:18px;backdrop-filter:blur(7px)}
+
+/* ── derecha: los números, en vertical ────────────────────────────────── */
+.cifra{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  padding:13px 0;border-bottom:1px solid var(--linea)}
+.cifra:last-child{border-bottom:0;padding-bottom:0}
+.cifra:first-of-type{padding-top:0}
+.cifra b{font-size:23px;letter-spacing:-.02em;white-space:nowrap}
+.cifra span{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--tinta3);
+  font-family:"IBM Plex Mono",monospace;text-align:right;line-height:1.35}
+
+/* ── izquierda: los juegos ────────────────────────────────────────────── */
+.juego{display:block;text-decoration:none;border:1px solid var(--linea);border-radius:11px;
+  padding:14px 15px;background:#0C1524E8;transition:border-color .15s,transform .15s}
+.juego:hover{border-color:#33466A;transform:translateX(2px)}
+.juego .em{font-size:21px;line-height:1}
+.juego h3{margin:8px 0 4px;font-size:15.5px;font-weight:700}
+.juego p{margin:0;font-size:13px;line-height:1.5;color:var(--tinta2)}
+.sello{display:inline-block;margin-top:9px;font-size:10px;letter-spacing:.09em;
+  text-transform:uppercase;font-family:"IBM Plex Mono",monospace;
+  border:1px solid var(--linea);border-radius:999px;padding:3px 8px;color:var(--tinta3)}
+.sello.propio{color:#0B1220;background:var(--verde);border-color:var(--verde);font-weight:600}
+
+/* ── centro: el deporte ───────────────────────────────────────────────── */
+.centro{display:grid;gap:22px}
+.centro .caja{padding:22px}
+h3.tit{margin:0 0 16px;font-size:21px;font-weight:700;letter-spacing:-.01em}
+.graf{display:grid;gap:13px}
+.fila{display:grid;grid-template-columns:128px 1fr 52px;align-items:center;gap:12px;
+  border-radius:8px;padding:3px 4px;margin:-3px -4px}
+.fila:hover{background:#1B283E}
+.fila .nom{font-size:14.5px;display:flex;align-items:center;gap:9px;min-width:0}
+.fila .nom i{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
+.fila .nom u{text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pista{position:relative;height:15px;background:#18253C;border-radius:4px;overflow:hidden}
+.barra{position:absolute;left:0;top:0;bottom:0;border-radius:4px;
+  transition:width .6s cubic-bezier(.2,.7,.3,1)}
+.val{text-align:right;font-size:14px;font-variant-numeric:tabular-nums}
+.nota{margin:16px 0 0;font-size:13px;line-height:1.6;color:var(--tinta3);max-width:64ch}
+.nota b{color:var(--tinta2);font-weight:600}
+.verlos{margin-top:14px;background:none;border:1px solid var(--linea);color:var(--tinta2);
+  border-radius:999px;padding:6px 13px;font-size:12px;cursor:pointer;font-family:inherit}
+.verlos:hover{color:var(--tinta);border-color:#33466A}
+table{width:100%;border-collapse:collapse;margin-top:14px;font-size:13.5px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--linea)}
+th{color:var(--tinta3);font-weight:600;font-size:11.5px;letter-spacing:.08em;
+  text-transform:uppercase;font-family:"IBM Plex Mono",monospace}
+td:last-child,th:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:7px;background:#0C1524E8;
+  border:1px solid var(--linea);border-radius:999px;padding:7px 13px;font-size:13.5px}
+.chip small{color:var(--tinta3);font-family:"IBM Plex Mono",monospace;font-size:11.5px}
+.saber{margin:0;padding:0;list-style:none;display:grid;gap:13px}
+.saber li{display:grid;grid-template-columns:118px 1fr;gap:14px;align-items:baseline;
+  font-size:14.5px;line-height:1.55;color:var(--tinta2)}
+.saber b{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--tinta3);
+  font-family:"IBM Plex Mono",monospace;line-height:1.5}
+@media (max-width:560px){ .saber li{grid-template-columns:1fr;gap:3px} }
+.fuentes{font-size:11.5px;line-height:1.75;color:var(--tinta3)}
+.fuentes a{color:var(--tinta2)}
+.fuentes b{display:block;margin-bottom:6px;color:var(--tinta3);
+  font-family:"IBM Plex Mono",monospace;letter-spacing:.1em;text-transform:uppercase;font-size:10.5px}
+
+/* ── angosto: se apila, y el deporte va primero ───────────────────────── */
+/* En un teléfono la pantalla es mucho más alta que ancha, y «cover» recorta
+   los costados: de México quedaría sólo la franja crema del medio. Ahí el
+   ancho manda y el alto se completa hacia abajo. */
+@media (max-aspect-ratio:3/4){
+  #tela{background-size:100% auto;background-repeat:repeat-y;background-position:center top}
+}
+@media (max-width:1080px){
+  .tres{grid-template-columns:1fr;gap:26px}
+  .lado{position:static}
+  .centro{order:1} .izq{order:2} .der{order:3}
+}
+@media (max-width:560px){
+  .fila{grid-template-columns:102px 1fr 46px;gap:9px}
+  .fila .nom{font-size:13.5px}
+}
+</style>
+</head>
+<body>
+
+<div id="tela"></div>
+<div id="velo"></div>
+
+<div id="capa">
+  <header class="cab">
+    <div class="env">
+      <a class="volver mono" href="../index.html">← MAPA</a>
+      <h1 id="nombre">México</h1>
+      <p class="bajada" id="bajada"></p>
+    </div>
+  </header>
+
+  <div class="env tres">
+
+    <aside class="lado izq">
+      <h2>Juegos de este país</h2>
+      <div id="juegos" style="display:grid;gap:12px"></div>
+    </aside>
+
+    <main class="centro">
+      <div class="caja">
+        <h3 class="tit">Qué mira su gente</h3>
+        <div class="graf" id="graf"></div>
+        <p class="nota" id="notaGraf"></p>
+        <button class="verlos mono" id="btTabla">Ver los números en tabla</button>
+        <div id="tabla" hidden></div>
+      </div>
+
+      <div class="caja">
+        <h3 class="tit">Deportes con sede acá</h3>
+        <div class="chips" id="sedes"></div>
+      </div>
+
+      <div class="caja">
+        <h3 class="tit">Para saber</h3>
+        <ul class="saber" id="saber"></ul>
+      </div>
+    </main>
+
+    <aside class="lado der">
+      <h2>El país en números</h2>
+      <div class="caja" id="cifras"></div>
+      <div class="caja fuentes" id="fuentes"></div>
+    </aside>
+
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════
+   UNA FICHA POR PAÍS
+   Todo lo que cambia de un país a otro vive en esta tabla. La página no
+   sabe nada de México: lee la ficha del código ISO que venga en la URL
+   (pais.html?iso=mx) y se arma sola. Agregar un país es agregar una ficha.
+   ═══════════════════════════════════════════════════════════════════════ */
+const FICHAS = {
+
+mx: {
+  nombre: 'México',
+  bajada: 'El país donde el fútbol manda sin discusión, el box nunca se fue y el juego más antiguo del continente todavía se juega con la cadera.',
+  tela: 'mx',                                   /* banderas/<iso>.jpg */
+
+  cifras: [
+    ['133,0 M',   'Habitantes'],
+    ['1,6 %',     'De la población mundial'],
+    ['+0,80 %',   'Crece por año'],
+    ['30 años',   'Edad mediana'],
+    ['75,6 años', 'Esperanza de vida'],
+    ['88,3 %',    'Vive en ciudades'],
+    ['68',        'Habitantes por km²']
+  ],
+
+  /* Dos formas de contar la afición, y hay que decir cuál se está usando:
+       poblacion → audiencia del deporte ÷ población total
+       publico   → audiencia del deporte ÷ gente que mira algún deporte
+     La segunda es la que responde «de cada 100 aficionados, cuántos siguen
+     esto» y es la mejor cuando la encuesta la trae. Ninguna de las dos suma
+     100: una persona sigue varios deportes. */
+  base: 'poblacion',
+  deportes: [
+    ['Fútbol',     56, 'c1'],
+    ['Box',        40, 'c2'],
+    ['Béisbol',    24, 'c3'],
+    ['Fórmula 1',  22, 'c4']
+  ],
+  fuenteDeportes: 'Encuesta Nielsen difundida en octubre de 2024.',
+
+  juegos: [
+    ['🏐','Ulama','El juego de pelota mesoamericano, con la cadera. Tres mil años y todavía se juega.','propio','../juegos/ulama.html'],
+    ['🏎️','Vuelta Rápida','Corrés el trazado mexicano en trajinera, piñata, molcajete o máscara de lucha.','propio','../juegos/vuelta-rapida.html'],
+    ['🧩','Rompecabezas','Armá escenarios, trofeos y momentos del deporte.','','../juegos.html'],
+    ['🥇','Primero','Un campeón oculto por día, seis intentos, cinco pistas.','','../juegos/primero.html']
+  ],
+
+  sedes: [
+    ['Fórmula 1','Ciudad de México'],
+    ['Fútbol','Ciudad de México'],
+    ['Boxeo','Ciudad de México'],
+    ['Pádel','Acapulco']
+  ],
+
+  saber: [
+    ['Deporte nacional','La charrería, declarada deporte nacional por decreto y reconocida por la UNESCO como patrimonio cultural inmaterial en 2016.'],
+    ['Juego propio','El ulama se juega desde hace más de tres mil años y es el deporte de equipo más antiguo que sigue vivo.'],
+    ['En el mapa','Cuatro deportes de FirstPlace tienen sede en el país, tres de ellos en la capital.']
+  ],
+
+  fuentes: [
+    ['Worldometer — Mexico Demographics 2026','https://www.worldometers.info/demographics/mexico-demographics/'],
+    ['RÉCORD — El futbol y el box, los favoritos','https://www.record.com.mx/historia/el-futbol-y-el-box-son-los-deportes-favoritos-de-los-mexicanos-confirma-encuesta-2025101615564186874']
+  ]
+}
+,
+
+it: {
+  nombre: 'Italia',
+  bajada: 'El país que inventó la Ruzzola tirando una rueda de queso por el camino, y que hoy mira tenis casi tanto como fútbol.',
+  tela: 'it',
+
+  cifras: [
+    ['58,9 M',    'Habitantes'],
+    ['0,71 %',    'De la población mundial'],
+    ['−0,37 %',   'Crece por año'],
+    ['48,6 años', 'Edad mediana'],
+    ['84,2 años', 'Esperanza de vida'],
+    ['72,4 %',    'Vive en ciudades'],
+    ['200',       'Habitantes por km²']
+  ],
+
+  base: 'poblacion',
+  deportes: [
+    ['Fútbol',    54, 'c1'],
+    ['Tenis',     40, 'c2'],
+    ['Vóleibol',  27, 'c3'],
+    ['Natación',  26, 'c4'],
+    ['Atletismo', 26, 'c5']
+  ],
+  fuenteDeportes: 'Osservatorio Branded Entertainment con Ipsos Doxa, mayo de 2026: 1.000 personas de 18 a 64 años.',
+
+  juegos: [
+    ['\uD83E\uDDC0','Ruzzola','Se tira una rueda de queso por el camino y gana la que llega más lejos.','propio','../juegos/ruzzola.html'],
+    ['\uD83C\uDFCE\uFE0F','Vuelta Rápida','El trazado de Monza, el más rápido de los veinticuatro.','','../juegos/vuelta-rapida.html'],
+    ['\uD83E\uDDE9','Rompecabezas','Armá escenarios, trofeos y momentos del deporte.','','../juegos.html'],
+    ['\uD83E\uDD47','Primero','Un campeón oculto por día, seis intentos, cinco pistas.','','../juegos/primero.html']
+  ],
+
+  sedes: [
+    ['Fórmula 1','Monza'], ['MotoGP','Mugello y Misano'], ['Tenis','Turín y Bolonia'],
+    ['Pádel','Roma y Milán'], ['Fútbol','Milán y Turín'], ['Rugby','Roma'],
+    ['Ciclismo','Milán, San Remo, Roma y Como']
+  ],
+
+  saber: [
+    ['Casi todos miran','El 86% de los italianos sigue al menos un deporte. Es de los países con menos gente afuera del deporte.'],
+    ['El envejecimiento','48,6 años de edad mediana y una población que se achica un 0,37% por año. Es el dato que más manda en Italia.'],
+    ['En el mapa','Ocho deportes con quince sedes: sexto del mapa en variedad, y tantas sedes como Francia.']
+  ],
+
+  fuentes: [
+    ['Worldometer — Italy Demographics 2026','https://www.worldometers.info/demographics/italy-demographics/'],
+    ['Corriere dello Sport — la investigación de OBE e Ipsos Doxa','https://www.corrieredellosport.it/news/calcio/2026/05/22-148793797/la_ricerca_di_obe_l_86_degli_italiani_segue_almeno_uno_sport_e_dopo_il_calcio_c_il_tennis']
+  ]
+},
+
+jp: {
+  nombre: 'Japón',
+  bajada: 'El único país grande donde el béisbol le gana al fútbol por más del doble, y donde el tercer deporte más querido tiene mil quinientos años.',
+  tela: 'jp',
+  brillo: 0.30,          /* marfil: con 0.52 se comía la página */
+
+  cifras: [
+    ['122,4 M',   'Habitantes'],
+    ['1,47 %',    'De la población mundial'],
+    ['−0,55 %',   'Crece por año'],
+    ['50,2 años', 'Edad mediana'],
+    ['85,1 años', 'Esperanza de vida'],
+    ['93,4 %',    'Vive en ciudades'],
+    ['336',       'Habitantes por km²']
+  ],
+
+  base: 'poblacion',
+  deportes: [
+    ['Béisbol',    47.5, 'c1'],
+    ['Fútbol',     21.7, 'c2'],
+    ['Sumo',       20.8, 'c3'],
+    ['Golf',       10.8, 'c4'],
+    ['Baloncesto', 10.3, 'c5']
+  ],
+  fuenteDeportes: 'Chuo Chosa-sha, encuesta «Deportes populares» n.º 34, mayo de 2026: 1.201 personas de 20 años o más.',
+
+  juegos: [
+    ['\uD83C\uDFCE\uFE0F','Vuelta Rápida','El trazado de Suzuka, el único de los veinticuatro que se cruza consigo mismo.','','../juegos/vuelta-rapida.html'],
+    ['\uD83E\uDDE9','Rompecabezas','Armá escenarios, trofeos y momentos del deporte.','','../juegos.html'],
+    ['\uD83E\uDD47','Primero','Un campeón oculto por día, seis intentos, cinco pistas.','','../juegos/primero.html']
+  ],
+
+  sedes: [
+    ['Fórmula 1','Suzuka'], ['MotoGP','Motegi'], ['Béisbol','Tokio y Osaka'],
+    ['Atletismo','Tokio'], ['Boxeo','Tokio'], ['Skateboarding','Tokio']
+  ],
+
+  saber: [
+    ['El béisbol manda','Primero en esta encuesta desde 1996, sin un solo año de interrupción.'],
+    ['El sumo','Tercero desde hace cinco años seguidos, y el único deporte de la lista que no vino de afuera.'],
+    ['La mitad pasa los 50','50,2 años de edad mediana, 85,1 de esperanza de vida y una población que se achica un 0,55% por año.']
+  ],
+
+  fuentes: [
+    ['Worldometer — Japan Demographics 2026','https://www.worldometers.info/demographics/japan-demographics/'],
+    ['Chuo Chosa-sha — «人気スポーツ」調査 n.º 34 (PDF)','https://www.crs.or.jp/data/pdf/sports26.pdf']
+  ]
+}
+};
+
+/* ── armado ──────────────────────────────────────────────────────────── */
+const $ = id => document.getElementById(id);
+const par = new URLSearchParams(location.search);
+const iso = (par.get('iso') || 'mx').toLowerCase();
+const F = FICHAS[iso] || FICHAS.mx;
+
+document.title = F.nombre + ' — FirstPlace.games';
+$('nombre').textContent = F.nombre;
+$('bajada').textContent = F.bajada;
+if (F.tela) $('tela').style.backgroundImage = 'url(../banderas/' + F.tela + '.jpg)';
+/* Telas claras —Japón es marfil casi blanco— necesitan menos brillo que una
+   oscura como el serape mexicano. Por defecto 0.52; la ficha puede pisarlo. */
+if (F.brillo) $('tela').style.filter =
+  'brightness(' + F.brillo + ') saturate(1.34) contrast(1.04)';
+
+$('cifras').innerHTML = F.cifras.map(c =>
+  '<div class="cifra"><b>' + c[0] + '</b><span>' + c[1] + '</span></div>').join('');
+
+/* Barras, no torta: los porcentajes se solapan —una persona sigue el fútbol
+   Y el box— así que no hay un entero que repartir. */
+const porPublico = F.base === 'publico';
+const tope = Math.max.apply(null, F.deportes.map(d => d[1]));
+$('graf').innerHTML = F.deportes.map(d =>
+  '<div class="fila" title="' + d[1] + ' de cada 100 ' +
+    (porPublico ? 'personas que miran deporte siguen ' : 'personas siguen ') + d[0].toLowerCase() + '">' +
+    '<div class="nom"><i style="background:var(--' + d[2] + ')"></i><u>' + d[0] + '</u></div>' +
+    '<div class="pista"><div class="barra" style="width:' +
+      (d[1] / tope * 100).toFixed(1) + '%;background:var(--' + d[2] + ')"></div></div>' +
+    '<div class="val">' + String(d[1]).replace('.', ',') + '%</div>' +
+  '</div>').join('');
+
+$('notaGraf').innerHTML =
+  '<b>Suman más de 100 a propósito.</b> ' +
+  (porPublico
+    ? 'De cada 100 personas que miran algún deporte, cuántas siguen cada uno. '
+    : 'Porcentaje de la población que sigue cada deporte. ') +
+  'Una misma persona sigue varios, así que no hay un entero que repartir: por eso ' +
+  'van en barras y no en una torta. ' + F.fuenteDeportes;
+
+$('btTabla').addEventListener('click', () => {
+  const t = $('tabla');
+  if (!t.innerHTML) {
+    t.innerHTML = '<table><thead><tr><th>Deporte</th><th>' +
+      (porPublico ? 'Del público deportivo' : 'De la población') + '</th></tr></thead><tbody>' +
+      F.deportes.map(d => '<tr><td>' + d[0] + '</td><td>' +
+        String(d[1]).replace('.', ',') + '%</td></tr>').join('') +
+      '</tbody></table>';
+  }
+  t.hidden = !t.hidden;
+  $('btTabla').textContent = t.hidden ? 'Ver los números en tabla' : 'Ocultar la tabla';
+});
+
+$('juegos').innerHTML = F.juegos.map(j =>
+  '<a class="juego" href="' + j[4] + '">' +
+    '<div class="em">' + j[0] + '</div><h3>' + j[1] + '</h3><p>' + j[2] + '</p>' +
+    (j[3] === 'propio' ? '<span class="sello propio">Propio de acá</span>'
+                       : '<span class="sello">Adaptado</span>') +
+  '</a>').join('');
+
+$('sedes').innerHTML = F.sedes.map(s =>
+  '<span class="chip">' + s[0] + ' <small>' + s[1] + '</small></span>').join('');
+
+$('saber').innerHTML = (F.saber || []).map(s =>
+  '<li><b>' + s[0] + '</b><span>' + s[1] + '</span></li>').join('');
+
+$('fuentes').innerHTML = '<b>Fuentes</b>' + F.fuentes.map(f =>
+  '<a href="' + f[1] + '" target="_blank" rel="noopener">' + f[0] + '</a>').join('<br>') +
+  '<br><br>Población, estimaciones 2026. La audiencia deportiva viene de encuestas y es ' +
+  'aproximada: no existe un censo de a quién le gusta qué.';
+</script>
+</body>
+</html>
