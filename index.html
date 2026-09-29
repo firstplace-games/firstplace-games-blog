@@ -4307,6 +4307,18 @@ function applyLang(){
   const q=$("#custSearch"); if(q) q.placeholder=T("searchPh");
   if($("#sport").classList.contains("on")) renderSport();
   if(WA.ctl){ WA.ctl.lang(STATE.lang); setTimeout(waColocar, 60); }
+  /* El mapa dibuja los nombres de los paises sobre el lienzo y los paneles ya
+     estan escritos: nada de eso tiene data-t, asi que hay que repintarlo a
+     mano o el idioma cambia en todo menos ahi. */
+  if(typeof wmPedir==="function") wmPedir();
+  if(typeof WM!=="undefined" && WM.sel){
+    const p=WM.sel;
+    if($("#wmRName")) $("#wmRName").textContent = wmNom(p);
+    if($("#wmLName")) $("#wmLName").textContent = T("wmGamesOf")+" "+wmNom(p);
+    const v=$("#wmVis");
+    if(v && v.style.display==="block") v.querySelector("b").textContent = wmNom(p);
+    if(typeof wmPintarR==="function") wmPintarR(p);
+  }
 }
 
 /* ---------- intro reel ---------- */
@@ -10922,7 +10934,8 @@ function wmDibujar(){
         const cx=p.micro?p.lon:p.anchor[0], cy=p.micro?p.lat:p.anchor[1];
         const q=wmPx(cx,cy); q[0]+=off;
         if(q[0]<40||q[0]>w-40||q[1]<20||q[1]>h-20) return;
-        const tw=g.measureText(p.nombre).width;
+        const nom=wmNom(p);
+        const tw=g.measureText(nom).width;
         if(!p.micro && (p.bb[2]-p.bb[0])*WM.k<tw*0.9) return;
         if(p===WM.sel && visOn) return;   /* el globo ya dice el nombre */
         const bx={x:q[0]-tw/2-3,y:q[1]-8,w:tw+6,h:16};
@@ -10932,7 +10945,7 @@ function wmDibujar(){
         g.fillStyle = apa?"rgba(6,10,18,.30)":"rgba(6,10,18,.60)";
         g.fillRect(bx.x,bx.y,bx.w,bx.h);
         g.fillStyle = apa?"rgba(232,242,255,.42)":"rgba(255,255,255,.98)";
-        g.fillText(p.nombre,q[0],q[1]);
+        g.fillText(nom,q[0],q[1]);
       });
     });
   }
@@ -10995,6 +11008,52 @@ const STACK_PAIS={MX:"juegos/stack-mexico.html",US:"juegos/stack-usa.html",FR:"j
    para éstos: ofrecer el botón de un país sin ficha sería prometer algo que
    no existe. Se agrega el código y aparece solo. */
 const PAIS_FICHA={MX:1,IT:1,JP:1};
+
+/* ── el nombre del pais en el idioma de la web ─────────────────────────
+   Los datos del mapa traen UN solo nombre por pais, en español, porque
+   vienen de la geometria. Con la web en ingles se leia «Games in México»
+   y el mapa decia «Japon». Esta tabla es la otra mitad: 174 nombres por
+   codigo ISO. Los tres paises sin ISO —N. Cyprus, Somaliland, Kosovo— ya
+   estan en ingles en los datos, asi que caen solos al nombre de siempre.
+
+   OJO: wmNom() es para MOSTRAR. Donde el nombre se usa como CLAVE —el
+   indice de `mapa/paises.txt`, el `data-wmpais` de los botones— tiene que
+   seguir yendo `p.nombre` o deja de encontrar el pais. */
+const PAIS_EN={
+  AE:"United Arab Emirates",AF:"Afghanistan",AL:"Albania",AM:"Armenia",AO:"Angola",
+  AQ:"Antarctica",AR:"Argentina",AT:"Austria",AU:"Australia",AZ:"Azerbaijan",
+  BA:"Bosnia and Herzegovina",BD:"Bangladesh",BE:"Belgium",BF:"Burkina Faso",BG:"Bulgaria",
+  BI:"Burundi",BJ:"Benin",BN:"Brunei",BO:"Bolivia",BR:"Brazil",BS:"Bahamas",BT:"Bhutan",
+  BW:"Botswana",BY:"Belarus",BZ:"Belize",CA:"Canada",CD:"DR Congo",
+  CF:"Central African Republic",CG:"Congo",CH:"Switzerland",CI:"Ivory Coast",CL:"Chile",
+  CM:"Cameroon",CN:"China",CO:"Colombia",CR:"Costa Rica",CU:"Cuba",CY:"Cyprus",CZ:"Czechia",
+  DE:"Germany",DJ:"Djibouti",DK:"Denmark",DO:"Dominican Republic",DZ:"Algeria",EC:"Ecuador",
+  EE:"Estonia",EG:"Egypt",EH:"Western Sahara",ER:"Eritrea",ES:"Spain",ET:"Ethiopia",
+  FI:"Finland",FJ:"Fiji",FK:"Falkland Islands",FR:"France",GA:"Gabon",GB:"United Kingdom",
+  GE:"Georgia",GH:"Ghana",GL:"Greenland",GM:"Gambia",GN:"Guinea",GQ:"Equatorial Guinea",
+  GR:"Greece",GT:"Guatemala",GW:"Guinea-Bissau",GY:"Guyana",HN:"Honduras",HR:"Croatia",
+  HT:"Haiti",HU:"Hungary",ID:"Indonesia",IE:"Ireland",IL:"Israel",IN:"India",IQ:"Iraq",
+  IR:"Iran",IS:"Iceland",IT:"Italy",JM:"Jamaica",JO:"Jordan",JP:"Japan",KE:"Kenya",
+  KG:"Kyrgyzstan",KH:"Cambodia",KP:"North Korea",KR:"South Korea",KW:"Kuwait",KZ:"Kazakhstan",
+  LA:"Laos",LB:"Lebanon",LK:"Sri Lanka",LR:"Liberia",LS:"Lesotho",LT:"Lithuania",
+  LU:"Luxembourg",LV:"Latvia",LY:"Libya",MA:"Morocco",MD:"Moldova",ME:"Montenegro",
+  MG:"Madagascar",MK:"North Macedonia",ML:"Mali",MM:"Myanmar",MN:"Mongolia",MR:"Mauritania",
+  MW:"Malawi",MX:"Mexico",MY:"Malaysia",MZ:"Mozambique",NA:"Namibia",NC:"New Caledonia",
+  NE:"Niger",NG:"Nigeria",NI:"Nicaragua",NL:"Netherlands",NO:"Norway",NP:"Nepal",
+  NZ:"New Zealand",OM:"Oman",PA:"Panama",PE:"Peru",PG:"Papua New Guinea",PH:"Philippines",
+  PK:"Pakistan",PL:"Poland",PR:"Puerto Rico",PS:"Palestine",PT:"Portugal",PY:"Paraguay",
+  QA:"Qatar",RO:"Romania",RS:"Serbia",RU:"Russia",RW:"Rwanda",SA:"Saudi Arabia",
+  SB:"Solomon Islands",SD:"Sudan",SE:"Sweden",SI:"Slovenia",SK:"Slovakia",SL:"Sierra Leone",
+  SN:"Senegal",SO:"Somalia",SR:"Suriname",SS:"South Sudan",SV:"El Salvador",SY:"Syria",
+  SZ:"Eswatini",TD:"Chad",TF:"French Southern Territories",TG:"Togo",TH:"Thailand",
+  TJ:"Tajikistan",TL:"Timor-Leste",TM:"Turkmenistan",TN:"Tunisia",TR:"Turkey",
+  TT:"Trinidad and Tobago",TW:"Taiwan",TZ:"Tanzania",UA:"Ukraine",UG:"Uganda",
+  US:"United States",UY:"Uruguay",UZ:"Uzbekistan",VE:"Venezuela",VN:"Vietnam",VU:"Vanuatu",
+  YE:"Yemen",ZA:"South Africa",ZM:"Zambia",ZW:"Zimbabwe"
+};
+function wmNom(p){
+  return (STATE.lang==="en" && PAIS_EN[p.iso]) ? PAIS_EN[p.iso] : p.nombre;
+}
 /* Página fija en inglés, para Google (la genera build-country.js). En inglés el globo lleva ahí; en español, a pais/?iso=. */
 const COUNTRY_URL={MX:"country/mexico/"};
 function wmJuegos(p){
@@ -11290,11 +11349,11 @@ function wmFoco(p, sp, compacto){
   return '<div class="wm-foco" style="--h:'+s.hue+'">'+
     '<div class="cab"><span class="em">'+s.em+'</span><div class="tx">'+
       '<div class="nm">'+L(s.n)+'</div>'+
-      '<div class="sb">'+sedes.length+' '+T(sedes.length===1?"wmVenueOne":"wmVenueMany")+' · '+p.nombre+'</div>'+
+      '<div class="sb">'+sedes.length+' '+T(sedes.length===1?"wmVenueOne":"wmVenueMany")+' · '+wmNom(p)+'</div>'+
     '</div></div>'+
     '<div class="sedes">'+sedes.map(v=>
       '<div class="sede"><div class="ciu">'+v.c+'</div>'+(v.d?'<div class="ds">'+v.d+'</div>':'')+'</div>').join("")+'</div>'+
-    (aqui.length?'<h4>'+T("wmHere")+' '+p.nombre+'</h4>'+
+    (aqui.length?'<h4>'+T("wmHere")+' '+wmNom(p)+'</h4>'+
       '<div class="comps local">'+aqui.map(linea).join("")+'</div>':'')+
     (mundo.length?'<h4>'+T("wmComps")+' <u>'+T("wmCompsNote")+'</u></h4>'+
       '<div class="comps mundo">'+mundo.map(linea).join("")+'</div>':'')+
@@ -11314,7 +11373,7 @@ function wmDonde(p, sp){
     .sort((a,b)=>b.sports[sp].length-a.sports[sp].length).slice(0,10);
   if(!otros.length) return '';
   return '<div class="otros"><span class="ot">'+T("wmWhere")+' '+L(SPORTBY[sp].n).toLowerCase()+'</span>'+
-    '<div class="paises">'+otros.map(q=>'<button data-wmpais="'+q.nombre+'">'+q.nombre+
+    '<div class="paises">'+otros.map(q=>'<button data-wmpais="'+q.nombre+'">'+wmNom(q)+
       '<b>'+q.sports[sp].length+'</b></button>').join("")+'</div></div>';
 }
 
@@ -11395,7 +11454,7 @@ function wmRecortar(body){
 
 function wmPintarR(p){
   const body=$("#wmRBody"), m1=$("#wmRm1"), m2=$("#wmRm2");
-  $("#wmRName").textContent = p.nombre;
+  $("#wmRName").textContent = wmNom(p);
   if(!p.nsports){
     body.className="wm-body";
     body.innerHTML='<div class="wm-empty">'+T("wmNothing")+'<br><br>'+T("wmNothingB")+'</div>';
@@ -11438,7 +11497,7 @@ function wmElegir(p){
   if(vis) vis.style.display="none";
   if(!p){ L1.classList.remove("on"); R1.classList.remove("on"); return; }
   if(vis && PAIS_FICHA[p.iso]){
-    vis.querySelector("b").textContent=p.nombre;
+    vis.querySelector("b").textContent=wmNom(p);
     vis.querySelector("a").href=(STATE.lang!=="es" && COUNTRY_URL[p.iso]) ? COUNTRY_URL[p.iso] : "pais/?iso="+p.iso.toLowerCase();
     vis.querySelector("a").textContent = STATE.lang==="en" ? "Visit" : "Visitar";
     vis.style.display="block";
@@ -11446,7 +11505,7 @@ function wmElegir(p){
   wmCentrar(p);
 
   /* izquierda: juegos, los propios del país arriba */
-  $("#wmLName").textContent=T("wmGamesOf")+" "+p.nombre;
+  $("#wmLName").textContent=T("wmGamesOf")+" "+wmNom(p);
   const js=wmJuegos(p), sk=STACK_PAIS[p.iso], listos=js.todos.filter(j=>j.ready).length+(sk?1:0);
   $("#wmLm1").innerHTML="<b>"+(js.todos.length+(sk?1:0))+"</b> "+T("wmGameMany");
   $("#wmLm2").innerHTML="<b>"+listos+"</b> "+T(listos===1?"wmReadyOne":"wmReadyMany");
@@ -11459,7 +11518,7 @@ function wmElegir(p){
     ? grupo(T("wmOwn"),js.con)+grupo(T("wmFit"),js.sin)
     : js.todos.map(fila).join("");
   if(sk) $("#wmLBody").insertAdjacentHTML("afterbegin",
-    '<div class="wm-game ok" data-stack="'+sk+'"><span class="em">🧱</span><div class="txt"><div class="nm">Stack '+p.nombre+'</div>'+
+    '<div class="wm-game ok" data-stack="'+sk+'"><span class="em">🧱</span><div class="txt"><div class="nm">Stack '+wmNom(p)+'</div>'+
     '<div class="ds">'+L({es:"Piezas que caen: cada una es un deporte del país.",en:"Falling blocks: each one is a sport from the country."})+'</div></div>'+
     '<span class="st">'+T("wmPlay")+'</span></div>');
 
@@ -11748,7 +11807,7 @@ function wmInit(){
     const tip=$("#wmTip");
     if(p){
       tip.style.display="block";
-      tip.innerHTML=p.nombre+(p.nsports
+      tip.innerHTML=wmNom(p)+(p.nsports
         ? "<small>"+wmPlural(p.nsports,"wmSportOne","wmSportMany")+" · "+wmPlural(p.n,"wmVenueOne","wmVenueMany")+"</small>"
         : "<small>"+T("wmWithout")+"</small>");
       tip.style.left=Math.min(r.width-tip.offsetWidth-10, x+14)+"px";
