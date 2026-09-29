@@ -1,0 +1,251 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FirstPlace.games//Agenda//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:FirstPlace.games · MotoGP
+X-WR-CALDESC:FirstPlace.games schedule — https://firstplace.games
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:motogp-gp-20261004@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261004
+DTEND;VALUE=DATE:20261005
+SUMMARY:🏍️ Japanese GP · MotoGP · Grand Prix
+LOCATION:Motegi
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:motogp-moto2-20261004@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261004
+DTEND;VALUE=DATE:20261005
+SUMMARY:🏍️ Moto2 · Japanese GP · Moto2
+LOCATION:Motegi
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:motogp-moto3-20261004@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261004
+DTEND;VALUE=DATE:20261005
+SUMMARY:🏍️ Moto3 · Japanese GP · Moto3
+LOCATION:Motegi
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:motogp-gp-20261011@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261011
+DTEND;VALUE=DATE:20261012
+SUMMARY:🏍️ Indonesian GP · MotoGP · Grand Prix
+LOCATION:Mandalika
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:motogp-moto2-20261011@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261011
+DTEND;VALUE=DATE:20261012
+SUMMARY:🏍️ Moto2 · Indonesian GP · Moto2
+LOCATION:Mandalika
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:motogp-moto3-20261011@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261011
+DTEND;VALUE=DATE:20261012
+SUMMARY:🏍️ Moto3 · Indonesian GP · Moto3
+LOCATION:Mandalika
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:motogp-gp-20261025@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:🏍️ Australian GP · MotoGP · Grand Prix
+LOCATION:Phillip Island
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:motogp-moto2-20261025@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:🏍️ Moto2 · Australian GP · Moto2
+LOCATION:Phillip Island
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:motogp-moto3-20261025@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261025
+DTEND;VALUE=DATE:20261026
+SUMMARY:🏍️ Moto3 · Australian GP · Moto3
+LOCATION:Phillip Island
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:motogp-gp-20261101@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261101
+DTEND;VALUE=DATE:20261102
+SUMMARY:🏍️ Malaysian GP · MotoGP · Grand Prix
+LOCATION:Sepang
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:motogp-moto2-20261101@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261101
+DTEND;VALUE=DATE:20261102
+SUMMARY:🏍️ Moto2 · Malaysian GP · Moto2
+LOCATION:Sepang
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:motogp-moto3-20261101@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261101
+DTEND;VALUE=DATE:20261102
+SUMMARY:🏍️ Moto3 · Malaysian GP · Moto3
+LOCATION:Sepang
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:motogp-gp-20261108@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261108
+DTEND;VALUE=DATE:20261109
+SUMMARY:🏍️ Qatar GP · MotoGP · Grand Prix
+LOCATION:Lusail
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:motogp-moto2-20261108@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261108
+DTEND;VALUE=DATE:20261109
+SUMMARY:🏍️ Moto2 · Qatar GP · Moto2
+LOCATION:Lusail
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:motogp-moto3-20261108@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261108
+DTEND;VALUE=DATE:20261109
+SUMMARY:🏍️ Moto3 · Qatar GP · Moto3
+LOCATION:Lusail
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:motogp-gp-20261122@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261122
+DTEND;VALUE=DATE:20261123
+SUMMARY:🏍️ Portuguese GP · MotoGP · Grand Prix
+LOCATION:Portimão
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:motogp-moto2-20261122@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261122
+DTEND;VALUE=DATE:20261123
+SUMMARY:🏍️ Moto2 · Portuguese GP · Moto2
+LOCATION:Portimão
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:motogp-moto3-20261122@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261122
+DTEND;VALUE=DATE:20261123
+SUMMARY:🏍️ Moto3 · Portuguese GP · Moto3
+LOCATION:Portimão
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:motogp-gp-20261129@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261129
+DTEND;VALUE=DATE:20261130
+SUMMARY:🏍️ Valencia GP · MotoGP · Grand Prix
+LOCATION:Cheste
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:motogp-teams-fin-20261129@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261129
+DTEND;VALUE=DATE:20261130
+SUMMARY:🏍️ Teams' championship ends
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:motogp-moto2-20261129@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261129
+DTEND;VALUE=DATE:20261130
+SUMMARY:🏍️ Moto2 · Valencia GP · Moto2
+LOCATION:Cheste
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:motogp-moto3-20261129@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261129
+DTEND;VALUE=DATE:20261130
+SUMMARY:🏍️ Moto3 · Valencia GP · Moto3
+LOCATION:Cheste
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR

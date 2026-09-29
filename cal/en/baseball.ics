@@ -1,0 +1,60 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FirstPlace.games//Agenda//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:FirstPlace.games · Baseball
+X-WR-CALDESC:FirstPlace.games schedule — https://firstplace.games
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:baseball-wildcard-20260929@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20260929
+DTEND;VALUE=DATE:20261002
+SUMMARY:⚾ MLB · Wild Card
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:baseball-lds-20261003@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261011
+SUMMARY:⚾ MLB · Division Series
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:baseball-lcs-20261011@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261011
+DTEND;VALUE=DATE:20261021
+SUMMARY:⚾ MLB · Championship Series
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:baseball-ws-20261023@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261023
+DTEND;VALUE=DATE:20261101
+SUMMARY:⚾ World Series
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:baseball-npb-fin-20261101@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261101
+DTEND;VALUE=DATE:20261102
+SUMMARY:⚾ NPB · Japan ends
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR

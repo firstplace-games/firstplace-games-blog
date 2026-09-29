@@ -1,0 +1,21 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FirstPlace.games//Agenda//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:FirstPlace.games · Swimming
+X-WR-CALDESC:FirstPlace.games schedule — https://firstplace.games
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:swimming-scworlds-20261201@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261201
+DTEND;VALUE=DATE:20261207
+SUMMARY:🏊 Short Course World Championships
+LOCATION:Pekín
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR

@@ -1,0 +1,54 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FirstPlace.games//Agenda//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:FirstPlace.games · Skateboarding
+X-WR-CALDESC:FirstPlace.games schedule — https://firstplace.games
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:skate-wsg-20260930@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20260930
+DTEND;VALUE=DATE:20261019
+SUMMARY:🛹 World Skate Games
+LOCATION:Asunción\, Paraguay
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:skate-sls-20261017@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261017
+DTEND;VALUE=DATE:20261018
+SUMMARY:🛹 SLS Paris · Street League Skateboarding
+LOCATION:Francia
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:skate-sls-20261114@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261114
+DTEND;VALUE=DATE:20261115
+SUMMARY:🛹 SLS Tokyo · Street League Skateboarding
+LOCATION:Japón
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:skate-sls-20261212@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261212
+DTEND;VALUE=DATE:20261213
+SUMMARY:🛹 SLS Final · Rio · Street League Skateboarding
+LOCATION:Brasil
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR

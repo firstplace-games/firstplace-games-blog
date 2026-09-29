@@ -1,0 +1,73 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FirstPlace.games//Agenda//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:FirstPlace.games · Padel
+X-WR-CALDESC:FirstPlace.games schedule — https://firstplace.games
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:padel-milano-20261012@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261012
+DTEND;VALUE=DATE:20261019
+SUMMARY:Milano P1
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:padel-kuwait-20261026@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261026
+DTEND;VALUE=DATE:20261101
+SUMMARY:Kuwait P1
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:padel-fipwc-20261102@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261102
+DTEND;VALUE=DATE:20261108
+SUMMARY:FIP World Cup
+LOCATION:Doha\, Catar
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:padel-dubai-20261109@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261109
+DTEND;VALUE=DATE:20261116
+SUMMARY:Dubai P1
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:padel-mexico-20261123@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261123
+DTEND;VALUE=DATE:20261130
+SUMMARY:Mexico Major
+LOCATION:Acapulco
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:padel-finals-20261207@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261207
+DTEND;VALUE=DATE:20261214
+SUMMARY:Barcelona Tour Finals
+LOCATION:Barcelona
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR

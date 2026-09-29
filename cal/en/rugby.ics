@@ -1,0 +1,84 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FirstPlace.games//Agenda//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:FirstPlace.games · Rugby
+X-WR-CALDESC:FirstPlace.games schedule — https://firstplace.games
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:rugby-champcup-ini-20261009@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261009
+DTEND;VALUE=DATE:20261010
+SUMMARY:🏉 Investec Champions Cup starts
+LOCATION:Lyon
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:rugby-nations-ini-20261106@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261106
+DTEND;VALUE=DATE:20261107
+SUMMARY:🏉 Nations Championship · North series starts
+LOCATION:Twickenham
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:rugby-nations-fin-20261129@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20261129
+DTEND;VALUE=DATE:20261130
+SUMMARY:🏉 Nations Championship · North series ends
+LOCATION:Twickenham
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:rugby-champcup-fin-20270522@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20270522
+DTEND;VALUE=DATE:20270523
+SUMMARY:🏉 Investec Champions Cup ends
+LOCATION:Lyon
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:rugby-urc-fin-20270619@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20270619
+DTEND;VALUE=DATE:20270620
+SUMMARY:🏉 United Rugby Championship ends
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:rugby-prem-fin-20270619@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20270619
+DTEND;VALUE=DATE:20270620
+SUMMARY:🏉 Premiership Rugby ends
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:rugby-top14-fin-20270626@firstplace.games
+DTSTAMP:20260929T011550Z
+DTSTART;VALUE=DATE:20270626
+DTEND;VALUE=DATE:20270627
+SUMMARY:🏉 Top 14 ends
+DESCRIPTION:FirstPlace.games schedule — https://firstplace.games
+URL:https://firstplace.games
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR
