@@ -1,0 +1,636 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Política de Privacidad — FirstPlace.games</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    body {
+      background: #1a1a1a;
+      color: #e0e0e0;
+    }
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  header {
+    background: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    header {
+      background: #0a0a0a;
+      border-bottom-color: #333;
+    }
+  }
+
+  header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1.5rem;
+  }
+
+  .logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+    text-decoration: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .logo {
+      color: #fff;
+    }
+  }
+
+  .back {
+    padding: 0.5rem 1rem;
+    background: #007AFF;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+  }
+
+  .back:hover {
+    background: #0051D5;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin: 2rem 0 0.5rem 0;
+    color: #000;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    h1 {
+      color: #fff;
+    }
+  }
+
+  h2 {
+    font-size: 1.3rem;
+    margin: 1.5rem 0 0.8rem 0;
+    color: #000;
+    border-bottom: 2px solid #007AFF;
+    padding-bottom: 0.5rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    h2 {
+      color: #fff;
+    }
+  }
+
+  h3 {
+    font-size: 1rem;
+    margin: 1rem 0 0.5rem 0;
+    color: #000;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    h3 {
+      color: #fff;
+    }
+  }
+
+  .meta {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .meta {
+      color: #999;
+    }
+  }
+
+  p {
+    margin: 1rem 0;
+  }
+
+  ul, ol {
+    margin: 1rem 0 1rem 2rem;
+  }
+
+  li {
+    margin: 0.5rem 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    background: #fff;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    table {
+      background: #0a0a0a;
+    }
+  }
+
+  th, td {
+    padding: 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    th, td {
+      border-bottom-color: #333;
+    }
+  }
+
+  th {
+    background: #f0f0f0;
+    font-weight: 600;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    th {
+      background: #222;
+    }
+  }
+
+  code {
+    background: #f0f0f0;
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-family: "Monaco", "Courier New", monospace;
+    font-size: 0.9em;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    code {
+      background: #222;
+      color: #ffb86c;
+    }
+  }
+
+  .highlight {
+    background: #fff3cd;
+    padding: 1rem;
+    border-left: 4px solid #ffc107;
+    margin: 1rem 0;
+    border-radius: 4px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .highlight {
+      background: #3d2f1f;
+      border-left-color: #ff9800;
+    }
+  }
+
+  footer {
+    border-top: 1px solid #e0e0e0;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 3rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    footer {
+      border-top-color: #333;
+      color: #999;
+    }
+  }
+
+  a {
+    color: #007AFF;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 1.5rem;
+    }
+
+    h2 {
+      font-size: 1.1rem;
+    }
+
+    .container {
+      padding: 1.5rem 1rem;
+    }
+
+    header .container {
+      padding: 0 1rem;
+    }
+  }
+</style>
+
+<header>
+  <div class="container">
+    <a href="/" class="logo">⚽ FirstPlace</a>
+    <a href="/" class="back">← Volver</a>
+  </div>
+</header>
+
+<main class="container">
+  <h1>Política de Privacidad</h1>
+  <p class="meta">Última actualización: 28 de septiembre de 2026 · Versión 1.0</p>
+
+  <h2>1. Introducción</h2>
+  <p>FirstPlace.games ("Nosotros", "la Empresa") se compromete a proteger tu privacidad. Esta Política de Privacidad explica cómo recopilamos, usamos, compartimos y protegemos tu información personal cuando usas nuestro sitio web, juegos y servicios (el "Servicio").</p>
+  <p><strong>Leer junto con:</strong> Los <a href="/terminos.html">Términos de Servicio</a> (documento relacionado). La Política de Privacidad y los Términos forman el acuerdo completo.</p>
+
+  <h2>2. Información Que Recopilamos</h2>
+
+  <h3>2.1 Información de Registro</h3>
+  <p>Cuando creas una cuenta, recopilamos:</p>
+  <ul>
+    <li><strong>Email:</strong> Para verificar tu identidad, enviarte avisos diarios y acceso a tu cuenta</li>
+    <li><strong>Código de verificación:</strong> Temporal, usado solo para confirmar que tienes acceso al email</li>
+  </ul>
+  <p><strong>No recopilamos contraseña</strong> — usamos códigos de un solo uso.</p>
+
+  <h3>2.2 Datos de Juego</h3>
+  <p>Recopilamos automáticamente mientras juegas:</p>
+  <ul>
+    <li><strong>Resultados de partidas:</strong> Tu respuesta, puntuación y hora de cada juego diario</li>
+    <li><strong>Racha:</strong> Tu cadena de juegos consecutivos sin perder</li>
+    <li><strong>Deporte jugado:</strong> Qué deporte elegiste</li>
+    <li><strong>Historial:</strong> Todos tus juegos pasados (para el Archivo)</li>
+  </ul>
+
+  <h3>2.3 Datos de Ligas</h3>
+  <p>Si creas o te unes a una liga privada, recopilamos:</p>
+  <ul>
+    <li><strong>Nombre de la liga</strong></li>
+    <li><strong>Miembros:</strong> Emails de otros jugadores (si los invitas)</li>
+    <li><strong>Puntuaciones de la liga:</strong> Cómo jugaron otros contra los mismos juegos</li>
+  </ul>
+
+  <h3>2.4 Información de Dispositivo y Navegación</h3>
+  <ul>
+    <li><strong>Dirección IP:</strong> Tu ubicación aproximada de internet</li>
+    <li><strong>Tipo de dispositivo:</strong> Teléfono, computadora, tablet</li>
+    <li><strong>Sistema operativo y navegador:</strong> Qué usas para acceder</li>
+    <li><strong>Páginas visitadas y tiempo en el sitio:</strong> Para entender cómo usas FirstPlace</li>
+    <li><strong>Referencia:</strong> De dónde viniste (post de Instagram, link de amigo, búsqueda)</li>
+  </ul>
+  <p>Recopilamos esto usando:</p>
+  <ul>
+    <li><strong>Logs del servidor:</strong> Registro automático de accesos</li>
+    <li><strong>Cookies:</strong> Archivos pequeños guardados en tu navegador (ver sección 7)</li>
+    <li><strong>Análisis:</strong> Google Analytics u herramientas similares</li>
+  </ul>
+
+  <h3>2.5 Información de Suscripción</h3>
+  <p>Si compras una suscripción Premium, recopilamos:</p>
+  <ul>
+    <li><strong>Método de pago:</strong> Tarjeta de crédito, billetera digital (procesado por proveedores terceros seguros)</li>
+    <li><strong>Fecha y monto:</strong> Para emisión de recibos e impuestos</li>
+    <li><strong>Estado de la suscripción:</strong> Activa, cancelada, suspendida</li>
+  </ul>
+  <p><strong>Tu tarjeta no se almacena en nuestros servidores</strong> — el procesador de pago se encarga.</p>
+
+  <h3>2.6 Información que Eliges Compartir</h3>
+  <ul>
+    <li><strong>Nombre:</strong> Opcional en tu perfil</li>
+    <li><strong>Equipo favorito:</strong> Si lo estableces</li>
+    <li><strong>Preferencias de deportes:</strong> Qué deportes te interesan</li>
+    <li><strong>Avisos:</strong> Si deseas email diario u otro contacto</li>
+  </ul>
+
+  <h3>2.7 Información de Contacto Voluntaria</h3>
+  <ul>
+    <li><strong>Email de soporte:</strong> Si escribes sobre un problema</li>
+    <li><strong>Comentarios o sugerencias:</strong> Si nos das feedback</li>
+  </ul>
+
+  <h2>3. Cómo Usamos Tu Información</h2>
+
+  <h3>3.1 Para Operar el Servicio</h3>
+  <ul>
+    <li>Verificar tu identidad y mantener tu cuenta segura</li>
+    <li>Guardar y mostrar tus resultados de juegos</li>
+    <li>Calcular y mostrar tu racha</li>
+    <li>Funcionar ligas y comparaciones con otros</li>
+    <li>Enviar avisos diarios por email (si te suscribiste)</li>
+  </ul>
+
+  <h3>3.2 Para Mejorar el Servicio</h3>
+  <ul>
+    <li>Entender cómo juegas (qué deportes prefieres, cuánto tiempo juegas)</li>
+    <li>Arreglar errores o problemas técnicos</li>
+    <li>Hacer nuevos juegos y características basadas en lo que la gente usa</li>
+    <li>Probar nuevos deportes o formatos</li>
+  </ul>
+
+  <h3>3.3 Para Marketing y Crecimiento</h3>
+  <ul>
+    <li>Enviar anuncios sobre nuevas características (solo si te suscribiste)</li>
+    <li>Usar datos anónimos para ads (sin identificarte personalmente)</li>
+    <li>Crear estadísticas públicas anónimas ("50.000 personas han jugado el juego de hoy")</li>
+    <li>Analizar qué atrae gente desde redes sociales</li>
+  </ul>
+
+  <h3>3.4 Para Cumplir con Leyes</h3>
+  <ul>
+    <li>Responder pedidos legales de autoridades</li>
+    <li>Cumplir impuestos y regulaciones de Uruguay</li>
+    <li>Proteger contra fraude o uso indebido</li>
+  </ul>
+
+  <h3>3.5 Lo Que NO Hacemos</h3>
+  <ul>
+    <li><strong>No vendemos tu email o datos personales</strong> a terceros</li>
+    <li><strong>No rastreamos fuera del Servicio</strong> (no te seguimos en otros sitios)</li>
+    <li><strong>No usamos datos para perfilado automático</strong> que te discrimine</li>
+    <li><strong>No compartimos datos a menos que sea necesario</strong> (ver Compartición abajo)</li>
+  </ul>
+
+  <h2>4. Compartición de Información</h2>
+
+  <h3>4.1 Con Tu Consentimiento</h3>
+  <p>Compartimos información si tú:</p>
+  <ul>
+    <li>Invitas a un amigo a una liga (compartimos tu email con él)</li>
+    <li>Compartes una grilla pública en redes (mostramos tu puntuación, no tu email)</li>
+  </ul>
+
+  <h3>4.2 Con Proveedores Terceros</h3>
+  <p>Compartimos información <strong>únicamente</strong> con empresas que:</p>
+  <ul>
+    <li>Procesan pagos (suscripciones Premium)</li>
+    <li>Proveen email (para avisos diarios)</li>
+    <li>Alojan nuestros datos (servidores web)</li>
+    <li>Analizan uso (Google Analytics)</li>
+  </ul>
+  <p>Estos proveedores aceptan proteger tu información bajo acuerdos de confidencialidad.</p>
+
+  <h3>4.3 Con Autoridades</h3>
+  <p>Podemos compartir información si:</p>
+  <ul>
+    <li>Una corte lo ordena</li>
+    <li>Lo requiere la ley de Uruguay</li>
+    <li>Es necesario para proteger seguridad pública</li>
+    <li>Investigamos fraude o abuso</li>
+  </ul>
+
+  <h3>4.4 Sin Compartición</h3>
+  <ul>
+    <li><strong>Datos de ligas:</strong> No los compartimos con nadie excepto miembros de la liga</li>
+    <li><strong>Email:</strong> No lo vendemos ni lo mostramos públicamente</li>
+    <li><strong>Resultados:</strong> Se muestran solo en tu perfil (privado) o si los compartes</li>
+    <li><strong>Información de suscripción:</strong> Solo se usa internamente y para cumplir leyes</li>
+  </ul>
+
+  <h2>5. Retención de Datos</h2>
+
+  <h3>5.1 Cuánto Tiempo Guardamos Todo</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Tipo de Dato</th>
+        <th>Período de Retención</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Email y account</td>
+        <td>Mientras tu cuenta esté activa + 30 días después de eliminarla</td>
+      </tr>
+      <tr>
+        <td>Resultados de juegos</td>
+        <td>Indefinido (mientras tu cuenta esté activa)</td>
+      </tr>
+      <tr>
+        <td>Racha</td>
+        <td>Mientras tu cuenta esté activa</td>
+      </tr>
+      <tr>
+        <td>Logs de acceso (IP, dispositivo)</td>
+        <td>90 días</td>
+      </tr>
+      <tr>
+        <td>Cookies de navegación</td>
+        <td>1 año o hasta que las borres</td>
+      </tr>
+      <tr>
+        <td>Datos de suscripción</td>
+        <td>7 años (requerido por impuestos)</td>
+      </tr>
+      <tr>
+        <td>Emails de contacto</td>
+        <td>1 año o hasta que resuelva tu problema</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>5.2 Eliminación de Cuenta</h3>
+  <p>Si eliminas tu cuenta:</p>
+  <ul>
+    <li>Tu email y nombre se borran de nuestros sistemas</li>
+    <li>Tus resultados de juegos se anonimizarán (se pierden tus resultados específicos)</li>
+    <li>Tu racha se elimina</li>
+    <li>Datos de suscripción se guardan 7 años para impuestos (sin el email asociado)</li>
+  </ul>
+  <p>No podemos recuperar nada después de 30 días de la eliminación.</p>
+
+  <h2>6. Seguridad</h2>
+
+  <h3>6.1 Medidas de Seguridad</h3>
+  <p>Usamos:</p>
+  <ul>
+    <li><strong>HTTPS/SSL:</strong> Encriptación de datos en tránsito (entre tu dispositivo y nuestros servidores)</li>
+    <li><strong>Bases de datos seguras:</strong> Acceso limitado, encriptación en reposo</li>
+    <li><strong>Autenticación:</strong> Códigos de un solo uso para acceso (sin contraseña almacenada)</li>
+    <li><strong>Auditorías:</strong> Revisamos periódicamente seguridad</li>
+  </ul>
+
+  <h3>6.2 Limitaciones</h3>
+  <p>Ninguna seguridad es perfecta. Aunque hacemos nuestro mejor esfuerzo:</p>
+  <ul>
+    <li>Si hackeamos tu email, podrían acceder a tu cuenta</li>
+    <li>Si pierdes acceso a tu email, podrías perder acceso a FirstPlace</li>
+  </ul>
+  <p><strong>Responsabilidades tuyas:</strong></p>
+  <ul>
+    <li>Protege tu email</li>
+    <li>No uses la misma contraseña en otros sitios</li>
+    <li>Cierra sesión en dispositivos compartidos</li>
+  </ul>
+
+  <h3>6.3 Notificación de Brechas</h3>
+  <p>Si descubrimos que tus datos se comprometieron, te notificaremos por email dentro de 72 horas y explicaremos qué pasó y qué puedes hacer.</p>
+
+  <h2>7. Cookies y Tecnologías de Seguimiento</h2>
+
+  <h3>7.1 Qué Son las Cookies</h3>
+  <p>Pequeños archivos guardados en tu navegador que nos ayudan a:</p>
+  <ul>
+    <li>Recordar que iniciaste sesión</li>
+    <li>Guardar tu racha localmente mientras juegas sin cuenta</li>
+    <li>Contar visitas (análisis)</li>
+  </ul>
+
+  <h3>7.2 Tipos de Cookies</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Cookie</th>
+        <th>Propósito</th>
+        <th>Duración</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Session</td>
+        <td>Mantener sesión abierta</td>
+        <td>Mientras navegas</td>
+      </tr>
+      <tr>
+        <td>Racha</td>
+        <td>Guardar progreso offline</td>
+        <td>1 año</td>
+      </tr>
+      <tr>
+        <td>Analytics</td>
+        <td>Contar visitas</td>
+        <td>2 años</td>
+      </tr>
+      <tr>
+        <td>Preferencias</td>
+        <td>Recordar idioma, tema</td>
+        <td>1 año</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>7.3 Control de Cookies</h3>
+  <p>Puedes:</p>
+  <ul>
+    <li><strong>Rechazar cookies</strong> en tu navegador (pero algunos Servicios podrían no funcionar)</li>
+    <li><strong>Borrar cookies</strong> en cualquier momento desde configuración del navegador</li>
+    <li><strong>Usar modo privado</strong> para no guardar cookies</li>
+  </ul>
+  <p>Si rechazas cookies de análisis, seguimos usando logs del servidor (no identifica quién eres, solo contabiliza visitas).</p>
+
+  <h3>7.4 Publicidad Personalizada</h3>
+  <p>Podemos usar cookies para mostrarte ads relacionados con deportes o juegos. Para optar por no recibir ads personalizados, consulta la configuración de privacidad de tu navegador.</p>
+
+  <h2>8. Tus Derechos</h2>
+
+  <h3>8.1 Derechos de Acceso</h3>
+  <p>Tienes derecho a:</p>
+  <ul>
+    <li><strong>Ver qué datos tenemos sobre ti:</strong> Puedes descargar un reporte</li>
+    <li><strong>Descargar tus datos:</strong> En formato legible (CSV, JSON)</li>
+    <li><strong>Portabilidad:</strong> Llevar tus datos a otro servicio</li>
+  </ul>
+
+  <h3>8.2 Derecho a la Corrección</h3>
+  <p>Si tus datos son incorrectos, puedes:</p>
+  <ul>
+    <li>Editar tu perfil</li>
+    <li>Solicitarnos que corrija datos que no puedes cambiar</li>
+  </ul>
+
+  <h3>8.3 Derecho al Olvido ("Derecho a Ser Olvidado")</h3>
+  <p>Puedes pedirle que borremos:</p>
+  <ul>
+    <li>Tu email y cuenta</li>
+    <li>Tus resultados de juegos (se anonimizarán)</li>
+  </ul>
+  <p><strong>Excepciones:</strong> No borramos datos si:</p>
+  <ul>
+    <li>Te debemos dinero por una suscripción</li>
+    <li>Existe un proceso legal</li>
+    <li>Necesitamos datos para impuestos (7 años)</li>
+  </ul>
+
+  <h3>8.4 Derecho a Objetar</h3>
+  <p>Puedes objetar:</p>
+  <ul>
+    <li>Recibir emails de marketing</li>
+    <li>Análisis y cookies de seguimiento</li>
+    <li>Que uses datos para un propósito específico</li>
+  </ul>
+
+  <h3>8.5 Cómo Ejercer Tus Derechos</h3>
+  <p>Email a: andy@firstplace.games o andres.canovas7@gmail.com</p>
+  <p>Responderemos dentro de 30 días. Podemos pedirte que confirmes tu identidad.</p>
+
+  <h2>9. Menores de Edad</h2>
+
+  <h3>9.1 Menores de 13 Años</h3>
+  <p>No recopilamos información de menores de 13 años. Si descubrimos que alguien menor de 13 se registró, eliminaremos la cuenta y los datos.</p>
+
+  <h3>9.2 Entre 13 y 18 Años</h3>
+  <p>Si tienes entre 13 y 18:</p>
+  <ul>
+    <li>Debes tener consentimiento de un padre o tutor</li>
+    <li>El padre/tutor tiene derecho a revisar tus datos</li>
+    <li>El padre/tutor puede pedirle que borre la cuenta</li>
+  </ul>
+
+  <h3>9.3 Contacto de Padres</h3>
+  <p>Si eres padre/madre y tienes preocupaciones sobre los datos de tu hijo, contáctanos con prueba de identidad.</p>
+
+  <h2>10. Cambios a Esta Política</h2>
+  <p>Podemos actualizar esta Política en cualquier momento. Si hacemos cambios importantes:</p>
+  <ul>
+    <li><strong>Te notificaremos por email</strong></li>
+    <li><strong>Mostraremos un aviso en el sitio</strong></li>
+    <li><strong>Tienes 30 días para objetar</strong></li>
+  </ul>
+  <p>Continuando el uso después de 30 días, aceptas los cambios.</p>
+
+  <h2>11. Información de Contacto</h2>
+  <p>Para preguntas, solicitudes de datos, o reportar problemas de privacidad:</p>
+  <ul>
+    <li>📧 <strong>Email:</strong> andres.canovas7@gmail.com (mientras no tengamos dominio de email propio)</li>
+    <li>📍 <strong>País:</strong> Uruguay, Montevideo</li>
+    <li>⏱️ <strong>Respuesta:</strong> Dentro de 30 días</li>
+  </ul>
+
+  <h2>12. Cumplimiento Legal</h2>
+  <p>Esta Política se adhiere a:</p>
+  <ul>
+    <li><strong>Ley de Protección de Datos de Uruguay</strong> (Ley 18.331)</li>
+    <li><strong>GDPR</strong> (Reglamento General de Protección de Datos de la UE), si acceso gente de Europa</li>
+    <li><strong>CCPA</strong> (Ley de Privacidad del Consumidor de California), si acceso gente de California</li>
+    <li><strong>Regulaciones de juegos:</strong> Si aplica en futuro</li>
+  </ul>
+
+  <hr style="margin: 2rem 0; border: none; border-top: 1px solid #e0e0e0;">
+  <p style="text-align: center; color: #999; font-size: 0.85rem;">Última actualización: 28 de septiembre de 2026 · Versión 1.0</p>
+</main>
+
+<footer>
+  <p>&copy; 2026 FirstPlace.games · <a href="/terminos.html">Términos de Servicio</a></p>
+</footer>
