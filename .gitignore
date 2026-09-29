@@ -1,0 +1,12 @@
+# Basura de macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# El script de subida: sirve en tu Mac, no hace falta publicarlo en la web
+subir.sh
+
+# Copias de seguridad y borradores sueltos
+*.bak
+*.bak.html

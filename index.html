@@ -4311,6 +4311,7 @@ function applyLang(){
      estan escritos: nada de eso tiene data-t, asi que hay que repintarlo a
      mano o el idioma cambia en todo menos ahi. */
   if(typeof wmPedir==="function") wmPedir();
+  if(typeof GB!=="undefined" && GB.sel && typeof showGlobeCard==="function") showGlobeCard();
   if(typeof WM!=="undefined" && WM.sel){
     const p=WM.sel;
     if($("#wmRName")) $("#wmRName").textContent = wmNom(p);
@@ -5249,6 +5250,57 @@ const VENUES={
  bmx:[["Sarrians",44.08,4.98,"Copa del Mundo"],["Brisbane",-27.47,153.03,"Mundial 2026"],["Montpellier",43.61,3.88,"FISE"],["Birmingham",33.52,-86.81,"Copa del Mundo"],["Shanghái",31.23,121.47,"Copa del Mundo"],["Riad",24.71,46.68,"Mundial urbano"],["Papendal",52.00,5.82,"Copa del Mundo"]],
  polo:[["Buenos Aires",-34.58,-58.42,"Palermo"],["Pilar",-34.46,-58.91,"Tortugas"],["Buenos Aires",-34.61,-58.52,"Hurlingham"],["Midhurst",50.99,-0.75,"Cowdray Park"],["Windsor",51.44,-0.62,"Guards Polo Club"],["Wellington",26.66,-80.24,"National Polo Center"],["Sotogrande",36.28,-5.28,"Santa María"]]
 };
+/* Lugares en inglés — SOLO para mostrar (wmLug). Los datos quedan en español
+   porque también son claves: wmRepartir guarda v[0]/v[3] en p.sports y
+   wmLocales los compara con c.venue para saber qué competencias son del país.
+   Regla, igual que wmNom: wmLug(x) para pintar, x crudo para buscar. */
+const CIUDAD_EN={
+  "Abu Dabi":"Abu Dhabi","Amberes":"Antwerp","Atenas":"Athens","Bakú":"Baku","Belgrado":"Belgrade",
+  "Berlín":"Berlin","Berna":"Bern","Bolonia":"Bologna","Bombay":"Mumbai","Brujas":"Bruges",
+  "Bruselas":"Brussels","Búfalo":"Buffalo","Calcuta":"Kolkata","Ciudad de México":"Mexico City",
+  "Ciudad del Cabo":"Cape Town","Cracovia":"Kraków","Dublín":"Dublin","Dubái":"Dubai",
+  "Edimburgo":"Edinburgh","Estambul":"Istanbul","Filadelfia":"Philadelphia",
+  "Johannesburgo":"Johannesburg","Lieja":"Liège","Lisboa":"Lisbon","Londres":"London",
+  "Los Ángeles":"Los Angeles","Milán":"Milan","Mánchester":"Manchester","Mónaco":"Monaco",
+  "Múnich":"Munich","Nueva Jersey":"New Jersey","Nueva Orleans":"New Orleans","Nueva York":"New York",
+  "París":"Paris","Pekín":"Beijing","Praga":"Prague","Riad":"Riyadh","Roma":"Rome",
+  "Río de Janeiro":"Rio de Janeiro","San Remo":"Sanremo","Seúl":"Seoul","Shanghái":"Shanghai",
+  "Singapur":"Singapore","Sídney":"Sydney","Tokio":"Tokyo","Turín":"Turin","Ámsterdam":"Amsterdam",
+  "Tahití":"Tahiti","Hawái":"Hawaii",
+  /* países y regiones que aparecen como sede */
+  "Brasil":"Brazil","Chequia":"Czechia","Eslovenia":"Slovenia","España":"Spain",
+  "Estados Unidos":"United States","Francia":"France","Japón":"Japan","Polonia":"Poland",
+  "Suiza":"Switzerland","Irlanda":"Ireland","Catar":"Qatar","Baréin":"Bahrain","Bélgica":"Belgium",
+  "Países Bajos":"Netherlands","Arabia Saudí":"Saudi Arabia"
+};
+const LUGAR_EN={
+  "Tour · llegada":"Tour · finish","Giro · llegada":"Giro · finish","Vuelta · llegada":"Vuelta · finish",
+  "París-Roubaix":"Paris–Roubaix","Milán-San Remo":"Milan–San Remo","Lieja-Bastoña":"Liège–Bastogne–Liège",
+  "Tour de Flandes":"Tour of Flanders","MetLife · final del Mundial":"MetLife · World Cup final",
+  "Mundial 2026":"Worlds 2026","Mundial 2027":"Worlds 2027","Mundial en corta":"Short-course Worlds",
+  "Mundial urbano":"Urban Worlds","Europeo 2026":"European Championships 2026",
+  "Copa del Mundo":"World Cup","Copa del Mundo FIP":"FIP World Cup","Copa Davis":"Davis Cup",
+  "Río":"Rio","Sede por confirmar":"Venue TBC","Estadio Olímpico":"Olympic Stadium",
+  "Centro Acuático de Pekín":"Beijing Aquatics Centre","India y Sri Lanka":"India and Sri Lanka"
+};
+/* el mismo rótulo cambia según el deporte: en hockey, el Mundial es la World Cup */
+const LUGAR_SP={fieldhockey:{"Mundial 2026":"World Cup 2026"}};
+const LUGAR_MEMO={};
+function wmLug(s, sp){
+  if(!s || STATE.lang!=="en") return s;
+  if(sp && LUGAR_SP[sp] && LUGAR_SP[sp][s]) return LUGAR_SP[sp][s];
+  if(s in LUGAR_MEMO) return LUGAR_MEMO[s];
+  let r=LUGAR_EN[s]||CIUDAD_EN[s];
+  if(!r){
+    const m=/^Maratón de (.+)$/.exec(s);
+    if(m) r=(m[1]==="Nueva York"?"New York City":(CIUDAD_EN[m[1]]||m[1]))+" Marathon";
+    /* compuestos: «Olympiastadion, Berlín», «Miami · Houston · San Juan · Tokio»,
+       «Bélgica / Países Bajos», «Final: Bruselas» */
+    else r=s.split(/(, | · | \/ |: | y )/).map(t=>t===" y "?" and ":(LUGAR_EN[t]||CIUDAD_EN[t]||t)).join("");
+  }
+  return (LUGAR_MEMO[s]=r);
+}
+
 
 let GB={lon:-20,lat:18,R:0,spin:true,drag:false,sel:null,pts:[],raf:null,hue:"#FF6A2B",sport:null};
 function openGlobe(){
@@ -5625,7 +5677,7 @@ function drawGlobe(){
   const boxes=[];
   vis.forEach(o=>{
     if(o.d<0.32) return;
-    const w=g.measureText(o.v[0]).width;
+    const w=g.measureText(wmLug(o.v[0])).width;
     const bx={x:o.x+8,y:o.y-7,w:w+4,h:13};
     if(boxes.some(q=>!(bx.x>q.x+q.w||bx.x+bx.w<q.x||bx.y>q.y+q.h||bx.y+bx.h<q.y))) return;
     boxes.push(bx);
@@ -5633,7 +5685,7 @@ function drawGlobe(){
     g.fillStyle="rgba(6,10,18,.62)";
     g.fillRect(bx.x-3,bx.y,bx.w,bx.h);
     g.fillStyle=`rgba(228,238,255,${0.86*a})`;
-    g.fillText(o.v[0],o.x+8,o.y+3.5);
+    g.fillText(wmLug(o.v[0]),o.x+8,o.y+3.5);
   });
   if(GB.sel){ const p=proj(GB.sel.v[2],GB.sel.v[1]);
     if(p){ g.beginPath(); g.arc(p[0],p[1],11,0,7); g.strokeStyle=GB.hue; g.lineWidth=1.6; g.stroke(); } }
@@ -5650,8 +5702,8 @@ function showGlobeCard(){
   const v=GB.sel.v;
   c.hidden=false;
   c.innerHTML=`<span class="gc-sub">${L(SPORTBY[GB.sport].n)}</span>
-    <h4>${v[3]}</h4><p>${v[0]}</p>
-    <div class="gc-co">${Math.abs(v[1]).toFixed(2)}°${v[1]>=0?"N":"S"} · ${Math.abs(v[2]).toFixed(2)}°${v[2]>=0?"E":"O"}</div>`;
+    <h4>${wmLug(v[3],GB.sport)}</h4><p>${wmLug(v[0])}</p>
+    <div class="gc-co">${Math.abs(v[1]).toFixed(2)}°${v[1]>=0?"N":"S"} · ${Math.abs(v[2]).toFixed(2)}°${v[2]>=0?"E":(STATE.lang==="en"?"W":"O")}</div>`;
 }
 
 /* =========================================================
@@ -5728,7 +5780,7 @@ function renderToday(){
             <span class="th">${e.status==="live"?`<span class="blink"></span> `:""}${e.time}</span>
             <span>
               <span class="tw">${e.duel?`${e.a} <em>vs</em> ${e.b}`:e.round}</span>
-              <span class="tc">${L(e.comp.n)}${e.venue?" · "+e.venue:""}</span>
+              <span class="tc">${L(e.comp.n)}${e.venue?" · "+wmLug(e.venue):""}</span>
             </span>
             ${e.score?`<span class="mono" style="font-size:12px">${e.score}</span>`
               :e.status==="live"?`<span class="pill live"><span class="blink"></span></span>`:""}
@@ -8366,7 +8418,7 @@ function agendaHTML(ids){
       <div class="ag-strip">${evs.length ? evs.map((e,i) => `<button class="ag-m${e.status === "live" ? " vivo" : ""}" data-d="${key}" data-i="${i}" style="--c:${e.comp.c}">
           <span class="t">${e.status === "live" ? "● " + T("live") : e.time}${e.fixture ? `<i>${es ? "Oficial" : "Official"}</i>` : ""}</span>
           <span class="w">${e.duel ? `${e.a} <em>vs</em> ${e.b}` : e.round}</span>
-          <span class="c">${L(e.comp.n)}${e.venue ? " · " + e.venue : ""}</span></button>`).join("")
+          <span class="c">${L(e.comp.n)}${e.venue ? " · " + wmLug(e.venue) : ""}</span></button>`).join("")
         : `<span class="ag-vacio">${T("noGames")}</span>`}</div></div>`;
   }
   /* semana vacía: abajo, lo próximo que viene, con fechas oficiales */
@@ -8587,7 +8639,7 @@ function calEventos(id, desde){
         const d = new Date(Y, f.m, f.d);
         if(d < desde) return;
         out.push({uid:id+"-"+c.id+"-"+calYmd(d), ini:d, fin:calMas(d,1),
-          t:calEm(id) + L(f.n) + " · " + cn, lugar:f.v||""});
+          t:calEm(id) + L(f.n) + " · " + cn, lugar:wmLug(f.v||"")});
       });
       return;
     }
@@ -8597,7 +8649,7 @@ function calEventos(id, desde){
     if(e < s) e = new Date(Y+1, c.to[0], c.to[1]);
     if(e < desde) return;                 /* ya terminó: no se inventa la próxima */
     const dias = Math.round((e - s)/86400000) + 1;
-    const lugar = c.venue || "";
+    const lugar = wmLug(c.venue || "");
     if(dias <= 21){
       out.push({uid:id+"-"+c.id+"-"+calYmd(s), ini:s, fin:calMas(e,1), t:calEm(id) + cn, lugar});
     }else{
@@ -8651,7 +8703,7 @@ function calAbrir(ancla, id, ev, dia){
     const g = "https://calendar.google.com/calendar/render?action=TEMPLATE"
       + "&text=" + encodeURIComponent(titulo)
       + "&dates=" + calYmd(ini) + "/" + calYmd(fin)
-      + (ev.venue ? "&location=" + encodeURIComponent(ev.venue) : "")
+      + (ev.venue ? "&location=" + encodeURIComponent(wmLug(ev.venue)) : "")
       + "&details=" + encodeURIComponent(x.pie + " — https://" + calHost());
     pop.style.setProperty("--h", sp.hue);
     pop.innerHTML = `<h4>${titulo}</h4><p class="sb">${x.subUno}</p>
@@ -8659,7 +8711,7 @@ function calAbrir(ancla, id, ev, dia){
       <button class="op" id="calIcsUno"><i>📥</i><span>${x.ics}<small>${x.icsUno}</small></span></button>`;
     $("#calIcsUno").onclick = ()=>{
       calBajar("firstplace-"+ev.sport+"-"+calYmd(ini)+".ics",
-        calIcs(L(sp.n), [{uid:ev.sport+"-"+ev.comp.id+"-"+calYmd(ini), ini, fin, t:titulo, lugar:ev.venue||""}]));
+        calIcs(L(sp.n), [{uid:ev.sport+"-"+ev.comp.id+"-"+calYmd(ini), ini, fin, t:titulo, lugar:wmLug(ev.venue||"")}]));
       pop.classList.remove("on");
     };
   }else{
@@ -8701,7 +8753,7 @@ function renderDayDetail(){
         <div class="who">${e.duel?`${e.a} <em>vs</em> ${e.b}`:e.round}</div>
         <div class="meta">
           <span><u style="width:8px;height:8px;border-radius:2px;background:${e.comp.c};display:inline-block"></u> ${L(e.comp.n)}</span>
-          ${e.venue?`<span>📍 ${e.venue}</span>`:""}
+          ${e.venue?`<span>📍 ${wmLug(e.venue)}</span>`:""}
           ${e.duel?`<span>🏷 ${e.round}</span>`:""}
           ${e.comp.surface?`<span>▦ ${L(e.comp.surface)}</span>`:""}
         </div>
@@ -8740,7 +8792,7 @@ function renderH2H(){
     const favs=favouritesFor(e);
     host.innerHTML=head+`
       <div class="h2h-top">
-        <div class="h2h-side"><b>${L(e.comp.n)}</b><span class="eyebrow">${e.round} · ${e.venue}</span></div>
+        <div class="h2h-side"><b>${L(e.comp.n)}</b><span class="eyebrow">${e.round} · ${wmLug(e.venue)}</span></div>
         <span class="pill hot">${e.time}</span>
       </div>
       <div class="eyebrow" style="margin:12px 0 6px">${T("probTitle")}</div>
@@ -8948,7 +9000,7 @@ function showTour(c){
       <div class="spec"><span class="k">${T("dates")}</span><span class="v" style="font-size:15px">${f} — ${t}</span></div>
       ${c.surface?`<div class="spec"><span class="k">${T("surface")}</span><span class="v" style="font-size:15px">${L(c.surface)}</span></div>`:""}
       <div class="spec"><span class="k">${T("champion")}</span><span class="v" style="font-size:15px">${ch.w}</span><span class="u">${ch.score} · vs ${ch.ru}</span></div>
-      <div class="spec"><span class="k">${T("venue")}</span><span class="v" style="font-size:15px">${ch.venue}</span></div>
+      <div class="spec"><span class="k">${T("venue")}</span><span class="v" style="font-size:15px">${wmLug(ch.venue)}</span></div>
       <div class="spec"><span class="k">${T("prize")}</span><span class="v" style="font-size:15px">${ch.prize}</span></div>
     </div>`;
 }
@@ -11003,7 +11055,10 @@ function wmPropio(j, p){
   return false;
 }
 /* Stack: el juego de bloques con piel de cada país (29/09) */
-const STACK_PAIS={MX:"juegos/stack-mexico.html",US:"juegos/stack-usa.html",FR:"juegos/stack-france.html"};
+const STACK_PAIS={MX:"juegos/stack-mexico.html",US:"juegos/stack-usa.html",FR:"juegos/stack-france.html",
+  IN:"juegos/stack-india.html",CN:"juegos/stack-china.html",BR:"juegos/stack-brasil.html",ID:"juegos/stack-indonesia.html",
+  NG:"juegos/stack-nigeria.html",PK:"juegos/stack-pakistan.html",BD:"juegos/stack-bangladesh.html",RU:"juegos/stack-russia.html",
+  ET:"juegos/stack-ethiopia.html",JP:"juegos/stack-japan.html",KR:"juegos/stack-korea.html"};
 /* Los países que ya tienen su página propia. El globo «Visitar» sale sólo
    para éstos: ofrecer el botón de un país sin ficha sería prometer algo que
    no existe. Se agrega el código y aparece solo. */
@@ -11055,7 +11110,7 @@ function wmNom(p){
   return (STATE.lang==="en" && PAIS_EN[p.iso]) ? PAIS_EN[p.iso] : p.nombre;
 }
 /* Página fija en inglés, para Google (la genera build-country.js). En inglés el globo lleva ahí; en español, a pais/?iso=. */
-const COUNTRY_URL={MX:"country/mexico/"};
+const COUNTRY_URL={MX:"country/mexico/",IT:"country/italy/",JP:"country/japan/"};
 function wmJuegos(p){
   const con=[], sin=[];
   GAMES.forEach(j=>(wmPropio(j,p)?con:sin).push(j));
@@ -11332,7 +11387,7 @@ let WMTIP = {};
 function wmTipHTML(p, sp){
   const s = SPORTBY[sp], sedes = wmSedes(p,sp), vivo = wmEnCurso(sp);
   return '<b>'+L(s.n)+'</b><i>'+sedes.length+' '+T(sedes.length===1?"wmVenueOne":"wmVenueMany")+'</i>'+
-    '<ul>'+sedes.slice(0,6).map(v=>'<li>'+v.c+(v.d?' <span>'+v.d+'</span>':'')+'</li>').join("")+
+    '<ul>'+sedes.slice(0,6).map(v=>'<li>'+wmLug(v.c)+(v.d?' <span>'+wmLug(v.d,sp)+'</span>':'')+'</li>').join("")+
     (sedes.length>6?'<li class="mas">+'+(sedes.length-6)+'</li>':'')+'</ul>'+
     (vivo?'<em><i class="pt"></i>'+T("wmLive")+' · '+vivo+'</em>':'');
 }
@@ -11352,7 +11407,7 @@ function wmFoco(p, sp, compacto){
       '<div class="sb">'+sedes.length+' '+T(sedes.length===1?"wmVenueOne":"wmVenueMany")+' · '+wmNom(p)+'</div>'+
     '</div></div>'+
     '<div class="sedes">'+sedes.map(v=>
-      '<div class="sede"><div class="ciu">'+v.c+'</div>'+(v.d?'<div class="ds">'+v.d+'</div>':'')+'</div>').join("")+'</div>'+
+      '<div class="sede"><div class="ciu">'+wmLug(v.c)+'</div>'+(v.d?'<div class="ds">'+wmLug(v.d,sp)+'</div>':'')+'</div>').join("")+'</div>'+
     (aqui.length?'<h4>'+T("wmHere")+' '+wmNom(p)+'</h4>'+
       '<div class="comps local">'+aqui.map(linea).join("")+'</div>':'')+
     (mundo.length?'<h4>'+T("wmComps")+' <u>'+T("wmCompsNote")+'</u></h4>'+
@@ -11391,7 +11446,7 @@ function wmLista(p){
     const s=SPORTBY[sp]; if(!s) return "";
     return '<div class="wm-sport" data-wmsport="'+sp+'"><div class="h"><span class="em">'+s.em+'</span>'+
       '<span class="nm">'+L(s.n)+'</span><span class="n">'+p.sports[sp].length+'</span></div><ul>'+
-      p.sports[sp].map(v=>'<li>'+v.c+' <span>'+v.d+'</span></li>').join("")+'</ul></div>';
+      p.sports[sp].map(v=>'<li>'+wmLug(v.c)+' <span>'+wmLug(v.d,sp)+'</span></li>').join("")+'</ul></div>';
   }).join("");
 }
 
