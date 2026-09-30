@@ -522,10 +522,11 @@ body.home-map #worldmap{display:block}
 .wm-grp:first-child{padding-top:10px}
 
 /* ── juegos del país en tarjetas (30/09): portada o animación + nombre ── */
-.wm-body.wm-cards{padding:14px;display:grid;gap:12px;overflow:hidden;min-height:0}
-.wm-cards.dos{grid-template-rows:1fr 1fr}
-.wm-cards.tres{grid-template-columns:1fr 1fr;grid-template-rows:1.25fr 1fr}
-.wm-cards.tres .wj:first-child{grid-column:1 / -1}
+.wm-body.wm-cards{padding:14px;display:grid;gap:12px;grid-template-columns:1fr 1fr;align-content:start;
+  overflow-y:auto;overscroll-behavior:contain;min-height:0}
+.wj.grande{grid-column:1 / -1;height:var(--wjg,200px)}
+.wj.chica{height:var(--wjc,170px)}
+.wj.chica.ancha{grid-column:1 / -1}
 .wj{position:relative;display:block;min-height:0;border-radius:14px;overflow:hidden;cursor:pointer;
   border:1px solid var(--line-strong);background:#0E1522;padding:0;color:var(--ink);text-decoration:none;
   font:inherit;text-align:left;transition:transform .18s,border-color .18s}
@@ -538,7 +539,7 @@ body.home-map #worldmap{display:block}
 .wj-nm{position:absolute;left:0;right:0;bottom:0;padding:26px 14px 11px;
   background:linear-gradient(180deg,rgba(7,9,15,0),rgba(7,9,15,.88) 70%);
   font-family:var(--f-display);font-weight:700;font-size:19px;letter-spacing:-.01em;line-height:1.1}
-.wm-cards.tres .wj:not(:first-child) .wj-nm{font-size:15px;padding:22px 11px 9px}
+.wj.chica .wj-nm{font-size:15px;padding:22px 11px 9px}
 .wj-sello{position:absolute;top:10px;left:10px;width:22px;height:22px;border-radius:50%;
   border:2px solid rgba(255,255,255,.85);background-size:60px;background-position:center;
   background-color:#0E1522;box-shadow:0 2px 6px rgba(0,0,0,.5)}
@@ -11791,11 +11792,15 @@ function wmPintarJuegos(p){
   const body=$("#wmLBody"); if(!body) return;
   wjParar();
   const todos=wjDelPais(p), propios=todos.filter(j=>j.tipo!=="mundo");
-  const vis = (propios.length>=2 && todos.length>=3) ? todos.slice(0,3) : todos.slice(0,2);
+  /* los primeros 2 o 3 llenan la pantalla; el resto sigue abajo, de a dos, con scroll */
+  const tres = propios.length>=2 && todos.length>=3;
+  const vis = todos.map((j,i)=>({j, grande: tres ? i===0 : i<2}));
   $("#wmLm1").innerHTML="<b>"+todos.length+"</b> "+T(todos.length===1?"wmGameOne":"wmGameMany");
   $("#wmLm2").innerHTML="<b>"+propios.length+"</b> "+L({es:"de "+wmNom(p), en:"made for "+wmNom(p)});
-  body.className="wm-body wm-cards "+(vis.length===3?"tres":"dos");
-  body.innerHTML = vis.map(j=>{
+  body.className="wm-body wm-cards";
+  body.dataset.tres = tres ? "1" : "";
+  body.dataset.mas = todos.length > (tres?3:2) ? "1" : "";
+  body.innerHTML = vis.map(({j,grande})=>{
     const nombre = L(j.nm) + (j.conPais ? " "+wmNom(p) : "");
     const url = j.urls ? j.urls[p.iso] : j.url;
     const img = wjPortada(j,p);
@@ -11803,9 +11808,12 @@ function wmPintarJuegos(p){
     const dentro = (img ? '<img src="'+img+'" alt="" loading="lazy">' : '<canvas data-anim="'+(j.anim||"emoji")+'" data-em="'+(j.em||"")+'" data-c="'+j.c+'"></canvas>')
       + sello + '<span class="wj-nm">'+nombre+'</span>';
     return url
-      ? '<a class="wj" href="'+url+'" style="--c:'+j.c+'" aria-label="'+nombre+'">'+dentro+'</a>'
-      : '<button type="button" class="wj" data-wjabre="'+j.abre+'" style="--c:'+j.c+'" aria-label="'+nombre+'">'+dentro+'</button>';
+      ? '<a class="wj '+(grande?"grande":"chica")+'" href="'+url+'" style="--c:'+j.c+'" aria-label="'+nombre+'">'+dentro+'</a>'
+      : '<button type="button" class="wj '+(grande?"grande":"chica")+'" data-wjabre="'+j.abre+'" style="--c:'+j.c+'" aria-label="'+nombre+'">'+dentro+'</button>';
   }).join("");
+  const chicas=body.querySelectorAll(".wj.chica");
+  if(chicas.length%2) chicas[chicas.length-1].classList.add("ancha");   /* la suelta ocupa la fila entera */
+  body.scrollTop=0; wjAltos();
   const cvs=body.querySelectorAll("canvas[data-anim]");
   if(!cvs.length) return;
   /* los deportes del país, para los bloques de Stack */
@@ -11814,6 +11822,19 @@ function wmPintarJuegos(p){
     ems:(deps.length?deps:[{em:"⚽",hue:"#5CC8A0"}]).map(s=>s.em),
     hues:(deps.length?deps:[{hue:"#5CC8A0"}]).map(s=>s.hue)}));
   wjLuego(()=>{ wjMedir(); wjCuadro(performance.now()); wjArrancar(); });
+}
+/* alto de las tarjetas: la primera pantalla se reparte entre 2 grandes (o
+   1 grande + 2 chicas); si hay más juegos, se achica un poco para que asome
+   la fila siguiente y se entienda que hay scroll */
+function wjAltos(){
+  const body=$("#wmLBody"); if(!body || !body.classList.contains("wm-cards")) return;
+  let H=body.clientHeight-28; if(H<200) H=420;
+  if(body.dataset.mas) H-=46;
+  const libre=H-12;
+  const g = body.dataset.tres ? libre*1.25/2.25 : libre/2;
+  const c = body.dataset.tres ? libre/2.25 : libre/2.25;
+  body.style.setProperty("--wjg", Math.round(g)+"px");
+  body.style.setProperty("--wjc", Math.round(c)+"px");
 }
 function wjLuego(f){ requestAnimationFrame(()=>requestAnimationFrame(f)); setTimeout(f,120); }
 function wjMedir(){
@@ -11916,7 +11937,7 @@ const WJ_DIB = {
     g.save(); g.translate(w/2,y); g.rotate(Math.sin(t*0.9)*0.12); wjEmoji(g,a.em||"🎮",0,0,s); g.restore();
   }
 };
-window.addEventListener("resize",()=>{ if(WJ.anims.length){ wjMedir(); wjCuadro(performance.now()); } });
+window.addEventListener("resize",()=>{ wjAltos(); if(WJ.anims.length){ wjMedir(); wjCuadro(performance.now()); } });
 
 function wmElegir(p){
   WM.sel=p||null; wmPedir();
@@ -12254,11 +12275,11 @@ function wmInit(){
   $$("[data-wmclose]").forEach(b=>b.onclick=()=>wmElegir(null));
   $$("[data-wmtab]").forEach(b=>b.onclick=()=>wmVer(b.dataset.wmtab));
 
-  $("#wmGoGames").onclick=()=>openGames();
+  $("#wmGoGames").onclick=()=>{ location.href="juegos.html"; };
 
   $("#wmLBody").addEventListener("click",e=>{
     const st=e.target.closest("[data-stack]"); if(st){ location.href=st.dataset.stack; return; }
-    const ab=e.target.closest("[data-wjabre]"); if(ab){ if(ab.dataset.wjabre==="puzzle") openGames(); return; }
+    const ab=e.target.closest("[data-wjabre]"); if(ab){ if(ab.dataset.wjabre==="puzzle") openPuzzle(); return; }
     const c=e.target.closest("[data-wmgame]"); if(!c) return;
     const j=GAMES.find(x=>x.id===c.dataset.wmgame);
     if(j&&j.ready) openGames(); else toast(L(j.n)+" · "+T("wmWip"));
