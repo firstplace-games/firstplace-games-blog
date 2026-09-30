@@ -527,6 +527,12 @@ body.home-map #worldmap{display:block}
 .wj.grande{grid-column:1 / -1;height:var(--wjg,200px)}
 .wj.chica{height:var(--wjc,170px)}
 .wj.chica.ancha{grid-column:1 / -1}
+.wj.estrella{grid-column:1 / -1;height:var(--wje,320px);border-color:var(--c,#C98A16);
+  box-shadow:0 0 0 1px var(--c,#C98A16),0 10px 30px rgba(0,0,0,.45)}
+.wj.estrella .wj-nm{font-size:30px;padding:40px 18px 15px}
+.wj-tag{position:absolute;top:12px;right:12px;padding:5px 10px;border-radius:99px;background:var(--c,#C98A16);
+  color:#10131B;font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  box-shadow:0 2px 8px rgba(0,0,0,.45)}
 .wj{position:relative;display:block;min-height:0;border-radius:14px;overflow:hidden;cursor:pointer;
   border:1px solid var(--line-strong);background:#0E1522;padding:0;color:var(--ink);text-decoration:none;
   font:inherit;text-align:left;transition:transform .18s,border-color .18s}
@@ -11771,8 +11777,10 @@ function wjDelPais(p){
   const ORD={adaptado:0,tipico:1,mundo:2};
   return wjCatalogo()
     .filter(j=> j.tipo==="mundo" ? (j.id!=="puzzle" || p.nsports>=1) : !!(j.urls && j.urls[p.iso]))
-    .sort((a,b)=>ORD[a.tipo]-ORD[b.tipo]);
+    .sort((a,b)=>(wjEstrella(b,p)-wjEstrella(a,p)) || (ORD[a.tipo]-ORD[b.tipo]));
 }
+/* el juego estrella del país (catálogo: estrella:['MX']) va primero, a todo lo ancho y más alto */
+function wjEstrella(j,p){ return (j.estrella && j.estrella.indexOf(p.iso)>=0) ? 1 : 0; }
 function wjPortada(j,p){
   const P=window.FP_PORTADAS||{};
   return P[j.id+":"+p.iso] || P[j.id] || null;
@@ -11793,23 +11801,25 @@ function wmPintarJuegos(p){
   wjParar();
   const todos=wjDelPais(p), propios=todos.filter(j=>j.tipo!=="mundo");
   /* los primeros 2 o 3 llenan la pantalla; el resto sigue abajo, de a dos, con scroll */
-  const tres = propios.length>=2 && todos.length>=3;
-  const vis = todos.map((j,i)=>({j, grande: tres ? i===0 : i<2}));
+  const est = todos.length && wjEstrella(todos[0],p) ? 1 : 0;
+  const tres = !est && propios.length>=2 && todos.length>=3;
+  const vis = todos.map((j,i)=>({j, clase: est ? (i===0?"estrella":"chica") : ((tres ? i===0 : i<2) ? "grande" : "chica")}));
   $("#wmLm1").innerHTML="<b>"+todos.length+"</b> "+T(todos.length===1?"wmGameOne":"wmGameMany");
   $("#wmLm2").innerHTML="<b>"+propios.length+"</b> "+L({es:"de "+wmNom(p), en:"made for "+wmNom(p)});
   body.className="wm-body wm-cards";
   body.dataset.tres = tres ? "1" : "";
-  body.dataset.mas = todos.length > (tres?3:2) ? "1" : "";
-  body.innerHTML = vis.map(({j,grande})=>{
+  body.dataset.estrella = est ? "1" : "";
+  body.dataset.mas = todos.length > (est?3:(tres?3:2)) ? "1" : "";
+  body.innerHTML = vis.map(({j,clase})=>{
     const nombre = L(j.nm) + (j.conPais ? " "+wmNom(p) : "");
     const url = j.urls ? j.urls[p.iso] : j.url;
     const img = wjPortada(j,p);
     const sello = j.tipo==="adaptado" ? '<span class="wj-sello" style="background-image:url(banderas/'+p.iso.toLowerCase()+'.jpg)"></span>' : '';
     const dentro = (img ? '<img src="'+img+'" alt="" loading="lazy">' : '<canvas data-anim="'+(j.anim||"emoji")+'" data-em="'+(j.em||"")+'" data-c="'+j.c+'"></canvas>')
-      + sello + '<span class="wj-nm">'+nombre+'</span>';
+      + sello + (clase==="estrella" && j.tag ? '<span class="wj-tag">'+L(j.tag)+'</span>' : '') + '<span class="wj-nm">'+nombre+'</span>';
     return url
-      ? '<a class="wj '+(grande?"grande":"chica")+'" href="'+url+'" style="--c:'+j.c+'" aria-label="'+nombre+'">'+dentro+'</a>'
-      : '<button type="button" class="wj '+(grande?"grande":"chica")+'" data-wjabre="'+j.abre+'" style="--c:'+j.c+'" aria-label="'+nombre+'">'+dentro+'</button>';
+      ? '<a class="wj '+clase+'" href="'+url+'" style="--c:'+j.c+'" aria-label="'+nombre+'">'+dentro+'</a>'
+      : '<button type="button" class="wj '+clase+'" data-wjabre="'+j.abre+'" style="--c:'+j.c+'" aria-label="'+nombre+'">'+dentro+'</button>';
   }).join("");
   const chicas=body.querySelectorAll(".wj.chica");
   if(chicas.length%2) chicas[chicas.length-1].classList.add("ancha");   /* la suelta ocupa la fila entera */
@@ -11832,7 +11842,8 @@ function wjAltos(){
   if(body.dataset.mas) H-=46;
   const libre=H-12;
   const g = body.dataset.tres ? libre*1.25/2.25 : libre/2;
-  const c = body.dataset.tres ? libre/2.25 : libre/2.25;
+  body.style.setProperty("--wje", Math.round(libre*0.62)+"px");
+  const c = body.dataset.estrella ? libre*0.38 : libre/2.25;
   body.style.setProperty("--wjg", Math.round(g)+"px");
   body.style.setProperty("--wjc", Math.round(c)+"px");
 }
