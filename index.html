@@ -173,6 +173,14 @@ body.home-map:not(.inwin) #btBuscar{display:inline-flex}
 /* va después de la regla de arriba, no dentro del bloque de 860: con la misma
    especificidad gana la última que se lee, no la del media query */
 @media(max-width:860px){ #homebar #bscMovil{display:inline-flex} }
+/* ruleta angosta (30/09): en el teléfono la lupa queda sola, redonda y al
+   medio de la izquierda, en el lugar de la flecha (ahí se desliza con el dedo) */
+@media(max-width:860px){
+  #homebar #bscMovil{top:50%;left:10px;transform:translateY(-50%);width:36px;height:36px;padding:0;justify-content:center}
+  #homebar #bscMovil span:not(.lupa){display:none}
+  #homebar #bscMovil .lupa{font-size:15px}
+  #reelPrev{display:none}
+}
 .nav-btn{
   display:flex;align-items:center;gap:7px;padding:6px 14px;border-radius:100px;
   border:1px solid var(--line-strong);background:rgba(255,255,255,.04);
@@ -314,7 +322,7 @@ body.home-map #hub{display:none}
 /* ══ la ruleta acostada: el único selector de deportes ══════════════════
    Un cilindro visto de canto. La tarjeta del centro es la elegida: pinta el
    mapa con los países que tienen ese deporte, y tocarla otra vez entra. */
-:root{ --reelh:158px }
+:root{ --reelh:96px }
 #homebar{
   position:fixed;top:calc(56px + var(--cintah));left:0;right:0;height:var(--reelh);z-index:60;
   background:linear-gradient(180deg,#0A1120,#0C1524 62%,#080D18);
@@ -326,7 +334,7 @@ body.home-map #hub{display:none}
    3D, que además eran lo que Safari aplastaba en el resto de la web */
 #drum{position:absolute;inset:0}
 .scard{
-  position:absolute;left:50%;top:36px;width:76px;height:68px;margin-left:-38px;
+  position:absolute;left:50%;top:21px;width:60px;height:54px;margin-left:-30px;
   display:flex;align-items:center;justify-content:center;
   border-radius:19px;border:1px solid var(--line-strong);cursor:pointer;
   background:linear-gradient(180deg,rgba(24,34,52,.96),rgba(8,13,22,.96));
@@ -354,7 +362,10 @@ body.home-map #hub{display:none}
 .scard.on .nm{color:var(--ink);font-weight:600}
 /* la elegida al doble. Va con #homebar delante: «#homebar .em{16px}», que
    quedó del conmutador viejo, le gana a «.scard .em» y deja todos a 16 px */
-#homebar .scard.on .em{font-size:32px}
+#homebar .scard.on .em{font-size:64px}
+/* ruleta angosta (30/09): la elegida crece para que el emoji entre al doble */
+.scard.on{width:84px;height:78px;margin-left:-42px;top:9px;border-radius:20px}
+.scard .go{display:none!important}
 .scard .go{
   position:absolute;left:50%;top:calc(100% + 28px);transform:translateX(-50%);opacity:0;
   font-family:var(--f-mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;
@@ -362,14 +373,15 @@ body.home-map #hub{display:none}
   transition:opacity .2s;pointer-events:none;
 }
 .scard.on .go{opacity:1}
-#slot{position:absolute;left:50%;top:30px;width:92px;height:80px;margin-left:-46px;
+#slot{position:absolute;left:50%;top:4px;width:94px;height:88px;margin-left:-47px;
   border-radius:23px;border:1px solid color-mix(in srgb,var(--torch) 55%,transparent);
   pointer-events:none;z-index:2}
-#slot::before,#slot::after{content:"";position:absolute;left:50%;margin-left:-5px;
+#slot::before,#slot::after{display:none;content:"";position:absolute;left:50%;margin-left:-5px;
   border-left:5px solid transparent;border-right:5px solid transparent}
 #slot::before{top:-7px;border-top:7px solid var(--torch)}
 #slot::after{bottom:-7px;border-bottom:7px solid var(--torch);opacity:.55}
 #homebar.elegido #reelHint{opacity:0}
+#reelHint{display:none!important}   /* ruleta angosta: ya no hay lugar para la pista */
 #reelFade{position:absolute;inset:0;pointer-events:none;z-index:3;background:
   linear-gradient(90deg,#080D18 0,rgba(8,13,24,0) 15%,rgba(8,13,24,0) 85%,#080D18 100%)}
 .reelArrow{position:absolute;top:50%;margin-top:-17px;width:34px;height:34px;border-radius:50%;
@@ -377,16 +389,18 @@ body.home-map #hub{display:none}
   color:var(--ink-2);font-size:17px;z-index:4;cursor:pointer}
 .reelArrow:hover{color:var(--ink);border-color:var(--torch)}
 #reelPrev{left:14px} #reelNext{right:14px}
-#reelHint{position:absolute;left:0;right:0;bottom:7px;text-align:center;z-index:4;
+#reelHint{position:absolute;left:0;right:0;bottom:3px;text-align:center;z-index:4;
   transition:opacity .2s;
   font-family:var(--f-mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;
   color:var(--faint);pointer-events:none}
 @media(max-width:700px){
-  :root{ --reelh:140px }
-  .scard{width:68px;height:62px;margin-left:-34px;top:34px;border-radius:17px}
+  :root{ --reelh:88px }
+  .scard{width:54px;height:50px;margin-left:-27px;top:19px;border-radius:15px}
+  .scard.on{width:76px;height:72px;margin-left:-38px;top:8px}
+  #homebar .scard.on .em{font-size:56px}
   .scard .nm{font-size:10px;padding:2px 8px}
   .scard .em{font-size:34px} .scard .em svg{width:34px;height:34px}
-  #slot{width:82px;height:74px;margin-left:-41px;top:28px}
+  #slot{width:86px;height:82px;margin-left:-43px;top:3px}
   #reelHint{display:none}
 }
 #homebar .sw{
@@ -506,6 +520,29 @@ body.home-map #worldmap{display:block}
 .wm-grp{padding:16px 22px 7px;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.15em;
   text-transform:uppercase;color:var(--faint)}
 .wm-grp:first-child{padding-top:10px}
+
+/* ── juegos del país en tarjetas (30/09): portada o animación + nombre ── */
+.wm-body.wm-cards{padding:14px;display:grid;gap:12px;overflow:hidden;min-height:0}
+.wm-cards.dos{grid-template-rows:1fr 1fr}
+.wm-cards.tres{grid-template-columns:1fr 1fr;grid-template-rows:1.25fr 1fr}
+.wm-cards.tres .wj:first-child{grid-column:1 / -1}
+.wj{position:relative;display:block;min-height:0;border-radius:14px;overflow:hidden;cursor:pointer;
+  border:1px solid var(--line-strong);background:#0E1522;padding:0;color:var(--ink);text-decoration:none;
+  font:inherit;text-align:left;transition:transform .18s,border-color .18s}
+.wj:hover,.wj:focus-visible{transform:translateY(-2px);border-color:var(--c,#5CC8A0)}
+.wj canvas,.wj img{position:absolute;inset:0;width:100%;height:100%;display:block;max-width:none}
+.wj img{object-fit:cover;transform-origin:50% 45%;animation:wjRespira 14s ease-in-out infinite alternate}
+.wj:nth-child(2) img{animation-delay:-5s} .wj:nth-child(3) img{animation-delay:-9s}
+.wj:hover img{animation-play-state:paused}
+@keyframes wjRespira{from{transform:scale(1.02) translate(0,0)}to{transform:scale(1.12) translate(-2%,-1.5%)}}
+.wj-nm{position:absolute;left:0;right:0;bottom:0;padding:26px 14px 11px;
+  background:linear-gradient(180deg,rgba(7,9,15,0),rgba(7,9,15,.88) 70%);
+  font-family:var(--f-display);font-weight:700;font-size:19px;letter-spacing:-.01em;line-height:1.1}
+.wm-cards.tres .wj:not(:first-child) .wj-nm{font-size:15px;padding:22px 11px 9px}
+.wj-sello{position:absolute;top:10px;left:10px;width:22px;height:22px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.85);background-size:60px;background-position:center;
+  background-color:#0E1522;box-shadow:0 2px 6px rgba(0,0,0,.5)}
+@media (prefers-reduced-motion:reduce){ .wj,.wj img{transition:none;animation:none} }
 
 /* ── un solo deporte, a fondo ── */
 .wm-foco{padding:4px 22px 22px}
@@ -2852,6 +2889,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:none;border-ra
 
   <div class="toast" id="toast"></div>
 </div>
+<script src="juegos/catalogo.js"></script>
 <script>
 /* =========================================================
    FirstPlace.games · demo data (invented placeholders, not real records)
@@ -4418,6 +4456,7 @@ function applyLang(){
     const p=WM.sel;
     if($("#wmRName")) $("#wmRName").textContent = wmNom(p);
     if($("#wmLName")) $("#wmLName").textContent = T("wmGamesOf")+" "+wmNom(p);
+    if(typeof wmPintarJuegos==="function") wmPintarJuegos(p);
     const v=$("#wmVis");
     if(v && v.style.display==="block") v.querySelector("b").textContent = wmNom(p);
     if(typeof wmPintarR==="function") wmPintarR(p);
@@ -11712,6 +11751,173 @@ function wmPintarR(p){
   });
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   EL PANEL DE JUEGOS DEL PAÍS · tarjetas con imagen (30/09)
+   La lista sale de juegos/catalogo.js (window.FP_JUEGOS), la misma para
+   todo el sitio: un juego nuevo aparece acá sin tocar este archivo.
+   1–2 juegos del país → dos tarjetas grandes (se completa con uno del
+   mundo). 3 o más → una grande y dos chicas. El resto, en «Ver todos».
+   Cada tarjeta: portada (FP_PORTADAS) o, si no hay, una animación simple.
+   ═══════════════════════════════════════════════════════════════════ */
+const WJ = { anims:[], raf:0, telas:{} };
+function wjCatalogo(){
+  if(window.FP_JUEGOS && window.FP_JUEGOS.length) return window.FP_JUEGOS;
+  /* respaldo si catalogo.js no cargó: Stack y el rompecabezas */
+  return [{id:"stack",tipo:"adaptado",anim:"stack",c:"#F4A640",nm:{es:"Stack",en:"Stack"},conPais:true,urls:STACK_PAIS},
+          {id:"puzzle",tipo:"mundo",anim:"jigsaw",c:"#7B5BE6",nm:{es:"Rompecabezas",en:"Jigsaw"},abre:"puzzle"}];
+}
+function wjDelPais(p){
+  const ORD={adaptado:0,tipico:1,mundo:2};
+  return wjCatalogo()
+    .filter(j=> j.tipo==="mundo" ? (j.id!=="puzzle" || p.nsports>=1) : !!(j.urls && j.urls[p.iso]))
+    .sort((a,b)=>ORD[a.tipo]-ORD[b.tipo]);
+}
+function wjPortada(j,p){
+  const P=window.FP_PORTADAS||{};
+  return P[j.id+":"+p.iso] || P[j.id] || null;
+}
+function wjTela(iso){
+  if(!iso) return null;
+  if(!(iso in WJ.telas)){
+    const im=new Image(); WJ.telas[iso]=im;
+    im.onerror=()=>{ WJ.telas[iso]=null; };
+    im.src="banderas/"+iso.toLowerCase()+".jpg";
+  }
+  const im=WJ.telas[iso];
+  return (im && im.complete && im.naturalWidth) ? im : null;
+}
+
+function wmPintarJuegos(p){
+  const body=$("#wmLBody"); if(!body) return;
+  wjParar();
+  const todos=wjDelPais(p), propios=todos.filter(j=>j.tipo!=="mundo");
+  const vis = (propios.length>=2 && todos.length>=3) ? todos.slice(0,3) : todos.slice(0,2);
+  $("#wmLm1").innerHTML="<b>"+todos.length+"</b> "+T(todos.length===1?"wmGameOne":"wmGameMany");
+  $("#wmLm2").innerHTML="<b>"+propios.length+"</b> "+L({es:"de "+wmNom(p), en:"made for "+wmNom(p)});
+  body.className="wm-body wm-cards "+(vis.length===3?"tres":"dos");
+  body.innerHTML = vis.map(j=>{
+    const nombre = L(j.nm) + (j.conPais ? " "+wmNom(p) : "");
+    const url = j.urls ? j.urls[p.iso] : j.url;
+    const img = wjPortada(j,p);
+    const sello = j.tipo==="adaptado" ? '<span class="wj-sello" style="background-image:url(banderas/'+p.iso.toLowerCase()+'.jpg)"></span>' : '';
+    const dentro = (img ? '<img src="'+img+'" alt="" loading="lazy">' : '<canvas data-anim="'+(j.anim||"emoji")+'" data-em="'+(j.em||"")+'" data-c="'+j.c+'"></canvas>')
+      + sello + '<span class="wj-nm">'+nombre+'</span>';
+    return url
+      ? '<a class="wj" href="'+url+'" style="--c:'+j.c+'" aria-label="'+nombre+'">'+dentro+'</a>'
+      : '<button type="button" class="wj" data-wjabre="'+j.abre+'" style="--c:'+j.c+'" aria-label="'+nombre+'">'+dentro+'</button>';
+  }).join("");
+  const cvs=body.querySelectorAll("canvas[data-anim]");
+  if(!cvs.length) return;
+  /* los deportes del país, para los bloques de Stack */
+  const deps=Object.keys(p.sports||{}).map(id=>SPORTBY[id]).filter(s=>s && s.em && s.em.charAt(0)!=="<");
+  WJ.anims=[...cvs].map(cv=>({cv, tipo:cv.dataset.anim, em:cv.dataset.em, c:cv.dataset.c, iso:p.iso,
+    ems:(deps.length?deps:[{em:"⚽",hue:"#5CC8A0"}]).map(s=>s.em),
+    hues:(deps.length?deps:[{hue:"#5CC8A0"}]).map(s=>s.hue)}));
+  wjLuego(()=>{ wjMedir(); wjCuadro(performance.now()); wjArrancar(); });
+}
+function wjLuego(f){ requestAnimationFrame(()=>requestAnimationFrame(f)); setTimeout(f,120); }
+function wjMedir(){
+  const d=Math.min(2,window.devicePixelRatio||1);
+  WJ.anims.forEach(a=>{
+    const r=a.cv.getBoundingClientRect(); if(!r.width) return;
+    a.w=r.width; a.h=r.height; a.cv.width=Math.round(r.width*d); a.cv.height=Math.round(r.height*d);
+    a.g=a.cv.getContext("2d"); a.g.setTransform(d,0,0,d,0,0);
+  });
+}
+const wjQuieto=()=>window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function wjCuadro(ahora){
+  const t = wjQuieto() ? 6.3 : ahora/1000;
+  WJ.anims.forEach(a=>{ if(!a.g||!a.w) return; a.g.clearRect(0,0,a.w,a.h); (WJ_DIB[a.tipo]||WJ_DIB.emoji)(a.g,a.w,a.h,t,a); });
+}
+function wjArrancar(){
+  if(WJ.raf || wjQuieto() || !WJ.anims.length) return;
+  const f=now=>{ WJ.raf=0; if(!WJ.anims.length) return; wjCuadro(now); WJ.raf=requestAnimationFrame(f); };
+  WJ.raf=requestAnimationFrame(f);
+}
+function wjParar(){ if(WJ.raf) cancelAnimationFrame(WJ.raf); WJ.raf=0; WJ.anims=[]; }
+
+/* ── las animaciones de respaldo ── */
+function wjRedondo(g,x,y,w,h,r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); }
+function wjEmoji(g,e,x,y,s){ g.font=Math.round(s)+'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'; g.textAlign="center"; g.textBaseline="middle"; g.fillText(e,x,y+s*0.05); }
+function wjFondo(g,w,h,a){
+  const im=wjTela(a.iso);
+  if(im){ const s=Math.max(w,h)/Math.min(im.naturalWidth,im.naturalHeight)*1.1; g.drawImage(im,0,0,im.naturalWidth*s,im.naturalHeight*s);
+    g.fillStyle="rgba(7,10,18,.72)"; g.fillRect(0,0,w,h); }
+  else { const gr=g.createLinearGradient(0,0,w,h); gr.addColorStop(0,a.c+"55"); gr.addColorStop(1,"#0B111D"); g.fillStyle=gr; g.fillRect(0,0,w,h); }
+}
+const WJ_DIB = {
+  /* bloques que caen y se apilan; cada uno es un deporte del país */
+  stack(g,w,h,t,a){
+    wjFondo(g,w,h,a);
+    const cols=6, s=Math.min(w/(cols+1.2),h/6.2), x0=(w-s*cols)/2, piso=h-s*0.45, ciclo=18;
+    const n=Math.floor(t*1.6)%(ciclo+4), fr=(t*1.6)%1;
+    for(let i=0;i<Math.min(n,ciclo);i++){
+      const c=i%cols; let yy=piso-s*(Math.floor(i/cols)+1);
+      if(i===n-1 && n<=ciclo){ const e=Math.min(1,fr*1.3); yy=yy*e - s*(1-e); }
+      wjRedondo(g,x0+c*s+2,yy+2,s-4,s-4,s*0.18); g.fillStyle=a.hues[i%a.hues.length]; g.fill();
+      g.fillStyle="rgba(255,255,255,.18)"; g.fillRect(x0+c*s+5,yy+4,s-10,s*0.14);
+      wjEmoji(g,a.ems[i%a.ems.length],x0+c*s+s/2,yy+s/2,s*0.52);
+    }
+  },
+  /* la cancha: rectángulos que se marcan y se dan vuelta */
+  cancha(g,w,h,t,a){
+    wjFondo(g,w,h,a);
+    const N=5, s=Math.min(w*0.62,h*0.72)/N, x0=(w-s*N)/2, y0=(h-s*N)/2-8;
+    g.fillStyle="#F4EDDD"; g.fillRect(x0,y0,s*N,s*N);
+    const R=[[0,0,3,1],[3,0,2,2],[0,1,1,3],[1,1,2,2],[3,2,2,3],[1,3,2,2],[0,4,1,1]];
+    const n=Math.floor(t*1.1)%(R.length+3);
+    for(let i=0;i<Math.min(n,R.length);i++){
+      const r=R[i], x=x0+r[0]*s, y=y0+r[1]*s, ww=r[2]*s, hh=r[3]*s, col=a.hues[i%a.hues.length];
+      const e=(i===n-1)?(t*1.1)%1:1; const sx=Math.max(.05, e<.5?1-e*2:(e-.5)*2);
+      g.save(); g.translate(x+ww/2,0); g.scale(sx,1); g.translate(-(x+ww/2),0);
+      if(e<.5){ g.fillStyle=col; g.fillRect(x+2,y+2,ww-4,hh-4); }
+      else { g.fillStyle=col+"40"; g.fillRect(x+2,y+2,ww-4,hh-4); g.strokeStyle=col; g.lineWidth=2.5; g.strokeRect(x+2,y+2,ww-4,hh-4);
+        for(let p=0;p<r[2];p++) for(let q=0;q<r[3];q++) wjEmoji(g,a.ems[i%a.ems.length],x+p*s+s/2,y+q*s+s/2,s*0.5); }
+      g.restore();
+    }
+  },
+  /* la pelota de hule va y viene entre dos caderas */
+  ulama(g,w,h,t){
+    const gr=g.createLinearGradient(0,0,0,h); gr.addColorStop(0,"#3A2A1E"); gr.addColorStop(1,"#16100C"); g.fillStyle=gr; g.fillRect(0,0,w,h);
+    const suelo=h*0.74; g.fillStyle="#B98B5E"; g.fillRect(0,suelo,w,h-suelo);
+    const per=2.2, f=(t%per)/per, ida=Math.floor(t/per)%2===0, xa=w*0.2, xb=w*0.8;
+    const x=ida?xa+(xb-xa)*f:xb-(xb-xa)*f, y=suelo-18-Math.sin(f*Math.PI)*h*0.42;
+    g.fillStyle="rgba(0,0,0,.3)"; g.beginPath(); g.ellipse(x,suelo+4,12,3,0,0,7); g.fill();
+    g.fillStyle="#2A1B12"; g.beginPath(); g.arc(x,y,h*0.05,0,7); g.fill();
+  },
+  /* las piezas de un estadio entran y encajan */
+  jigsaw(g,w,h,t){
+    g.fillStyle="#120F24"; g.fillRect(0,0,w,h);
+    const bw=w*0.78, bh=h*0.62, x0=(w-bw)/2, y0=(h-bh)/2-10, cols=4, filas=3, pw=bw/cols, ph=bh/filas;
+    const escena=()=>{ const s=g.createLinearGradient(0,y0,0,y0+bh); s.addColorStop(0,"#2B3F8F"); s.addColorStop(.55,"#E07B53"); s.addColorStop(.56,"#2E7D4F"); s.addColorStop(1,"#1F5E3A");
+      g.fillStyle=s; g.fillRect(x0,y0,bw,bh); g.fillStyle="#1B1B2E"; g.beginPath(); g.ellipse(x0+bw/2,y0+bh*0.56,bw*0.48,bh*0.2,0,Math.PI,0); g.fill(); };
+    const tot=cols*filas, n=Math.floor(t*2.2)%(tot+5);
+    for(let i=0;i<tot;i++){
+      const c=i%cols, r=Math.floor(i/cols), ord=(i*5)%tot; if(ord>=n) continue;
+      const e=ord===n-1?(t*2.2)%1:1, ez=1-Math.pow(1-e,3), dx=(1-ez)*(c<2?-60:60), dy=(1-ez)*(r===0?-40:40);
+      g.save(); g.translate(dx,dy); g.beginPath(); g.rect(x0+c*pw,y0+r*ph,pw,ph); g.clip(); escena(); g.restore();
+      g.strokeStyle="rgba(18,15,36,.8)"; g.lineWidth=1.2; g.strokeRect(x0+c*pw+dx,y0+r*ph+dy,pw,ph);
+    }
+  },
+  /* el kart da la vuelta a un óvalo */
+  kart(g,w,h,t){
+    g.fillStyle="#10161F"; g.fillRect(0,0,w,h);
+    const cx=w/2, cy=h/2-8, rx=w*0.36, ry=h*0.28;
+    g.strokeStyle="#2C3645"; g.lineWidth=h*0.13; g.beginPath(); g.ellipse(cx,cy,rx,ry,0,0,7); g.stroke();
+    for(let k=0;k<14;k++){ const a0=-t*2.4+k*0.05; g.fillStyle="rgba(244,85,29,"+(0.5-k*0.035)+")"; g.beginPath(); g.arc(cx+Math.cos(a0)*rx,cy+Math.sin(a0)*ry,5-k*0.25,0,7); g.fill(); }
+    const a=-t*2.4, x=cx+Math.cos(a)*rx, y=cy+Math.sin(a)*ry;
+    g.fillStyle="#F4551D"; g.beginPath(); g.arc(x,y,8,0,7); g.fill();
+  },
+  /* respaldo genérico: el objeto del juego flotando sobre su color */
+  emoji(g,w,h,t,a){
+    wjFondo(g,w,h,a);
+    const s=Math.min(w,h)*0.42, y=h*0.44+Math.sin(t*1.8)*h*0.05;
+    g.fillStyle="rgba(0,0,0,.28)"; g.beginPath(); g.ellipse(w/2,h*0.78,s*0.38*(1-Math.sin(t*1.8)*0.12),s*0.08,0,0,7); g.fill();
+    g.save(); g.translate(w/2,y); g.rotate(Math.sin(t*0.9)*0.12); wjEmoji(g,a.em||"🎮",0,0,s); g.restore();
+  }
+};
+window.addEventListener("resize",()=>{ if(WJ.anims.length){ wjMedir(); wjCuadro(performance.now()); } });
+
 function wmElegir(p){
   WM.sel=p||null; wmPedir();
   $("#worldmap").classList.toggle("sel", !!p);
@@ -11719,7 +11925,7 @@ function wmElegir(p){
   const pp=$("#wmPop"); if(pp) pp.style.display="none";
   const vis=$("#wmVis");
   if(vis) vis.style.display="none";
-  if(!p){ L1.classList.remove("on"); R1.classList.remove("on"); return; }
+  if(!p){ L1.classList.remove("on"); R1.classList.remove("on"); wjParar(); return; }
   if(vis && PAIS_FICHA[p.iso]){
     vis.querySelector("b").textContent=wmNom(p);
     vis.querySelector("a").href=(STATE.lang!=="es" && COUNTRY_URL[p.iso]) ? COUNTRY_URL[p.iso] : "pais/?iso="+p.iso.toLowerCase();
@@ -11728,23 +11934,9 @@ function wmElegir(p){
   }
   wmCentrar(p);
 
-  /* izquierda: juegos, los propios del país arriba */
+  /* izquierda: juegos del país, en tarjetas (catálogo único) */
   $("#wmLName").textContent=T("wmGamesOf")+" "+wmNom(p);
-  const js=wmJuegos(p), sk=STACK_PAIS[p.iso], listos=js.todos.filter(j=>j.ready).length+(sk?1:0);
-  $("#wmLm1").innerHTML="<b>"+(js.todos.length+(sk?1:0))+"</b> "+T("wmGameMany");
-  $("#wmLm2").innerHTML="<b>"+listos+"</b> "+T(listos===1?"wmReadyOne":"wmReadyMany");
-  const fila=j=>'<div class="wm-game '+(j.ready?"ok":"wip")+'" data-wmgame="'+j.id+'">'+
-    '<span class="em">'+j.em+'</span><div class="txt"><div class="nm">'+L(j.n)+'</div>'+
-    '<div class="ds">'+L(j.d).split(".")[0]+'.</div></div>'+
-    '<span class="st">'+T(j.ready?"wmPlay":"wmWip")+'</span></div>';
-  const grupo=(t,l)=>l.length?'<div class="wm-grp">'+t+'</div>'+l.map(fila).join(""):"";
-  $("#wmLBody").innerHTML = (js.con.length && js.sin.length)
-    ? grupo(T("wmOwn"),js.con)+grupo(T("wmFit"),js.sin)
-    : js.todos.map(fila).join("");
-  if(sk) $("#wmLBody").insertAdjacentHTML("afterbegin",
-    '<div class="wm-game ok" data-stack="'+sk+'"><span class="em">🧱</span><div class="txt"><div class="nm">Stack '+wmNom(p)+'</div>'+
-    '<div class="ds">'+L({es:"Piezas que caen: cada una es un deporte del país.",en:"Falling blocks: each one is a sport from the country."})+'</div></div>'+
-    '<span class="st">'+T("wmPlay")+'</span></div>');
+  wmPintarJuegos(p);
 
   /* derecha: deportes */
   wmPintarR(p);
@@ -12066,6 +12258,7 @@ function wmInit(){
 
   $("#wmLBody").addEventListener("click",e=>{
     const st=e.target.closest("[data-stack]"); if(st){ location.href=st.dataset.stack; return; }
+    const ab=e.target.closest("[data-wjabre]"); if(ab){ if(ab.dataset.wjabre==="puzzle") openGames(); return; }
     const c=e.target.closest("[data-wmgame]"); if(!c) return;
     const j=GAMES.find(x=>x.id===c.dataset.wmgame);
     if(j&&j.ready) openGames(); else toast(L(j.n)+" · "+T("wmWip"));
