@@ -176,12 +176,20 @@ button:focus-visible{outline:3px solid var(--cempa);outline-offset:2px}
 
 
 <style>
-.cov-nav{font-family:var(--mono);font-size:12.5px;line-height:1.9;display:flex;flex-direction:column;align-items:center;gap:2px}
-.cov-nav a{color:var(--papel);text-decoration:none;border-bottom:1px solid rgba(243,233,210,.35)}
-.cov-nav a:hover{color:var(--cempa);border-color:var(--cempa)}
-.cov-nav a[aria-current]{color:var(--cempa);border-bottom-color:transparent;font-weight:600}
-.cov-nav span{opacity:.6}
-#cover.hasimg .cov-nav{text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.cov-nav{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%}
+.cov-flags{display:flex;flex-wrap:wrap;justify-content:center;gap:2px;max-width:760px}
+.cov-flags a{display:flex;flex-direction:column;align-items:center;width:44px;padding:3px 0 2px;border:2px solid transparent;border-radius:5px;text-decoration:none;color:var(--papel);line-height:1}
+.cov-flags a b{font-size:20px;font-weight:400;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.cov-flags a span{font-family:var(--mono);font-size:7.5px;letter-spacing:.03em;opacity:.75;margin-top:2px;white-space:nowrap;overflow:hidden;max-width:44px;text-overflow:ellipsis}
+.cov-flags a:hover,.cov-flags a:focus-visible{border-color:var(--cempa);background:rgba(247,162,27,.14);outline:none}
+.cov-flags a[aria-current]{border-color:var(--cempa);background:rgba(247,162,27,.22)}
+.cov-flags a[aria-current] span{opacity:1;font-weight:600}
+.cov-links{font-family:var(--mono);font-size:12px}
+.cov-links a{color:var(--papel);text-decoration:none;border-bottom:1px solid rgba(243,233,210,.35)}
+.cov-links a:hover{color:var(--cempa);border-color:var(--cempa)}
+.cov-links i{font-style:normal;opacity:.6;margin:0 4px}
+#cover.hasimg .cov-links,#cover.hasimg .cov-flags span{text-shadow:0 1px 3px rgba(0,0,0,.8)}
+#cover.hasimg .cov-flags a b{filter:drop-shadow(0 1px 2px rgba(0,0,0,.7))}
 a.brand{text-decoration:none}
 a.brand:hover{color:var(--cempa)}
 </style>
@@ -260,7 +268,7 @@ a.brand:hover{color:var(--cempa)}
     </div>
     <div class="cov-best" id="covBest"></div>
     <div class="cov-help" id="covHelp"></div>
-    <nav class="cov-nav" aria-label="Countries"><div><a href="stack-mexico.html" aria-current="page">México</a> <span>·</span> <a href="stack-usa.html">USA</a> <span>·</span> <a href="stack-france.html">France</a> <span>·</span> <a href="stack-india.html">India</a> <span>·</span> <a href="stack-china.html">China</a> <span>·</span> <a href="stack-brasil.html">Brasil</a> <span>·</span> <a href="stack-indonesia.html">Indonesia</a> <span>·</span> <a href="stack-nigeria.html">Nigeria</a> <span>·</span> <a href="stack-pakistan.html">Pakistan</a> <span>·</span> <a href="stack-bangladesh.html">Bangladesh</a> <span>·</span> <a href="stack-russia.html">Russia</a> <span>·</span> <a href="stack-ethiopia.html">Ethiopia</a> <span>·</span> <a href="stack-japan.html">Japan</a> <span>·</span> <a href="stack-korea.html">Korea</a> <span>·</span> <a href="stack-italy.html">Italy</a> <span>·</span> <a href="stack-spain.html">Spain</a> <span>·</span> <a href="stack-uk.html">UK</a> <span>·</span> <a href="stack-germany.html">Germany</a> <span>·</span> <a href="stack-netherlands.html">Netherlands</a> <span>·</span> <a href="stack-portugal.html">Portugal</a> <span>·</span> <a href="stack-argentina.html">Argentina</a> <span>·</span> <a href="stack-uruguay.html">Uruguay</a> <span>·</span> <a href="stack-chile.html">Chile</a> <span>·</span> <a href="stack-colombia.html">Colombia</a> <span>·</span> <a href="stack-cuba.html">Cuba</a></div><div><a href="../juegos.html">← All games</a> <span>·</span> <a href="../index.html">Map</a></div></nav>
+    <nav class="cov-nav" aria-label="Countries"><div class="cov-flags"><a href="stack-mexico.html" aria-current="page" title="Stack México"><b>🇲🇽</b><span>México</span></a><a href="stack-usa.html" title="Stack USA"><b>🇺🇸</b><span>USA</span></a><a href="stack-france.html" title="Stack France"><b>🇫🇷</b><span>France</span></a><a href="stack-india.html" title="Stack India"><b>🇮🇳</b><span>India</span></a><a href="stack-china.html" title="Stack China"><b>🇨🇳</b><span>China</span></a><a href="stack-brasil.html" title="Stack Brasil"><b>🇧🇷</b><span>Brasil</span></a><a href="stack-indonesia.html" title="Stack Indonesia"><b>🇮🇩</b><span>Indonesia</span></a><a href="stack-nigeria.html" title="Stack Nigeria"><b>🇳🇬</b><span>Nigeria</span></a><a href="stack-pakistan.html" title="Stack Pakistan"><b>🇵🇰</b><span>Pakistan</span></a><a href="stack-bangladesh.html" title="Stack Bangladesh"><b>🇧🇩</b><span>Bangladesh</span></a><a href="stack-russia.html" title="Stack Russia"><b>🇷🇺</b><span>Russia</span></a><a href="stack-ethiopia.html" title="Stack Ethiopia"><b>🇪🇹</b><span>Ethiopia</span></a><a href="stack-japan.html" title="Stack Japan"><b>🇯🇵</b><span>Japan</span></a><a href="stack-korea.html" title="Stack Korea"><b>🇰🇷</b><span>Korea</span></a><a href="stack-italy.html" title="Stack Italy"><b>🇮🇹</b><span>Italy</span></a><a href="stack-spain.html" title="Stack Spain"><b>🇪🇸</b><span>Spain</span></a><a href="stack-uk.html" title="Stack UK"><b>🇬🇧</b><span>UK</span></a><a href="stack-germany.html" title="Stack Germany"><b>🇩🇪</b><span>Germany</span></a><a href="stack-netherlands.html" title="Stack Netherlands"><b>🇳🇱</b><span>Netherlands</span></a><a href="stack-portugal.html" title="Stack Portugal"><b>🇵🇹</b><span>Portugal</span></a><a href="stack-argentina.html" title="Stack Argentina"><b>🇦🇷</b><span>Argentina</span></a><a href="stack-uruguay.html" title="Stack Uruguay"><b>🇺🇾</b><span>Uruguay</span></a><a href="stack-chile.html" title="Stack Chile"><b>🇨🇱</b><span>Chile</span></a><a href="stack-colombia.html" title="Stack Colombia"><b>🇨🇴</b><span>Colombia</span></a><a href="stack-cuba.html" title="Stack Cuba"><b>🇨🇺</b><span>Cuba</span></a></div><div class="cov-links"><a href="stack.html">All countries</a> <i>·</i> <a href="../juegos.html">← All games</a> <i>·</i> <a href="../index.html">Map</a></div></nav>
   </div>
 </div>
 
