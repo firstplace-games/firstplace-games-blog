@@ -32,8 +32,8 @@ window.FP_JUEGOS = [
   { id:'cancha', tipo:'adaptado', anim:'cancha', c:'#D6167A', em:'🟩',
     nm:{es:'La Cancha', en:'La Cancha'}, urls:{ MX:'juegos/cancha.html' } },
 
-  { id:'ulama', tipo:'tipico', anim:'ulama', c:'#C98A16', em:'⚫',
-    nm:{es:'Ulama', en:'Ulama'}, urls:{ MX:'juegos/ulama.html' } },
+  { id:'ulama', tipo:'tipico', anim:'ulama', c:'#C98A16', em:'⚫', estrella:['MX'], tag:{es:'Nuevo · 3D', en:'New · 3D'},
+    nm:{es:'Ulama 3D', en:'Ulama 3D'}, urls:{ MX:'juegos/ulama.html' } },
   { id:'fronton', tipo:'tipico', anim:'emoji', c:'#2B7A9E', em:'🥎',
     nm:{es:'Frontón', en:'Frontón'}, urls:{ ES:'juegos/fronton.html' } },
   { id:'ruzzola', tipo:'tipico', anim:'emoji', c:'#C98A16', em:'🧀',
@@ -54,7 +54,7 @@ window.FP_JUEGOS = [
 window.FP_PORTADAS = {
   'stack:AR':  'juegos/portadas/stack-argentina.jpg',
   'cancha:MX': 'juegos/portadas/cancha-mexico.jpg',
-  'ulama':     'juegos/portadas/ulama.jpg',
+  'ulama':     'juegos/portadas/ulama-3d.jpg',
   'puzzle':    'juegos/portadas/rompecabezas.jpg',
   'vr':        'juegos/portadas/vuelta-rapida.jpg'
 };
