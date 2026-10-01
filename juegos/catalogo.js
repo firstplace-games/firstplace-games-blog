@@ -29,6 +29,10 @@ window.FP_JUEGOS = [
       NL:'juegos/stack-netherlands.html', PT:'juegos/stack-portugal.html', AR:'juegos/stack-argentina.html',
       UY:'juegos/stack-uruguay.html', CL:'juegos/stack-chile.html', CO:'juegos/stack-colombia.html',
       CU:'juegos/stack-cuba.html' } },
+  /* Maze: laberinto con monumento, deporte y rivales de cada país (01/10) */
+  { id:'maze', tipo:'adaptado', anim:'emoji', c:'#2F5BD3', em:'🎭',
+    nm:{es:'Maze', en:'Maze'}, conPais:true,
+    urls:{ MX:'juegos/maze-mexico.html', US:'juegos/maze-usa.html', FR:'juegos/maze-france.html', IN:'juegos/maze-india.html', CN:'juegos/maze-china.html', BR:'juegos/maze-brasil.html', ID:'juegos/maze-indonesia.html', NG:'juegos/maze-nigeria.html', PK:'juegos/maze-pakistan.html', BD:'juegos/maze-bangladesh.html', RU:'juegos/maze-russia.html', ET:'juegos/maze-ethiopia.html', JP:'juegos/maze-japan.html', KR:'juegos/maze-korea.html', IT:'juegos/maze-italy.html', ES:'juegos/maze-spain.html', GB:'juegos/maze-uk.html', DE:'juegos/maze-germany.html', NL:'juegos/maze-netherlands.html', PT:'juegos/maze-portugal.html', AR:'juegos/maze-argentina.html', UY:'juegos/maze-uruguay.html', CL:'juegos/maze-chile.html', CO:'juegos/maze-colombia.html', CU:'juegos/maze-cuba.html' } },
   { id:'cancha', tipo:'adaptado', anim:'cancha', c:'#D6167A', em:'🟩',
     nm:{es:'La Cancha', en:'The Court'}, urls:{ MX:'juegos/cancha.html' } },
 
