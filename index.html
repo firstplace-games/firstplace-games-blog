@@ -214,7 +214,53 @@ body.home-map:not(.inwin) #btBuscar{display:inline-flex}
 .lang button[aria-pressed="true"]{background:var(--torch);color:#0B0A08;font-weight:600}
 
 /* ---------- intro reel ---------- */
-#intro{position:fixed;inset:0;z-index:100;background:#05070C;overflow:hidden}
+/* La portada tiene dos alturas: el reel ocupa la primera pantalla entera y
+   debajo va texto de verdad. Antes la página era un botón y nada más: todo el
+   contenido lo pintaba JavaScript dentro del mapa, así que Google no veía ni
+   texto ni enlaces. El reel no cambió; sólo dejó de ser lo único que hay.
+   Los hijos absolutos cuelgan de .intro-screen, no de #intro. */
+#intro{position:fixed;inset:0;z-index:100;background:#05070C;overflow-y:auto;overflow-x:hidden;
+  scroll-behavior:smooth;overscroll-behavior:contain}
+.intro-screen{position:relative;height:100dvh;min-height:520px;overflow:hidden}
+.intro-mas{
+  display:flex;flex-direction:column;align-items:center;gap:5px;margin-top:4px;
+  font-family:var(--f-mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--faint);background:none;border:0;cursor:pointer;padding:4px 10px}
+.intro-mas:hover{color:var(--ink-2)}
+.intro-mas i{font-style:normal;font-size:13px;line-height:1;animation:masBaja 1.8s ease-in-out infinite}
+@keyframes masBaja{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(3px);opacity:1}}
+@media(prefers-reduced-motion:reduce){.intro-mas i{animation:none}}
+
+.intro-doc{
+  position:relative;background:var(--ground);border-top:1px solid var(--line);
+  padding:104px 26px 54px;color:var(--ink-2);
+  font-family:var(--f-sans,'IBM Plex Sans',system-ui,sans-serif);font-size:15px;line-height:1.62}
+.intro-doc .caja{max-width:1080px;margin:0 auto}
+.intro-doc h2{
+  font-family:var(--f-display);font-weight:700;color:var(--ink);
+  font-size:clamp(26px,3.4vw,38px);line-height:1.1;letter-spacing:-.02em;margin:0 0 14px}
+.intro-doc h3{
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--torch);margin:40px 0 14px;font-weight:500}
+.intro-doc p{margin:0 0 14px;max-width:62ch}
+.intro-doc a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line-strong)}
+.intro-doc a:hover{color:var(--torch);border-bottom-color:var(--torch)}
+.doc-fams{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.doc-fam{background:var(--surface);padding:16px 18px}
+.doc-fam b{display:block;font-family:var(--f-display);font-size:14px;color:var(--ink);margin-bottom:5px;font-weight:600}
+.doc-fam b::before{content:"";display:inline-block;width:7px;height:7px;border-radius:2px;
+  background:var(--c);margin-right:8px;vertical-align:middle}
+.doc-fam span{font-size:13.5px;line-height:1.55}
+.doc-cols{display:grid;gap:26px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin-top:6px}
+.doc-cols ul{list-style:none;margin:0;padding:0}
+.doc-cols li{padding:5px 0;font-size:14px}
+.doc-pie{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);
+  font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:var(--faint);
+  display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+.doc-pie a{border:0;color:var(--faint)}
+.doc-pie a:hover{color:var(--torch)}
+@media(max-width:640px){ .intro-doc{padding:96px 18px 40px} .intro-doc h3{margin-top:32px} }
 #reel{position:absolute;inset:0}
 .reel-slide{
   position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:6px;
@@ -322,7 +368,7 @@ body.home-map #hub{display:none}
 /* ══ la ruleta acostada: el único selector de deportes ══════════════════
    Un cilindro visto de canto. La tarjeta del centro es la elegida: pinta el
    mapa con los países que tienen ese deporte, y tocarla otra vez entra. */
-:root{ --reelh:96px }
+:root{ --reelh:124px }
 #homebar{
   position:fixed;top:calc(56px + var(--cintah));left:0;right:0;height:var(--reelh);z-index:60;
   background:linear-gradient(180deg,#0A1120,#0C1524 62%,#080D18);
@@ -342,26 +388,31 @@ body.home-map #hub{display:none}
 }
 /* pasar el cursor la trae al frente: se le devuelve el color y el foco */
 .scard:hover{opacity:1!important;filter:none!important;z-index:200!important}
-.scard .em{font-size:40px;line-height:1;pointer-events:none}
-.scard .em svg{width:40px;height:40px;display:block}
-/* el nombre ya no está impreso en la tarjeta: es un globo que sale arriba al
-   pasar el cursor, en cualquiera de las tarjetas, la del centro incluida */
-.scard .nm{position:absolute;left:50%;bottom:calc(100% + 9px);transform:translateX(-50%);
+#homebar .scard .em{font-size:32px;line-height:1;pointer-events:none}
+/* los 11 deportes con glifo propio (futsal, kabaddi, sumo…) traen un <svg>.
+   Medido en «em» crece con el font-size de la tarjeta, igual que un emoji de
+   texto: sin esto se quedaban clavados en 40 px y la elegida no se veía al
+   doble. Una sola regla, y vale también para el móvil. */
+.scard .em svg{width:1em;height:1em;display:block}
+/* el nombre es un globo que sale DEBAJO del emoji (1/10): arriba lo cortaba
+   el borde de #homebar, que es overflow:hidden. Abajo entra entero porque
+   --reelh deja sitio. Sale al pasar el cursor por cualquier tarjeta, y en la
+   elegida queda siempre a la vista. */
+.scard .nm{position:absolute;left:50%;top:calc(100% + 8px);transform:translateX(-50%);
   font-size:11px;color:var(--ink);font-weight:600;white-space:nowrap;
   background:rgba(8,13,24,.94);border:1px solid var(--line-strong);border-radius:9px;
   padding:3px 10px;box-shadow:0 6px 16px rgba(0,0,0,.5);
   opacity:0;pointer-events:none;transition:opacity .14s}
 .scard:hover .nm{opacity:1}
-/* en pantalla táctil no hay cursor: ahí el nombre de la elegida queda fijo */
-@media(hover:none){ .scard.on .nm{opacity:1} }
+/* el de la elegida siempre visible: es el que hay que poder leer */
+.scard.on .nm{opacity:1}
 .scard .bar{position:absolute;left:28%;right:28%;top:-1px;height:2px;border-radius:2px;
   background:var(--h);box-shadow:0 0 10px var(--h);opacity:.9}
 .scard.on{border-color:var(--h);
   box-shadow:0 18px 40px color-mix(in srgb,var(--h) 40%,transparent),
              inset 0 1px 0 rgba(255,255,255,.14)}
 .scard.on .nm{color:var(--ink);font-weight:600}
-/* la elegida al doble. Va con #homebar delante: «#homebar .em{16px}», que
-   quedó del conmutador viejo, le gana a «.scard .em» y deja todos a 16 px */
+/* la elegida al doble exacto de la suelta: 64 contra 32 (móvil 56 contra 28) */
 #homebar .scard.on .em{font-size:64px}
 /* ruleta angosta (30/09): la elegida crece para que el emoji entre al doble */
 .scard.on{width:84px;height:78px;margin-left:-42px;top:9px;border-radius:20px}
@@ -394,12 +445,12 @@ body.home-map #hub{display:none}
   font-family:var(--f-mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;
   color:var(--faint);pointer-events:none}
 @media(max-width:700px){
-  :root{ --reelh:88px }
+  :root{ --reelh:116px }
   .scard{width:54px;height:50px;margin-left:-27px;top:19px;border-radius:15px}
   .scard.on{width:76px;height:72px;margin-left:-38px;top:8px}
   #homebar .scard.on .em{font-size:56px}
   .scard .nm{font-size:10px;padding:2px 8px}
-  .scard .em{font-size:34px} .scard .em svg{width:34px;height:34px}
+  #homebar .scard .em{font-size:28px}
   #slot{width:86px;height:82px;margin-left:-43px;top:3px}
   #reelHint{display:none}
 }
@@ -2420,6 +2471,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:none;border-ra
 
   <!-- ============ INTRO REEL ============ -->
   <section id="intro" aria-label="Intro">
+   <div class="intro-screen">
     <div class="reel-wash" id="reelWash"></div>
     <div id="reel"></div>
     <div class="reel-scan" aria-hidden="true"></div>
@@ -2433,7 +2485,77 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:none;border-ra
           <span style="font:inherit;color:inherit" data-t="ctaAll">Entrar</span>
         </button>
       </div>
+      <button class="intro-mas" type="button" id="introMas" aria-label="Read more about FirstPlace">
+        <span>What is this</span><i>▾</i>
+      </button>
     </div>
+   </div>
+
+   <!-- ============ texto real de la portada ============
+        Lo que Google ve sin ejecutar JavaScript. Los enlaces van sólo a
+        páginas que existen hoy; cuando el chat de SEO publique /sports/,
+        los 50 deportes de abajo pasan a ser enlaces. -->
+   <section class="intro-doc" id="introDoc" aria-label="About FirstPlace.games">
+    <div class="caja">
+      <h2>Every sport in one place</h2>
+      <p>FirstPlace.games is a world map of sport. Pick one of fifty sports and the
+      map lights up the countries where it is actually played, with the venues, the
+      competitions and the dates behind each one. Pick a country and you get the
+      sports it follows, the places they are played and a game built around them.</p>
+      <p>Every date and every figure on this site comes from the governing body or
+      the competition itself. When something has not been published yet, it is not
+      here — we would rather leave a gap than guess.</p>
+
+      <h3>The fifty sports</h3>
+      <div class="doc-fams">
+        <div class="doc-fam" style="--c:#4C7CF5"><b>Football</b><span>Football and futsal — the eleven-a-side game and its five-a-side indoor cousin.</span></div>
+        <div class="doc-fam" style="--c:#E2703A"><b>Court sports</b><span>Basketball, baseball, netball, volleyball and handball.</span></div>
+        <div class="doc-fam" style="--c:#E9A13B"><b>Contact codes</b><span>American football, rugby, Australian football, flag football and kabaddi.</span></div>
+        <div class="doc-fam" style="--c:#E4699E"><b>Racket sports</b><span>Tennis, padel, squash, pickleball, table tennis and badminton.</span></div>
+        <div class="doc-fam" style="--c:#3FB6A8"><b>Motorsport</b><span>Formula 1 and MotoGP.</span></div>
+        <div class="doc-fam" style="--c:#3FA96B"><b>Precision and strategy</b><span>Golf, polo, darts, snooker, chess and esports.</span></div>
+        <div class="doc-fam" style="--c:#B36BFF"><b>Stick sports</b><span>Ice hockey, field hockey, cricket, lacrosse and hurling.</span></div>
+        <div class="doc-fam" style="--c:#E9C83B"><b>Endurance and strength</b><span>Cycling, athletics, swimming, triathlon and weightlifting.</span></div>
+        <div class="doc-fam" style="--c:#E4574C"><b>Combat sports</b><span>Boxing, MMA, judo, taekwondo, wrestling and sumo.</span></div>
+        <div class="doc-fam" style="--c:#7B5BE6"><b>Board, air and blade</b><span>Climbing, surfing, skateboarding, BMX, snowboard, gymnastics, figure skating and fencing.</span></div>
+      </div>
+
+      <h3>Countries</h3>
+      <p>The map covers 177 countries. These have a page of their own, with the
+      sports they follow and the games that came out of them:
+      <a href="country/mexico/">Sports in Mexico</a>,
+      <a href="country/italy/">Sports in Italy</a> and
+      <a href="country/japan/">Sports in Japan</a>. More are on the way.</p>
+
+      <h3>Games you can play right now</h3>
+      <div class="doc-cols">
+        <ul>
+          <li><a href="juegos.html">All games</a> — the full games room</li>
+          <li><a href="juegos/stack.html">Stack</a> — falling blocks, one skin per country, 25 of them</li>
+          <li><a href="juegos/cancha.html">La Cancha</a> — a pitch puzzle that teaches you a fact per piece</li>
+          <li><a href="juegos/ulama.html">Ulama 3D</a> — the Mesoamerican ballgame, three against three</li>
+        </ul>
+        <ul>
+          <li><a href="juegos/vuelta-rapida.html">Vuelta Rápida</a> — 24 real racing circuits</li>
+          <li><a href="juegos/fronton.html">Frontón</a> — Basque handball against the wall</li>
+          <li><a href="juegos/ruzzola.html">Ruzzola</a> — rolling a wheel of cheese down an Italian road</li>
+          <li><a href="juegos/queso.html">Cheese Rolling</a> — the Cooper's Hill chase</li>
+        </ul>
+        <ul>
+          <li><a href="juegos/fierljeppen.html">Fierljeppen</a> — the Dutch canal pole jump</li>
+          <li><a href="juegos/petanca.html">Pétanque</a> — point or shoot</li>
+          <li><a href="blog/">Blog</a> — what we are building and why</li>
+        </ul>
+      </div>
+
+      <div class="doc-pie">
+        <span>FirstPlace.games</span>
+        <a href="terminos.html">Terms</a>
+        <a href="privacidad.html">Privacy</a>
+        <a href="blog/">Blog</a>
+      </div>
+    </div>
+   </section>
   </section>
 
   <!-- ============ HUB / WHEEL ============ -->
@@ -3338,6 +3460,200 @@ const TVCH = ["ESPN","DAZN","Movistar+","Sky","Prime","Eurosport","TNT","beIN"];
 
 /* ---- per-sport datasets ---- */
 const SPORTDATA = {
+/* ── los 27 que estaban vacíos (1/10/2026) ───────────────────────────────
+   Tienen calendario, torneos, medidas y datos; NO tienen todavía heat,
+   rules, decades ni field propio, así que la pestaña Dinámica les muestra
+   la nota de «sin datos» (ver renderDynamics). Rellenar eso es el próximo
+   paso, no una urgencia: lo que se ve en el mapa y en el calendario ya está. */
+  volleyball:{
+    pool:[], venues:["Mundial de Clubes, Katowice","Maracanãzinho, Río de Janeiro","Allianz Cloud, Milán","Burhan Felek, Estambul","Ariake Arena, Tokio","Mundial 2025, Manila","Mundial femenino 2027, Anaheim"],
+    comps:[{"id":"mundialclubes","n":{"es":"Mundial de Clubes FIVB","en":"FIVB Club World Championship"},"tier":"Mundial","venue":"Arena Katowice, Katowice","from":[11,15],"to":[11,20]},{"id":"cevcl","n":{"es":"Final Four de la Champions League CEV","en":"CEV Champions League Final Four"},"tier":"Liga","venue":"Europa","from":[4,15],"to":[4,16]}],
+    countries:[["URS",6],["ITA",5],["BRA",3],["POL",3],["TCH",2],["USA",1]],
+    specs:[{"k":{"es":"Cancha","en":"Court"},"v":"18 × 9","u":"m"},{"k":{"es":"Red (masc. / fem.)","en":"Net (men / women)"},"v":"2,43 / 2,24","u":"m"},{"k":{"es":"Pelota","en":"Ball"},"v":"65–67 cm · 260–280","u":"g"},{"k":{"es":"En cancha","en":"On court"},"v":"6","u":{"es":"por equipo","en":"per side"}}],
+    facts:["Italia ganó en 2025 su quinto Campeonato Mundial masculino al vencer a Bulgaria en la final jugada en Filipinas.","La red se cuelga a 2,43 m en categoría masculina y a 2,24 m en femenina: 19 centímetros de diferencia.","Polonia es sede del Mundial de Clubes masculino dos años seguidos, 2026 y 2027, con Silesia como anfitriona."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  handball:{
+    pool:[], venues:["Lanxess Arena, Colonia","SAP Garden, Múnich","Wunderino Arena, Kiel","Palau Blaugrana, Barcelona","Paris La Défense Arena, París","Jyske Bank Boxen, Herning","Mundial 2021, El Cairo"],
+    comps:[{"id":"mundial","n":{"es":"Mundial masculino IHF","en":"IHF Men's World Championship"},"tier":"Mundial","venue":"Lanxess Arena, Colonia","from":[0,13],"to":[0,31]},{"id":"eurofem","n":{"es":"Europeo femenino EHF","en":"EHF European Women's Championship"},"tier":"Copa","venue":"Europa central","from":[11,3],"to":[11,20]}],
+    countries:[["FRA",6],["SWE",4],["DEN",4],["ROU",4],["GER",3],["RUS",3],["ESP",2],["CRO",1]],
+    specs:[{"k":{"es":"Cancha","en":"Court"},"v":"40 × 20","u":"m"},{"k":{"es":"Arco","en":"Goal"},"v":"3 × 2","u":"m"},{"k":{"es":"Pelota (talla 3)","en":"Ball (size 3)"},"v":"58–60 cm · 425–475","u":"g"},{"k":{"es":"Duración","en":"Duration"},"v":"2 × 30","u":"min"}],
+    facts:["El Mundial masculino de 2027 se juega íntegramente en Alemania, del 13 al 31 de enero, repartido entre Múnich, Stuttgart, Kiel, Magdeburgo, Hannover y Colonia.","Francia es el país con más Mundiales masculinos: seis, el último en 2017.","La pelota masculina reglamentaria mide entre 58 y 60 centímetros de circunferencia y pesa entre 425 y 475 gramos."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  netball:{
+    pool:[], venues:["Mundial 2027, Sídney","John Cain Arena, Melbourne","Spark Arena, Auckland","Wolfbrook Arena, Christchurch","Copper Box Arena, Londres","National Indoor Sports Centre, Kingston","Mundial 2023, Ciudad del Cabo"],
+    comps:[{"id":"concup","n":{"es":"Constellation Cup","en":"Constellation Cup"},"tier":"Copa","venue":"Spark Arena, Auckland","from":[9,18],"to":[9,28]},{"id":"mundial","n":{"es":"Mundial de Netball","en":"Netball World Cup"},"tier":"Mundial","venue":"Qudos Bank Arena, Sídney","from":[7,25],"to":[8,5]}],
+    countries:[["AUS",12],["NZL",5],["TTO",1]],
+    specs:[{"k":{"es":"Cancha","en":"Court"},"v":"30,5 × 15,25","u":"m"},{"k":{"es":"Altura del aro","en":"Goalpost"},"v":"3,05","u":"m"},{"k":{"es":"Pelota","en":"Ball"},"v":"690–710 mm · 400–450","u":"g"},{"k":{"es":"En cancha","en":"On court"},"v":"7","u":{"es":"por equipo","en":"per side"}}],
+    facts:["La Constellation Cup entre Australia y Nueva Zelanda se juega a cuatro partidos, dos en cada país.","El Mundial de Sídney 2027 será el primero de la historia con todos los partidos disputados en un solo recinto.","El aro de netball no tiene tablero y mide 380 milímetros de diámetro interior, colgado a 3,05 metros del suelo."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  futsal:{
+    pool:[], venues:["Finales UEFA, Biel","Arena Gradski Vrt, Osijek","Palau Blaugrana, Barcelona","Pavilhão João Rocha, Lisboa","Mundial 2024, Taskent","Mundial 2016, Cali","Mundial 2012, Bangkok"],
+    comps:[{"id":"uefafcl","n":{"es":"Finales de la UEFA Futsal Champions League","en":"UEFA Futsal Champions League finals"},"tier":"Liga","venue":"Biel/Bienne Arena, Biel","from":[4,7],"to":[4,9]},{"id":"eurofem","n":{"es":"Eurocopa femenina de futsal","en":"UEFA Women's Futsal Euro"},"tier":"Copa","venue":"Arena Gradski Vrt, Osijek","from":[2,14],"to":[2,21]}],
+    countries:[["BRA",6],["ESP",2],["ARG",1],["POR",1]],
+    specs:[{"k":{"es":"Pista","en":"Pitch"},"v":"40 × 20","u":"m"},{"k":{"es":"Pelota (talla 4)","en":"Ball (size 4)"},"v":"62–64 cm · 400–440","u":"g"},{"k":{"es":"Duración","en":"Duration"},"v":"2 × 20","u":{"es":"min efectivos","en":"min effective"}},{"k":{"es":"En pista","en":"On pitch"},"v":"5","u":{"es":"por equipo","en":"per side"}}],
+    facts:["Las finales de la Champions League de futsal 2026-27 se juegan en Biel/Bienne: el primer torneo final de futsal de la UEFA disputado en Suiza.","Brasil ganó 6 de los 10 Mundiales de futsal de la FIFA, el último en 2024 al vencer a Argentina 2-1 en Uzbekistán.","El reloj se detiene en cada interrupción, así que los dos periodos de 20 minutos son de tiempo efectivo de juego."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  aussie:{
+    pool:[], venues:["MCG, Melbourne","Optus Stadium, Perth","Adelaide Oval, Adelaida","The Gabba, Brisbane","SCG, Sídney","GMHBA Stadium, Geelong"],
+    comps:[{"id":"aflgf","n":{"es":"Gran Final AFL","en":"AFL Grand Final"},"tier":"Liga","venue":"MCG, Melbourne","from":[9,2],"to":[9,2]},{"id":"aflw","n":{"es":"Temporada AFLW","en":"AFLW Season"},"tier":"Liga","venue":"Ikon Park, Melbourne","from":[7,9],"to":[10,27]}],
+    countries:[],
+    specs:[{"k":{"es":"Campo (óvalo)","en":"Oval ground"},"v":"135–185 × 110–155","u":"m"},{"k":{"es":"En cancha","en":"On field"},"v":"18","u":{"es":"por equipo","en":"per side"}},{"k":{"es":"Duración","en":"Duration"},"v":"4 × 20","u":"min"},{"k":{"es":"Puntuación","en":"Scoring"},"v":"Gol 6 / behind 1","u":"pts"}],
+    facts:["Los Brisbane Lions ganaron la Gran Final de 2026 ante Fremantle y sumaron su tercer título consecutivo.","Carlton, Collingwood y Essendon comparten el récord histórico de 16 premierships VFL/AFL cada uno.","La Gran Final de 2027 se jugará en octubre en el MCG: la primera en ese mes desde 2016, salvo la temporada alterada de 2020."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  flagfb:{
+    pool:[], venues:["BMO Stadium · LA28, Los Ángeles","Mundial 2026, Düsseldorf","Q-Series, Montreal","Q-Series, Orlando","Mundial 2024, Lahti"],
+    comps:[{"id":"mundial","n":{"es":"Mundial IFAF de Flag Football","en":"IFAF Flag Football World Championship"},"tier":"Mundial","venue":"Garath, Düsseldorf","from":[7,13],"to":[7,16]},{"id":"la2028","n":{"es":"Juegos Olímpicos de Los Ángeles 2028","en":"Los Angeles 2028 Olympic Games"},"tier":"Mundial","venue":"BMO Stadium, Los Ángeles","from":[6,15],"to":[6,22]}],
+    countries:[["USA",7],["AUT",1]],
+    specs:[{"k":{"es":"Campo","en":"Field"},"v":"70 × 25","u":{"es":"yd (50 + dos zonas de 10)","en":"yd (50 + two 10 end zones)"}},{"k":{"es":"Jugadores","en":"Players"},"v":"5 contra 5","u":{"es":"plantel de 12","en":"squad of 12"}},{"k":{"es":"Duración","en":"Duration"},"v":"2 × 20","u":"min"},{"k":{"es":"Puntuación","en":"Scoring"},"v":"TD 6 / extra 1 o 2","u":"pts"}],
+    facts:["El flag football se estrena en los Juegos Olímpicos en Los Ángeles 2028, en el BMO Stadium.","En el Mundial de Düsseldorf de 2026, Estados Unidos ganó su séptimo título masculino al vencer 46-26 a Italia, y Canadá se llevó el femenino 27-20.","Los dueños de la NFL votaron en 2025 permitir que jugadores de la liga compitan en el flag football olímpico de 2028."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  kabaddi:{
+    pool:[], venues:["Thyagaraj Sports Complex, Nueva Delhi","SMS Indoor Stadium, Jaipur","SDAT Indoor Stadium, Chennai","Rajiv Gandhi Indoor Stadium, Visakhapatnam","NSCI Dome, Bombay","Balewadi, Pune","GMC Balayogi Stadium, Hyderabad"],
+    comps:[{"id":"asiaticos","n":{"es":"Kabaddi en los Juegos Asiáticos","en":"Kabaddi at the Asian Games"},"tier":"Mundial","venue":"Tōkai Citizens Gymnasium, Tōkai","from":[8,21],"to":[8,26]}],
+    countries:[["IND",13],["IRI",2]],
+    specs:[{"k":{"es":"Cancha","en":"Court"},"v":"13 × 10","u":{"es":"m (12 × 8 en mujeres)","en":"m (12 × 8 women)"}},{"k":{"es":"En cancha","en":"On court"},"v":"7","u":{"es":"por equipo","en":"per side"}},{"k":{"es":"Duración","en":"Duration"},"v":"2 × 20","u":"min"},{"k":{"es":"Puntuación","en":"Scoring"},"v":"1","u":{"es":"por rival tocado o atajado","en":"per tag or tackle"}}],
+    facts:["En los Juegos Asiáticos de 2026, en Japón, India ganó el oro masculino 40-34 y el femenino 37-34, los dos ante Irán.","De los 15 oros de kabaddi repartidos en la historia de los Juegos Asiáticos, India ganó 13: el único país que se los arrebató fue Irán, en 2018.","Patna Pirates es el único club con tres títulos de la Pro Kabaddi League, ganados seguidos."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  hurling:{
+    pool:[], venues:["Croke Park, Dublín","Semple Stadium, Thurles","Páirc Uí Chaoimh, Cork","TUS Gaelic Grounds, Limerick","UPMC Nowlan Park, Kilkenny","Pearse Stadium, Galway","Chadwicks Wexford Park, Wexford","Cusack Park, Ennis"],
+    comps:[{"id":"aishc","n":{"es":"Campeonato de Irlanda de hurling","en":"All-Ireland Senior Hurling Championship"},"tier":"Copa","venue":"Croke Park, Dublín","from":[3,18],"to":[6,19]},{"id":"clubes","n":{"es":"Final del Campeonato de Clubes de Irlanda","en":"All-Ireland Senior Club Hurling Final"},"tier":"Copa","venue":"Croke Park, Dublín","from":[0,18],"to":[0,18]}],
+    countries:[],
+    specs:[{"k":{"es":"Campo","en":"Pitch"},"v":"130–145 × 80–90","u":"m"},{"k":{"es":"Jugadores","en":"Players"},"v":"15","u":{"es":"por equipo","en":"per side"}},{"k":{"es":"Duración","en":"Duration"},"v":"2 × 35","u":"min"},{"k":{"es":"Puntuación","en":"Scoring"},"v":"Gol 3 / punto 1","u":"pts"}],
+    facts:["Limerick recuperó la corona en julio de 2026 en Croke Park al vencer a Galway en la final: su decimotercer título.","La Unesco inscribió el hurling y el camogie en su lista de patrimonio cultural inmaterial en 2018.","Kilkenny es el condado más laureado con 36 títulos, por delante de Cork con 30 y Tipperary con 29; en total solo 13 condados ganaron el campeonato."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  lacrosse:{
+    pool:[], venues:["Final de la PLL, Harrison","Subaru Park, Filadelfia","Harvard Stadium, Boston","Zions Bank Stadium, Salt Lake City","Peter Barton Stadium, Denver","KeyBank Center · NLL, Búfalo","TD Coliseum · NLL, Hamilton","Exposition Park · LA28, Los Ángeles"],
+    comps:[{"id":"pll","n":{"es":"Premier Lacrosse League","en":"Premier Lacrosse League"},"tier":"Liga","venue":"Sports Illustrated Stadium, Harrison","from":[4,8],"to":[8,20]},{"id":"la2028","n":{"es":"Lacrosse Sixes en Los Ángeles 2028","en":"Lacrosse Sixes at Los Angeles 2028"},"tier":"Mundial","venue":"Exposition Park Stadium, Los Ángeles","from":[6,24],"to":[6,29]}],
+    countries:[["USA",11],["CAN",3]],
+    specs:[{"k":{"es":"Campo","en":"Field"},"v":"110 × 60","u":{"es":"yd","en":"yd"}},{"k":{"es":"En cancha","en":"On field"},"v":"10","u":{"es":"por equipo","en":"per side"}},{"k":{"es":"Duración","en":"Duration"},"v":"4 × 15","u":"min"},{"k":{"es":"Portería","en":"Goal"},"v":"1,83 × 1,83","u":"m"}],
+    facts:["El lacrosse vuelve a los Juegos Olímpicos en Los Ángeles 2028, en formato Sixes y con seis equipos por género.","Será la primera vez que haya lacrosse femenino olímpico y la primera vez desde 1908 que el masculino reparte medallas.","Estados Unidos ganó 11 de los 14 Mundiales masculinos de campo y Canadá los otros tres: ningún otro país lo ganó nunca."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  squash:{
+    pool:[], venues:["Arlen Specter Center, Filadelfia","Grand Central Terminal, Nueva York","Mundial, Londres","El Gouna International, El Gouna","Qatar Classic, Doha","Windy City Open, Chicago","Hong Kong Open, Hong Kong","LA28, Los Ángeles"],
+    comps:[{"id":"usopen","n":{"es":"Abierto de Estados Unidos","en":"U.S. Open"},"tier":"Abierto","venue":"Arlen Specter Center, Filadelfia","from":[10,1],"to":[10,7]},{"id":"toc","n":{"es":"Tournament of Champions","en":"Tournament of Champions"},"tier":"Abierto","venue":"Grand Central Terminal, Nueva York","from":[0,21],"to":[0,28]},{"id":"mundial","n":{"es":"Campeonato Mundial PSA","en":"PSA World Championships"},"tier":"Mundial","venue":"Londres","from":[2,27],"to":[3,4]}],
+    countries:[["EGY",16],["PAK",14],["AUS",8],["ENG",3],["FRA",2],["CAN",1],["NZL",1],["PER",1]],
+    specs:[{"k":{"es":"Pista","en":"Court"},"v":"9,75 × 6,40","u":"m"},{"k":{"es":"Altura","en":"Height"},"v":"5,64","u":"m"},{"k":{"es":"Pelota","en":"Ball"},"v":"23–25","u":"g"},{"k":{"es":"Tanteo","en":"Scoring"},"v":"11","u":{"es":"por juego, al mejor de 5","en":"per game, best of 5"}}],
+    facts:["El squash debuta en los Juegos Olímpicos de Los Ángeles 2028, en el Universal Studios Lot, con 32 plazas.","Jansher Khan, de Pakistán, tiene el récord de ocho títulos del Mundial masculino.","El Tournament of Champions se juega en una pista de cristal montada dentro de la Grand Central Terminal de Nueva York."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  pickleball:{
+    pool:[], venues:["Brookhaven Country Club, Dallas","East Naples Community Park, Naples","Finales del PPA, San Clemente","Las Vegas Open, Las Vegas","Chicago Cup, Chicago","Australian Open, Brisbane","PPA Tour Asia, Kuala Lumpur","PPA Tour Canadá, Vancouver"],
+    comps:[{"id":"worlds","n":{"es":"Campeonato Mundial de Pickleball","en":"Pickleball World Championships"},"tier":"Mundial","venue":"Brookhaven Country Club, Farmers Branch","from":[10,2],"to":[10,8]},{"id":"usopen","n":{"es":"Abierto de Estados Unidos","en":"US Open Pickleball Championships"},"tier":"Abierto","venue":"East Naples Community Park, Naples","from":[3,17],"to":[3,24]},{"id":"ppafinals","n":{"es":"Finales del PPA Tour","en":"PPA Finals"},"tier":"Finales","venue":"San Clemente","from":[4,10],"to":[4,16]}],
+    countries:[],
+    specs:[{"k":{"es":"Pista","en":"Court"},"v":"13,4 × 6,1","u":"m"},{"k":{"es":"Red (centro)","en":"Net (centre)"},"v":"0,86","u":"m"},{"k":{"es":"Pelota","en":"Ball"},"v":"22,1–26,5","u":"g"},{"k":{"es":"Zona de no volea","en":"Non-volley zone"},"v":"2,1","u":"m"}],
+    facts:["Se inventó en 1965 en Bainbridge Island, en el estado de Washington, juntando una cancha de bádminton, palas de paddleball y una pelota de plástico agujereada.","La pelota es hueca y lleva entre 26 y 40 agujeros circulares; las de agujeros chicos se usan al aire libre para que el viento moleste menos.","El Abierto de EE. UU. se juega desde 2016 en el East Naples Community Park de Florida, que tiene 64 pistas permanentes."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  tabletennis:{
+    pool:[], venues:["China Smash, Pekín","Singapore Smash, Singapur","Europe Smash, Malmö","Mundial 2027, Astaná","WTT Finals, Hong Kong","WTT Champions, Doha","WTT Champions, Montpellier","WTT Contender, Lagos"],
+    comps:[{"id":"chinasmash","n":{"es":"China Smash","en":"China Smash"},"tier":"Abierto","venue":"Shougang Park, Pekín","from":[9,1],"to":[9,11]}],
+    countries:[["CHN",164],["HUN",68],["JPN",49],["TCH",28],["ROU",17],["SWE",15],["ENG",14],["USA",10]],
+    specs:[{"k":{"es":"Mesa","en":"Table"},"v":"2,74 × 1,525","u":"m"},{"k":{"es":"Altura","en":"Height"},"v":"0,76","u":"m"},{"k":{"es":"Red","en":"Net"},"v":"15,25","u":"cm"},{"k":{"es":"Pelota","en":"Ball"},"v":"40 mm · 2,7","u":"g"}],
+    facts:["La pelota pasó de 38 a 40 mm en octubre de 2000 y el tanteo bajó de 21 a 11 puntos en 2001: las dos reformas buscaban frenar el juego para que se viera mejor por televisión.","El Mundial por equipos de 2026 se jugó en Londres, la ciudad donde nació el torneo en 1926, como edición del centenario.","El equipo masculino chino acumula un récord de 24 títulos mundiales por equipos."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  badminton:{
+    pool:[], venues:["Axiata Arena, Kuala Lumpur","Istora Senayan, Yakarta","All England, Birmingham","Denmark Open, Odense","World Tour Finals, Hangzhou","Japan Open, Tokio","Indira Gandhi Arena, Nueva Delhi","Arena Grand Paris, París"],
+    comps:[{"id":"denmarkopen","n":{"es":"Abierto de Dinamarca","en":"Denmark Open"},"tier":"Abierto","venue":"Odense","from":[9,13],"to":[9,18]},{"id":"wtf","n":{"es":"Finales del World Tour BWF","en":"BWF World Tour Finals"},"tier":"Finales","venue":"Hangzhou","from":[11,9],"to":[11,13]},{"id":"allengland","n":{"es":"All England Open","en":"All England Open"},"tier":"Abierto","venue":"Birmingham","from":[2,4],"to":[2,14]},{"id":"indonesiaopen","n":{"es":"Abierto de Indonesia","en":"Indonesia Open"},"tier":"Abierto","venue":"Yakarta","from":[4,27],"to":[5,6]}],
+    countries:[["CHN",73],["INA",23],["KOR",16],["DEN",11.5],["JPN",10],["ESP",3],["THA",3]],
+    specs:[{"k":{"es":"Pista (dobles)","en":"Court (doubles)"},"v":"13,4 × 6,1","u":"m"},{"k":{"es":"Red (centro)","en":"Net (centre)"},"v":"1,524","u":"m"},{"k":{"es":"Volante","en":"Shuttlecock"},"v":"≈5","u":"g"},{"k":{"es":"Tanteo desde 2027","en":"Scoring from 2027"},"v":"3 × 15","u":{"es":"pts, tope 21","en":"pts, cap 21"}}],
+    facts:["Desde la temporada 2027 el BWF cambia el tanteo: tres juegos a 15 puntos, con tope absoluto en 21.","El volante lleva dieciséis plumas superpuestas clavadas en una base de corcho y pesa unos cinco gramos.","China ha ganado 73 oros en los Mundiales, más que todos los demás países juntos, y es el único que barrió los cinco títulos en una misma edición."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  darts:{
+    pool:[], venues:["Alexandra Palace, Londres","Winter Gardens, Blackpool","Mattioli Arena, Leicester","WV Active Aldersley, Wolverhampton","Westfalenhallen, Dortmund","Butlin's Resort, Minehead","World Series Finals, Ámsterdam"],
+    comps:[{"id":"mundialpdc","n":{"es":"Mundial de Dardos PDC","en":"PDC World Darts Championship"},"tier":"Mundial","venue":"Alexandra Palace, Londres","from":[11,11],"to":[0,3]},{"id":"grandprix","n":{"es":"World Grand Prix","en":"World Grand Prix"},"tier":"Major","venue":"Mattioli Arena, Leicester","from":[8,28],"to":[9,4]},{"id":"europeo","n":{"es":"Campeonato Europeo","en":"European Championship"},"tier":"Major","venue":"Westfalenhallen, Dortmund","from":[9,22],"to":[9,25]},{"id":"grandslam","n":{"es":"Grand Slam of Darts","en":"Grand Slam of Darts"},"tier":"Major","venue":"WV Active Aldersley, Wolverhampton","from":[10,14],"to":[10,22]}],
+    countries:[["ENG",22],["NED",4],["SCO",4],["CAN",2],["WAL",1]],
+    specs:[{"k":{"es":"Distancia de tiro","en":"Throw distance"},"v":"2,37","u":"m"},{"k":{"es":"Centro de la diana","en":"Bullseye height"},"v":"1,73","u":"m"},{"k":{"es":"Diana","en":"Board"},"v":"451","u":"mm"},{"k":{"es":"Partida","en":"Leg"},"v":"501","u":{"es":"a doble","en":"double out"}}],
+    facts:["Luke Littler ganó el Mundial de 2026 arrasando 7-1 a Gian van Veen en la final.","La edición 2026/27 se muda al Great Hall del Alexandra Palace y pasa de unos 3.200 a más de 5.200 espectadores por sesión.","Por primera vez la final del Mundial se jugará un domingo: el 3 de enero de 2027."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  snooker:{
+    pool:[], venues:["Crucible Theatre, Sheffield","York Barbican, York","Masters, Londres","Shanghai Masters, Shanghái","International Championship, Nankín","Northern Ireland Open, Belfast","Wuhan Open, Wuhan","China Open, Taiyuán"],
+    comps:[{"id":"mundial","n":{"es":"Campeonato Mundial de Snooker","en":"World Snooker Championship"},"tier":"Mundial","venue":"Crucible Theatre, Sheffield","from":[3,17],"to":[4,3]},{"id":"ukchamp","n":{"es":"Campeonato del Reino Unido","en":"UK Championship"},"tier":"Major","venue":"York Barbican, York","from":[10,28],"to":[11,6]},{"id":"masters","n":{"es":"Masters","en":"Masters"},"tier":"Major","venue":"Alexandra Palace, Londres","from":[0,10],"to":[0,17]},{"id":"intlchamp","n":{"es":"International Championship","en":"International Championship"},"tier":"Circuito","venue":"Nankín","from":[9,31],"to":[10,7]}],
+    countries:[["ENG",25],["SCO",12],["WAL",5],["CHN",2],["NIR",2],["AUS",1],["BEL",1],["CAN",1]],
+    specs:[{"k":{"es":"Mesa (área de juego)","en":"Table (playing area)"},"v":"3,57 × 1,78","u":"m"},{"k":{"es":"Bolas","en":"Balls"},"v":"52,5","u":"mm"},{"k":{"es":"Bolas en la mesa","en":"Balls on table"},"v":"22","u":{"es":"15 rojas + 6 colores + blanca","en":"15 reds + 6 colours + cue ball"}},{"k":{"es":"Break máximo","en":"Maximum break"},"v":"147","u":"pts"}],
+    facts:["El chino Wu Yize ganó el Mundial de 2026 venciendo 18-17 a Shaun Murphy en la última bola decisiva del Crucible.","La edición de 2027 es la del centenario: el primer Mundial se jugó en 1927 y será el 51º año consecutivo en el Crucible.","El Mundial de 2027 reparte 3 millones de libras, con 625.000 para el campeón."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  chess:{
+    pool:[], venues:["Match por el título, Ginebra","Olimpiada, Samarcanda","Tata Steel Chess, Wijk aan Zee","Norway Chess, Stavanger","Saint Louis Chess Club, San Luis","Mundial por equipos, Hong Kong","Chennai Grand Masters, Chennai"],
+    comps:[{"id":"mundial","n":{"es":"Match por el Campeonato del Mundo FIDE","en":"FIDE World Championship Match"},"tier":"Mundial","venue":"Fondation Martin Bodmer, Ginebra","from":[10,25],"to":[11,15]},{"id":"olimpiada","n":{"es":"Olimpiada de Ajedrez","en":"Chess Olympiad"},"tier":"Mundial","venue":"Silk Road Centre, Samarcanda","from":[8,15],"to":[8,28]},{"id":"equipos","n":{"es":"Mundial por Equipos de Rápidas y Blitz","en":"World Team Rapid & Blitz"},"tier":"Circuito","venue":"Hong Kong","from":[5,17],"to":[5,21]}],
+    countries:[],
+    specs:[{"k":{"es":"Casillas","en":"Squares"},"v":"64","u":"8 × 8"},{"k":{"es":"Piezas","en":"Pieces"},"v":"32","u":{"es":"16 por bando","en":"16 per side"}},{"k":{"es":"Control de tiempo","en":"Time control"},"v":"120 / 40 + 30","u":{"es":"min, con 30 s de incremento","en":"min, 30 s increment"}},{"k":{"es":"Partidas del match","en":"Games in the match"},"v":"14","u":{"es":"máximo","en":"maximum"}}],
+    facts:["El Mundial de 2026 enfrenta a Gukesh, de India, con Javokhir Sindarov, de Uzbekistán: ambos con 20 años, el match por el título más joven de la historia.","Suiza vuelve a albergar un match por el Campeonato del Mundo por primera vez desde 2004.","La Olimpiada de Samarcanda es la primera que se celebra en Asia Central y reúne 205 equipos en la sección abierta."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  esports:{
+    pool:[], venues:["Barclays Center, Nueva York","CUTX Event Center, Allen","Riot Games Arena, Los Ángeles","Esports World Cup, Riad","The International, Shanghái","Major de CS2, Buenos Aires","MSI, Daejeon"],
+    comps:[{"id":"lolworlds","n":{"es":"Mundial de League of Legends","en":"League of Legends World Championship"},"tier":"Mundial","venue":"Barclays Center, Nueva York","from":[9,15],"to":[10,14]},{"id":"ti","n":{"es":"The International · Dota 2","en":"The International · Dota 2"},"tier":"Mundial","venue":"Shanghái","from":[7,13],"to":[7,23]},{"id":"cs2major","n":{"es":"Major de Counter-Strike 2","en":"Counter-Strike 2 Major"},"tier":"Major","venue":"Buenos Aires","from":[4,31],"to":[5,20]}],
+    countries:[["KOR",10],["CHN",3],["TWN",1]],
+    specs:[{"k":{"es":"Jugadores por equipo","en":"Players per team"},"v":"5","u":{"es":"LoL, Dota 2, CS2 y Valorant","en":"LoL, Dota 2, CS2, Valorant"}},{"k":{"es":"Equipos en el Mundial de LoL","en":"Teams at LoL Worlds"},"v":"19","u":{"es":"equipos","en":"teams"}},{"k":{"es":"Bolsa de la Esports World Cup","en":"Esports World Cup prize pool"},"v":"75","u":{"es":"millones de USD","en":"million USD"}},{"k":{"es":"Aforo de la final de LoL","en":"LoL final capacity"},"v":"19.000","u":{"es":"espectadores","en":"spectators"}}],
+    facts:["La Esports World Cup de 2026 se jugó en París durante siete semanas, la primera fuera de Arabia Saudita, y repartió 75 millones de dólares entre 25 torneos de 24 videojuegos distintos.","Nueva York será la primera ciudad de la costa este en albergar la final del Mundial de League of Legends, en el Barclays Center.","El Major de Counter-Strike 2 de 2027 en Buenos Aires será el primer Major respaldado por Valve que se juegue en Argentina."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  triathlon:{
+    pool:[], venues:["WTCS, Abu Dabi","WTCS, Samarcanda","WTCS, Yokohama","Finales T50, Hamburgo","WTCS, Weihai","Finales WTCS, Pontevedra","Ironman Mundial, Kona","T50 Nueva Zelanda, Tauranga"],
+    comps:[{"id":"wtcsfinals","n":{"es":"Finales WTCS","en":"WTCS Finals"},"tier":"Mundial","venue":"Pontevedra","from":[8,27],"to":[8,27]},{"id":"kona","n":{"es":"Campeonato Mundial Ironman","en":"Ironman World Championship"},"tier":"Mundial","venue":"Bahía de Kailua, Kona","from":[9,10],"to":[9,10]},{"id":"t50abudabi","n":{"es":"T50 Abu Dabi","en":"T50 Abu Dhabi"},"tier":"Serie","venue":"Corniche, Abu Dabi","from":[2,27],"to":[2,28]},{"id":"t50finals","n":{"es":"Finales del Mundial T50","en":"T50 World Championship Finals"},"tier":"Mundial","venue":"Binnenalster, Hamburgo","from":[8,8],"to":[8,12]}],
+    countries:[["GBR",4],["SUI",2],["GER",2],["AUS",1],["NZL",1],["USA",1],["CAN",1],["FRA",1]],
+    specs:[{"k":{"es":"Distancia olímpica","en":"Olympic distance"},"v":"1,5 / 40 / 10","u":"km"},{"k":{"es":"Distancia sprint","en":"Sprint distance"},"v":"0,75 / 20 / 5","u":"km"},{"k":{"es":"Distancia Ironman","en":"Ironman distance"},"v":"3,86 / 180,2 / 42,2","u":"km"},{"k":{"es":"Relevo mixto","en":"Mixed relay"},"v":"2 + 2","u":{"es":"mujeres y hombres","en":"women and men"}}],
+    facts:["Las Finales WTCS de 2026 cerraron la temporada en Pontevedra, en el circuito del puente de Los Tirantes.","El Mundial Ironman vuelve a Kona en 2026 con formato de un solo día y cerca de 3.000 atletas.","Desde 2027 el circuito se reorganiza como Triathlon World Tour y las Finales del Mundial T50 pasan a Hamburgo."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  weightlifting:{
+    pool:[], venues:["Mundial, Ningbo","Europeo, Batumi","Asiático, Ahmedabad","Panamericano, Isla Margarita","Copa del Mundo, Apia","Juegos del Commonwealth, Glasgow","Juegos Asiáticos, Nagoya"],
+    comps:[{"id":"mundial","n":{"es":"Campeonato Mundial de Halterofilia","en":"World Weightlifting Championships"},"tier":"Mundial","venue":"Centro Deportivo Olímpico, Ningbo","from":[9,27],"to":[10,8]}],
+    countries:[["CHN",43],["URS",39],["USA",17],["BUL",13],["IRI",9],["FRA",9],["TUR",8],["GRE",6]],
+    specs:[{"k":{"es":"Barra","en":"Barbell"},"v":"20 / 15","u":{"es":"kg (hombres / mujeres)","en":"kg (men / women)"}},{"k":{"es":"Disco grande","en":"Largest disc"},"v":"450","u":"mm"},{"k":{"es":"Plataforma","en":"Platform"},"v":"4 × 4","u":"m"},{"k":{"es":"Categorías","en":"Weight classes"},"v":"16","u":"8 + 8"}],
+    facts:["China lidera el palmarés olímpico de la halterofilia con 43 oros, por delante de los 39 de la Unión Soviética.","Los discos de competencia se reconocen por color: rojo 25 kg, azul 20 kg, amarillo 15 kg, verde 10 kg y blanco 5 kg.","Tras Ningbo, la federación internacional llevará el Mundial a Armenia en 2027 y a Venezuela en 2028."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  gymnastics:{
+    pool:[], venues:["Rotterdam Ahoy, Róterdam","Mundial 2027, Chengdú","Copa del Mundo, Cottbus","Copa del Mundo, Bakú","Copa del Mundo, Antalya","Copa del Mundo, El Cairo","Copa Desafío, Taskent","Copa Desafío, París"],
+    comps:[{"id":"mundial","n":{"es":"Campeonato Mundial de Gimnasia Artística","en":"World Artistic Gymnastics Championships"},"tier":"Mundial","venue":"Rotterdam Ahoy, Róterdam","from":[9,17],"to":[9,25]},{"id":"paris","n":{"es":"Copa Desafío de París","en":"Paris World Challenge Cup"},"tier":"Copa","venue":"París","from":[8,26],"to":[8,27]}],
+    countries:[["URS",72],["USA",43],["JPN",36],["CHN",31],["ROU",25],["SUI",15],["GER",15],["HUN",15]],
+    specs:[{"k":{"es":"Barra de equilibrio","en":"Balance beam"},"v":"500 × 10","u":{"es":"cm, a 125 de alto","en":"cm, 125 high"}},{"k":{"es":"Practicable de suelo","en":"Floor area"},"v":"12 × 12","u":"m"},{"k":{"es":"Aparatos","en":"Apparatus"},"v":"6 / 4","u":{"es":"masculinos / femeninos","en":"men's / women's"}},{"k":{"es":"Finales con medalla","en":"Medal finals"},"v":"14","u":"8 + 6"}],
+    facts:["Róterdam acogió el Mundial de 2026 en el Rotterdam Ahoy, su tercera vez como anfitriona tras 1987 y 2010.","La etapa de Doha de la Copa del Mundo de 2026 fue cancelada.","La barra de equilibrio nació de los profesores de educación física del siglo XIX Johann GutsMuths, alemán, y Pehr Henrik Ling, sueco."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  fencing:{
+    pool:[], venues:["AsiaWorld-Expo, Hong Kong","Copa del Mundo de sable, Orán","Copa del Mundo de espada, Vancouver","Mundial 2027, Taskent","Copa del Mundo de florete, Fukuoka","Copa del Mundo de sable, Budapest","Copa del Mundo, El Cairo","Copa del Mundo de sable, Lima"],
+    comps:[{"id":"mundial","n":{"es":"Campeonato Mundial de Esgrima","en":"World Fencing Championships"},"tier":"Mundial","venue":"AsiaWorld-Expo, Hong Kong","from":[6,22],"to":[6,30]}],
+    countries:[["ITA",50],["FRA",45],["HUN",39],["URS",18],["RUS",13],["KOR",7],["USA",6],["GER",5]],
+    specs:[{"k":{"es":"Pista","en":"Piste"},"v":"14 × 1,5–2","u":"m"},{"k":{"es":"Peso del arma","en":"Weapon weight"},"v":"500 / 770","u":{"es":"g, florete y sable / espada","en":"g, foil and sabre / épée"}},{"k":{"es":"Hoja","en":"Blade"},"v":"90 / 88","u":{"es":"cm, florete y espada / sable","en":"cm, foil and épée / sabre"}},{"k":{"es":"Tocados","en":"Touches"},"v":"5 / 15","u":{"es":"poules / eliminación directa","en":"poules / direct elimination"}}],
+    facts:["El Mundial de 2026 fue el primero disputado en Hong Kong, con más de 1.000 tiradores de más de 100 países.","Italia encabeza el palmarés olímpico de la esgrima con 50 oros, delante de Francia con 45 y Hungría con 39.","La espada es la única de las tres armas en la que vale todo el cuerpo como blanco, de la cabeza a los pies."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  judo:{
+    pool:[], venues:["Accor Arena, París","National Gymnastics Arena, Bakú","Grand Slam, Taskent","Grand Slam, Tiflis","Grand Slam, Ulán Bator","Grand Slam, Abu Dabi","Grand Slam, Tokio","Grand Prix, Lima"],
+    comps:[{"id":"mundial","n":{"es":"Campeonato Mundial de Judo","en":"World Judo Championships"},"tier":"Mundial","venue":"National Gymnastics Arena, Bakú","from":[9,4],"to":[9,11]},{"id":"gsabudabi","n":{"es":"Grand Slam de Abu Dabi","en":"Abu Dhabi Grand Slam"},"tier":"Grand Slam","venue":"Abu Dabi","from":[9,29],"to":[9,31]},{"id":"gstokio","n":{"es":"Grand Slam de Tokio","en":"Tokyo Grand Slam"},"tier":"Grand Slam","venue":"Tokio","from":[11,5],"to":[11,6]}],
+    countries:[["JPN",51],["FRA",18],["KOR",11],["CHN",8],["CUB",6],["GEO",5],["BRA",5]],
+    specs:[{"k":{"es":"Zona de combate","en":"Contest area"},"v":"8 × 8 a 10 × 10","u":"m"},{"k":{"es":"Duración","en":"Bout length"},"v":"4","u":"min"},{"k":{"es":"Golden score","en":"Golden score"},"v":"∞","u":{"es":"sin límite de tiempo","en":"no time limit"}},{"k":{"es":"Categorías","en":"Weight categories"},"v":"14","u":"7 + 7"}],
+    facts:["Japón acumula 51 oros olímpicos en judo, casi el triple que Francia, segunda con 18.","En el golden score no hay límite de tiempo: el combate sigue hasta que alguien marca o es sancionado.","El Grand Slam de París de 2026 reunió 488 judocas de 78 países en el Accor Arena."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  taekwondo:{
+    pool:[], venues:["Foro Itálico, Roma","Taekwondowon, Muju","Palais des Sports Marcel-Cerdan, París","Final del Grand Prix, Astaná","Mundial 2025, Wuxi","Mundial Junior, Taskent","Mundial de Poomsae, Chuncheon"],
+    comps:[{"id":"gpparis","n":{"es":"Grand Prix de París","en":"Paris World Taekwondo Grand Prix"},"tier":"Grand Prix","venue":"Palais des Sports Marcel-Cerdan, París","from":[9,9],"to":[9,11]},{"id":"gpfinal","n":{"es":"Final del Grand Prix","en":"Grand Prix Final"},"tier":"Grand Prix","venue":"Astaná","from":[10,28],"to":[10,29]}],
+    countries:[["KOR",14],["CHN",7],["IRI",3],["USA",3],["GBR",2],["MEX",2],["THA",2],["SRB",2]],
+    specs:[{"k":{"es":"Octágono","en":"Octagon"},"v":"8","u":{"es":"m de diámetro","en":"m across"}},{"k":{"es":"Rondas","en":"Rounds"},"v":"3 × 2","u":"min"},{"k":{"es":"Puntuación","en":"Scoring"},"v":"1 / 2 / 3","u":{"es":"puño, patada, patada a la cabeza","en":"punch, kick, head kick"}},{"k":{"es":"Categorías olímpicas","en":"Olympic divisions"},"v":"8","u":"4 + 4"}],
+    facts:["El Grand Prix de Muju, en septiembre de 2026, fue el primero de la serie disputado en Corea del Sur, cuna del taekwondo.","Corea del Sur lidera el palmarés olímpico del taekwondo con 14 oros, el doble que China, segunda con 7.","El Grand Prix de Roma de 2026 abrió la serie del ciclo hacia Los Ángeles 2028."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  wrestling:{
+    pool:[], venues:["Barys Arena, Astaná","Thomas & Mack Center, Las Vegas","Tirana Olympic Park, Tirana","Zhashtyk Arena, Biskek","Zagreb Open, Zagreb","Memorial Polyák–Varga–Kozma, Budapest"],
+    comps:[{"id":"mundial","n":{"es":"Campeonato Mundial de Lucha","en":"World Wrestling Championships"},"tier":"Mundial","venue":"Barys Arena, Astaná","from":[9,24],"to":[10,1]},{"id":"mundial27","n":{"es":"Campeonato Mundial de Lucha 2027","en":"2027 World Wrestling Championships"},"tier":"Mundial","venue":"Thomas & Mack Center, Las Vegas","from":[8,11],"to":[8,19]}],
+    countries:[["URS",62],["USA",57],["JPN",45],["RUS",31],["TUR",29],["SWE",28],["BUL",18],["IRI",13]],
+    specs:[{"k":{"es":"Colchoneta","en":"Mat"},"v":"9","u":{"es":"m de diámetro","en":"m across"}},{"k":{"es":"Duración","en":"Bout length"},"v":"2 × 3","u":"min"},{"k":{"es":"Títulos por Mundial","en":"Titles per Worlds"},"v":"30","u":{"es":"10 por estilo","en":"10 per style"}},{"k":{"es":"Superioridad técnica","en":"Technical superiority"},"v":"8 / 10","u":{"es":"grecorromana / libre","en":"greco / freestyle"}}],
+    facts:["El Mundial de 2026 se mudó de Manama a Astaná porque la situación en Oriente Medio complicaba los viajes internacionales.","El Mundial reparte 30 títulos: diez categorías de libre masculina, diez de grecorromana y diez de lucha femenina.","El cubano Mijaín López ganó cinco oros olímpicos en grecorromana, más que ningún otro luchador de la historia."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  sumo:{
+    pool:[], venues:["Ryōgoku Kokugikan, Tokio","EDION Arena Osaka, Osaka","IG Arena, Nagoya","Fukuoka Kokusai Center, Fukuoka"],
+    comps:[{"id":"hatsu","n":{"es":"Hatsu Basho · Tokio","en":"Hatsu Basho · Tokyo"},"tier":"Basho","venue":"Ryōgoku Kokugikan, Tokio","from":[0,10],"to":[0,24]},{"id":"haru","n":{"es":"Haru Basho · Osaka","en":"Haru Basho · Osaka"},"tier":"Basho","venue":"EDION Arena Osaka, Osaka","from":[2,14],"to":[2,28]},{"id":"natsu","n":{"es":"Natsu Basho · Tokio","en":"Natsu Basho · Tokyo"},"tier":"Basho","venue":"Ryōgoku Kokugikan, Tokio","from":[4,9],"to":[4,23]},{"id":"kyushu","n":{"es":"Kyushu Basho · Fukuoka","en":"Kyushu Basho · Fukuoka"},"tier":"Basho","venue":"Fukuoka Kokusai Center, Fukuoka","from":[10,8],"to":[10,22]}],
+    countries:[],
+    specs:[{"k":{"es":"Dohyo","en":"Dohyo"},"v":"4,55","u":{"es":"m de diámetro","en":"m across"}},{"k":{"es":"Plataforma","en":"Platform"},"v":"6,7","u":{"es":"m de lado","en":"m per side"}},{"k":{"es":"Duración del basho","en":"Tournament length"},"v":"15","u":{"es":"días","en":"days"}},{"k":{"es":"Combates","en":"Bouts"},"v":"1","u":{"es":"por día y luchador","en":"per day per wrestler"}}],
+    facts:["De los 75 yokozuna de la historia, seis nacieron en Mongolia y dos en Hawái; el 75º es el japonés Ōnosato, ascendido en 2025.","Hakuhō ganó 45 torneos de la división makuuchi, récord absoluto del sumo profesional.","Desde julio de 2025 el torneo de Nagoya se disputa en el IG Arena, estadio estrenado ese mismo año."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  snowboard:{
+    pool:[], venues:["Laax Open, Laax","Corvatsch, Silvaplana","Mundial 2027, Montafon","Big Air, Innsbruck","Big Air, Tignes","Big Air Shougang, Pekín","Secret Garden, Chongli","Halfpipe, Copper Mountain","Buttermilk, Aspen"],
+    comps:[{"id":"laaxopen","n":{"es":"Laax Open","en":"Laax Open"},"tier":"Copa del Mundo","venue":"Laax Mountain Resort, Laax","from":[0,13],"to":[0,16]},{"id":"aspen","n":{"es":"Copa del Mundo de Aspen","en":"Aspen World Cup"},"tier":"Copa del Mundo","venue":"Buttermilk, Aspen","from":[1,24],"to":[1,27]},{"id":"mundial","n":{"es":"Mundial FIS de Snowboard y Freestyle","en":"FIS Snowboard & Freestyle World Championships"},"tier":"Mundial","venue":"Valle del Montafon","from":[2,6],"to":[2,21]}],
+    countries:[["USA",17],["SUI",8],["AUT",7],["CAN",5],["JPN",5],["FRA",4],["CZE",4],["AUS",2]],
+    specs:[{"k":{"es":"Pared del halfpipe","en":"Halfpipe wall"},"v":"6,7","u":{"es":"m (22 pies)","en":"m (22 ft)"}},{"k":{"es":"Ancho","en":"Width"},"v":"20","u":{"es":"m de borde a borde","en":"m lip to lip"}},{"k":{"es":"Largo","en":"Length"},"v":"120–180","u":"m"},{"k":{"es":"Disciplinas","en":"Disciplines"},"v":"6","u":{"es":"pruebas","en":"events"}}],
+    facts:["Shaun White es el único snowboarder con tres oros olímpicos en halfpipe: Turín 2006, Vancouver 2010 y Pyeongchang 2018.","El Mundial de Montafon de 2027 reparte 31 títulos en 15 días, repartidos en seis recintos de un mismo valle austríaco.","El Laax Open de 2027 será el duodécimo año consecutivo que la estación suiza acoge la prueba, con unos 250 atletas en pista."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
+  figureskating:{
+    pool:[], venues:["Angers IceParc, Angers","Skate Canada, Kelowna","Cup of China, Shenzhen","Angel of the Winds Arena, Everett","Finlandia Trophy, Helsinki","NHK Trophy, Tokio","Final del Grand Prix, Chongqing","Nokia Arena, Tampere"],
+    comps:[{"id":"gpfrancia","n":{"es":"Gran Premio de Francia","en":"Grand Prix de France"},"tier":"Grand Prix","venue":"Angers IceParc, Angers","from":[9,23],"to":[9,25]},{"id":"skateamerica","n":{"es":"Skate America","en":"Skate America"},"tier":"Grand Prix","venue":"Angel of the Winds Arena, Everett","from":[10,13],"to":[10,15]},{"id":"finalgp","n":{"es":"Final del Grand Prix","en":"Grand Prix Final"},"tier":"Grand Prix","venue":"Chongqing","from":[11,10],"to":[11,13]},{"id":"mundial","n":{"es":"Campeonato Mundial de Patinaje Artístico","en":"World Figure Skating Championships"},"tier":"Mundial","venue":"Nokia Arena, Tampere","from":[2,15],"to":[2,21]}],
+    countries:[["USA",19],["RUS",15],["AUT",7],["CAN",6],["FRA",5],["GBR",5],["SWE",5]],
+    specs:[{"k":{"es":"Programa corto","en":"Short program"},"v":"2:40","u":"min:s"},{"k":{"es":"Programa libre","en":"Free skating"},"v":"4:00","u":"min:s"},{"k":{"es":"Danza rítmica","en":"Rhythm dance"},"v":"2:50","u":"min:s"},{"k":{"es":"Elementos del corto","en":"Short program elements"},"v":"7","u":{"es":"obligatorios","en":"required"}}],
+    facts:["El patinaje artístico es el deporte más antiguo del programa olímpico de invierno: se disputó por primera vez en los Juegos de verano de Londres 1908.","Ilia Malinin es el único patinador que ha completado un cuádruple axel validado en competición internacional, en septiembre de 2022.","Estados Unidos lidera el palmarés olímpico del patinaje artístico con 19 de los 101 oros repartidos en la historia del deporte."],
+    rounds:[], rules:[], history:[], cells:[], decades:[], heat:[], field:"generic" },
   tennis:{
     pool:[...P.tennisM,...P.tennisW], venues:VEN.tennis,
     comps:[
@@ -4569,6 +4885,11 @@ function buildTicker(){
   pintarCinta($("#tickerTrack"), null);
   pintarCinta($("#cintaTrack"), (typeof WM!=="undefined" && WM) ? WM.sport : null);
 }
+document.addEventListener("click", e=>{
+  const b = e.target.closest("#introMas"); if(!b) return;
+  const d = document.getElementById("introDoc");
+  if(d) d.scrollIntoView({behavior:"smooth", block:"start"});
+});
 function closeIntro(){ clearInterval(reelTimer); reelTimer=null; $("#intro").style.display="none"; }
 /* the FirstPlace.games mark returns to the opening reel from anywhere */
 function goHome(){
@@ -5431,6 +5752,36 @@ const BORDERS=(()=>{
 })();
 
 const VENUES={
+/* los 27 del esqueleto (1/10/2026): sedes reales, para que cada deporte
+   pinte al menos una vez en el mapa. Investigadas con fuente; lo que no se
+   pudo verificar quedó fuera. Ver firstplace-deportes-vacios.md */
+ volleyball:[["Katowice",50.26,19.02,"Mundial de Clubes"],["Río de Janeiro",-22.91,-43.23,"Maracanãzinho"],["Milán",45.48,9.15,"Allianz Cloud"],["Estambul",41.01,29.06,"Burhan Felek"],["Tokio",35.64,139.79,"Ariake Arena"],["Manila",14.53,120.98,"Mundial 2025"],["Anaheim",33.84,-117.91,"Mundial femenino 2027"]],
+ handball:[["Colonia",50.94,6.98,"Lanxess Arena"],["Múnich",48.18,11.56,"SAP Garden"],["Kiel",54.32,10.14,"Wunderino Arena"],["Barcelona",41.38,2.12,"Palau Blaugrana"],["París",48.9,2.23,"Paris La Défense Arena"],["Herning",56.14,8.98,"Jyske Bank Boxen"],["El Cairo",30.07,31.31,"Mundial 2021"]],
+ netball:[["Sídney",-33.85,151.07,"Mundial 2027"],["Melbourne",-37.82,144.98,"John Cain Arena"],["Auckland",-36.85,174.78,"Spark Arena"],["Christchurch",-43.54,172.6,"Wolfbrook Arena"],["Londres",51.55,-0.02,"Copper Box Arena"],["Kingston",18.01,-76.78,"National Indoor Sports Centre"],["Ciudad del Cabo",-33.92,18.43,"Mundial 2023"]],
+ futsal:[["Biel",47.14,7.26,"Finales UEFA"],["Osijek",45.55,18.68,"Arena Gradski Vrt"],["Barcelona",41.38,2.12,"Palau Blaugrana"],["Lisboa",38.76,-9.16,"Pavilhão João Rocha"],["Taskent",41.33,69.29,"Mundial 2024"],["Cali",3.42,-76.54,"Mundial 2016"],["Bangkok",13.76,100.62,"Mundial 2012"]],
+ aussie:[["Melbourne",-37.82,144.98,"MCG"],["Perth",-31.95,115.89,"Optus Stadium"],["Adelaida",-34.92,138.6,"Adelaide Oval"],["Brisbane",-27.49,153.04,"The Gabba"],["Sídney",-33.89,151.22,"SCG"],["Geelong",-38.16,144.35,"GMHBA Stadium"]],
+ flagfb:[["Los Ángeles",34.01,-118.28,"BMO Stadium · LA28"],["Düsseldorf",51.14,6.89,"Mundial 2026"],["Montreal",45.5,-73.57,"Q-Series"],["Orlando",28.54,-81.38,"Q-Series"],["Lahti",60.98,25.65,"Mundial 2024"]],
+ kabaddi:[["Nueva Delhi",28.57,77.21,"Thyagaraj Sports Complex"],["Jaipur",26.9,75.8,"SMS Indoor Stadium"],["Chennai",13.07,80.22,"SDAT Indoor Stadium"],["Visakhapatnam",17.73,83.31,"Rajiv Gandhi Indoor Stadium"],["Bombay",19.01,72.82,"NSCI Dome"],["Pune",18.57,73.77,"Balewadi"],["Hyderabad",17.44,78.35,"GMC Balayogi Stadium"]],
+ hurling:[["Dublín",53.36,-6.25,"Croke Park"],["Thurles",52.68,-7.81,"Semple Stadium"],["Cork",51.9,-8.43,"Páirc Uí Chaoimh"],["Limerick",52.66,-8.65,"TUS Gaelic Grounds"],["Kilkenny",52.65,-7.24,"UPMC Nowlan Park"],["Galway",53.26,-9.09,"Pearse Stadium"],["Wexford",52.33,-6.47,"Chadwicks Wexford Park"],["Ennis",52.85,-8.99,"Cusack Park"]],
+ lacrosse:[["Harrison",40.74,-74.15,"Final de la PLL"],["Filadelfia",39.83,-75.38,"Subaru Park"],["Boston",42.37,-71.13,"Harvard Stadium"],["Salt Lake City",40.5,-112.01,"Zions Bank Stadium"],["Denver",39.68,-104.96,"Peter Barton Stadium"],["Búfalo",42.88,-78.88,"KeyBank Center · NLL"],["Hamilton",43.26,-79.87,"TD Coliseum · NLL"],["Los Ángeles",34.01,-118.28,"Exposition Park · LA28"]],
+ squash:[["Filadelfia",39.95,-75.19,"Arlen Specter Center"],["Nueva York",40.75,-73.98,"Grand Central Terminal"],["Londres",51.51,-0.13,"Mundial"],["El Gouna",27.4,33.68,"El Gouna International"],["Doha",25.26,51.44,"Qatar Classic"],["Chicago",41.88,-87.63,"Windy City Open"],["Hong Kong",22.32,114.17,"Hong Kong Open"],["Los Ángeles",34.14,-118.35,"LA28"]],
+ pickleball:[["Farmers Branch",32.93,-96.89,"Brookhaven Country Club"],["Naples",26.14,-81.72,"East Naples Community Park"],["San Clemente",33.43,-117.61,"Finales del PPA"],["Las Vegas",36.17,-115.14,"Las Vegas Open"],["Chicago",41.88,-87.63,"Chicago Cup"],["Brisbane",-27.47,153.03,"Australian Open"],["Kuala Lumpur",3.14,101.69,"PPA Tour Asia"],["Vancouver",49.28,-123.12,"PPA Tour Canadá"]],
+ tabletennis:[["Pekín",39.92,116.2,"China Smash"],["Singapur",1.3,103.87,"Singapore Smash"],["Malmö",55.56,12.98,"Europe Smash"],["Astaná",51.14,71.39,"Mundial 2027"],["Hong Kong",22.32,114.17,"WTT Finals"],["Doha",25.29,51.53,"WTT Champions"],["Montpellier",43.61,3.88,"WTT Champions"],["Lagos",6.52,3.38,"WTT Contender"]],
+ badminton:[["Kuala Lumpur",3.05,101.69,"Axiata Arena"],["Yakarta",-6.22,106.8,"Istora Senayan"],["Birmingham",52.48,-1.92,"All England"],["Odense",55.4,10.39,"Denmark Open"],["Hangzhou",30.27,120.16,"World Tour Finals"],["Tokio",35.68,139.71,"Japan Open"],["Nueva Delhi",28.63,77.24,"Indira Gandhi Arena"],["París",48.95,2.57,"Arena Grand Paris"]],
+ darts:[["Londres",51.59,-0.13,"Alexandra Palace"],["Blackpool",53.81,-3.05,"Winter Gardens"],["Leicester",52.63,-1.13,"Mattioli Arena"],["Wolverhampton",52.59,-2.13,"WV Active Aldersley"],["Dortmund",51.51,7.45,"Westfalenhallen"],["Minehead",51.21,-3.47,"Butlin's Resort"],["Ámsterdam",52.37,4.89,"World Series Finals"]],
+ snooker:[["Sheffield",53.38,-1.47,"Crucible Theatre"],["York",53.96,-1.08,"York Barbican"],["Londres",51.59,-0.13,"Masters"],["Shanghái",31.23,121.47,"Shanghai Masters"],["Nankín",32.06,118.8,"International Championship"],["Belfast",54.6,-5.92,"Northern Ireland Open"],["Wuhan",30.59,114.31,"Wuhan Open"],["Taiyuán",37.87,112.55,"China Open"]],
+ chess:[["Ginebra",46.2,6.15,"Match por el título"],["Samarcanda",39.65,66.96,"Olimpiada"],["Wijk aan Zee",52.49,4.6,"Tata Steel Chess"],["Stavanger",58.97,5.73,"Norway Chess"],["San Luis",38.63,-90.2,"Saint Louis Chess Club"],["Hong Kong",22.32,114.17,"Mundial por equipos"],["Chennai",13.08,80.27,"Chennai Grand Masters"]],
+ esports:[["Nueva York",40.68,-73.98,"Barclays Center"],["Allen",33.1,-96.67,"CUTX Event Center"],["Los Ángeles",34.05,-118.24,"Riot Games Arena"],["París",48.86,2.35,"Esports World Cup"],["Shanghái",31.23,121.47,"The International"],["Buenos Aires",-34.61,-58.38,"Major de CS2"],["Daejeon",36.35,127.38,"MSI"]],
+ triathlon:[["Abu Dabi",24.47,54.37,"WTCS"],["Samarcanda",39.65,66.96,"WTCS"],["Yokohama",35.44,139.64,"WTCS"],["Hamburgo",53.55,9.99,"Finales T50"],["Weihai",37.51,122.12,"WTCS"],["Pontevedra",42.43,-8.64,"Finales WTCS"],["Kona",19.64,-155.99,"Ironman Mundial"],["Tauranga",-37.69,176.17,"T50 Nueva Zelanda"]],
+ weightlifting:[["Ningbo",29.87,121.55,"Mundial"],["Batumi",41.65,41.64,"Europeo"],["Ahmedabad",23.02,72.57,"Asiático"],["Isla Margarita",10.95,-63.85,"Panamericano"],["Apia",-13.83,-171.77,"Copa del Mundo"],["Glasgow",55.86,-4.25,"Juegos del Commonwealth"],["Nagoya",35.18,136.91,"Juegos Asiáticos"]],
+ gymnastics:[["Róterdam",51.92,4.48,"Rotterdam Ahoy"],["Chengdú",30.57,104.07,"Mundial 2027"],["Cottbus",51.76,14.33,"Copa del Mundo"],["Bakú",40.41,49.87,"Copa del Mundo"],["Antalya",36.9,30.71,"Copa del Mundo"],["El Cairo",30.04,31.24,"Copa del Mundo"],["Taskent",41.31,69.24,"Copa Desafío"],["París",48.86,2.35,"Copa Desafío"]],
+ fencing:[["Hong Kong",22.32,114.17,"AsiaWorld-Expo"],["Orán",35.7,-0.63,"Copa del Mundo de sable"],["Vancouver",49.28,-123.12,"Copa del Mundo de espada"],["Taskent",41.31,69.24,"Mundial 2027"],["Fukuoka",33.59,130.4,"Copa del Mundo de florete"],["Budapest",47.5,19.04,"Copa del Mundo de sable"],["El Cairo",30.04,31.24,"Copa del Mundo"],["Lima",-12.05,-77.04,"Copa del Mundo de sable"]],
+ judo:[["París",48.84,2.38,"Accor Arena"],["Bakú",40.41,49.87,"National Gymnastics Arena"],["Taskent",41.31,69.24,"Grand Slam"],["Tiflis",41.72,44.78,"Grand Slam"],["Ulán Bator",47.92,106.92,"Grand Slam"],["Abu Dabi",24.47,54.37,"Grand Slam"],["Tokio",35.69,139.69,"Grand Slam"],["Lima",-12.05,-77.04,"Grand Prix"]],
+ taekwondo:[["Roma",41.93,12.45,"Foro Itálico"],["Muju",35.91,127.66,"Taekwondowon"],["París",48.89,2.29,"Palais des Sports Marcel-Cerdan"],["Astaná",51.17,71.45,"Final del Grand Prix"],["Wuxi",31.57,120.3,"Mundial 2025"],["Taskent",41.31,69.24,"Mundial Junior"],["Chuncheon",37.88,127.73,"Mundial de Poomsae"]],
+ wrestling:[["Astaná",51.11,71.41,"Barys Arena"],["Las Vegas",36.1,-115.14,"Thomas & Mack Center"],["Tirana",41.33,19.82,"Tirana Olympic Park"],["Biskek",42.87,74.59,"Zhashtyk Arena"],["Zagreb",45.81,15.98,"Zagreb Open"],["Budapest",47.5,19.04,"Memorial Polyák–Varga–Kozma"]],
+ sumo:[["Tokio",35.7,139.79,"Ryōgoku Kokugikan"],["Osaka",34.66,135.5,"EDION Arena Osaka"],["Nagoya",35.18,136.9,"IG Arena"],["Fukuoka",33.6,130.41,"Fukuoka Kokusai Center"]],
+ snowboard:[["Laax",46.8,9.26,"Laax Open"],["Silvaplana",46.46,9.79,"Corvatsch"],["Montafon",47.08,9.92,"Mundial 2027"],["Innsbruck",47.27,11.39,"Big Air"],["Tignes",45.47,6.9,"Big Air"],["Pekín",39.91,116.19,"Big Air Shougang"],["Chongli",40.95,115.43,"Secret Garden"],["Copper Mountain",39.5,-106.15,"Halfpipe"],["Aspen",39.2,-106.86,"Buttermilk"]],
+ figureskating:[["Angers",47.47,-0.55,"Angers IceParc"],["Kelowna",49.89,-119.5,"Skate Canada"],["Shenzhen",22.54,114.06,"Cup of China"],["Everett",47.98,-122.2,"Angel of the Winds Arena"],["Helsinki",60.17,24.94,"Finlandia Trophy"],["Tokio",35.69,139.69,"NHK Trophy"],["Chongqing",29.56,106.55,"Final del Grand Prix"],["Tampere",61.5,23.76,"Nokia Arena"]],
  f1:[["Melbourne",-37.85,144.97,"Albert Park"],["Shanghái",31.34,121.22,"Shanghai Intl."],["Suzuka",34.84,136.54,"Suzuka"],["Miami",25.96,-80.24,"Miami Intl."],["Montreal",45.51,-73.52,"Gilles Villeneuve"],["Mónaco",43.73,7.42,"Circuit de Monaco"],["Barcelona",41.57,2.26,"Barcelona-Catalunya"],["Spielberg",47.22,14.76,"Red Bull Ring"],["Silverstone",52.07,-1.01,"Silverstone"],["Spa",50.44,5.97,"Spa-Francorchamps"],["Budapest",47.58,19.25,"Hungaroring"],["Zandvoort",52.39,4.54,"Zandvoort"],["Monza",45.62,9.28,"Autodromo di Monza"],["Madrid",40.47,-3.60,"Madring"],["Bakú",40.37,49.85,"Baku City"],["Singapur",1.29,103.86,"Marina Bay"],["Austin",30.13,-97.64,"Circuit of the Americas"],["Ciudad de México",19.40,-99.09,"Hermanos Rodríguez"],["São Paulo",-23.70,-46.70,"Interlagos"],["Las Vegas",36.11,-115.17,"Las Vegas Strip"],["Lusail",25.49,51.45,"Lusail"],["Abu Dabi",24.47,54.60,"Yas Marina"]],
  motogp:[["Buriram",14.95,103.09,"Chang Intl."],["Goiânia",-16.68,-49.25,"Goiânia"],["Austin",30.13,-97.64,"COTA"],["Jerez",36.71,-6.03,"Ángel Nieto"],["Le Mans",47.96,0.21,"Bugatti"],["Montmeló",41.57,2.26,"Catalunya"],["Mugello",43.99,11.37,"Mugello"],["Balatonfőkajár",46.85,17.75,"Balaton Park"],["Brno",49.20,16.45,"Masaryk"],["Assen",52.96,6.52,"TT Circuit"],["Hohenstein",50.79,12.69,"Sachsenring"],["Silverstone",52.07,-1.01,"Silverstone"],["Alcañiz",41.08,-0.20,"MotorLand Aragón"],["Misano",43.96,12.68,"Misano"],["Spielberg",47.22,14.76,"Red Bull Ring"],["Motegi",36.53,140.23,"Twin Ring"],["Mandalika",-8.90,116.30,"Mandalika"],["Phillip Island",-38.50,145.23,"Phillip Island"],["Sepang",2.76,101.74,"Sepang"],["Lusail",25.49,51.45,"Lusail"],["Portimão",37.23,-8.63,"Algarve"],["Cheste",39.49,-0.63,"Ricardo Tormo"]],
  tennis:[["Melbourne",-37.82,144.98,"Australian Open"],["Indian Wells",33.72,-116.31,"Indian Wells"],["Miami",25.96,-80.24,"Miami Open"],["Madrid",40.39,-3.68,"Mutua Madrid"],["París",48.85,2.25,"Roland Garros"],["Londres",51.43,-0.21,"Wimbledon"],["Nueva York",40.75,-73.85,"US Open"],["Riad",24.71,46.68,"WTA Finals"],["Turín",45.07,7.65,"ATP Finals"],["Bolonia",44.49,11.34,"Copa Davis"]],
@@ -9958,6 +10309,26 @@ function renderDynamics(){
       +`<p class="nota">${T("sinDatos")}</p></div>`;
     return;
   }
+  /* un deporte puede tener calendario y torneos y todavía no tener la
+     Dinámica cargada (heat, rules, decades). Antes alcanzaba con mirar si
+     había competencias; con los 27 deportes nuevos eso dejó de ser cierto y
+     esta pantalla se caía al leer d.heat.title. Mira lo que de verdad usa. */
+  const faltaDin = !d.heat || !d.heat.cells || !(d.rules||[]).length
+                || !d.decades || !d.decades.pts;
+  if(faltaDin){
+    const ficha = (d.specs||[]).length ? `<div class="card">
+      <div class="card-head"><h3>${T("specsTitle")}</h3><span class="eyebrow">${L(SPORTBY[id].n)}</span></div>
+      <div class="specs">${d.specs.map(s=>`<div class="spec"><span class="k">${L(s.k)}</span><span class="v">${s.v}</span><span class="u">${L(s.u)}</span></div>`).join("")}</div></div>` : "";
+    const cm = Math.max(1,...(d.countries||[]).map(c=>c[1]));
+    const pal = (d.countries||[]).length ? `<div class="card">
+      <div class="card-head"><h3>${T("chartCountries")}</h3><span class="eyebrow">${STATE.lang==="es"?"títulos acumulados":"cumulative titles"}</span></div>
+      <div class="hbars">${d.countries.map(([c,v])=>`<div class="hbar"><span class="mono">${c}</span>
+        <span class="t"><i style="width:${(v/cm)*100}%"></i></span><span class="v">${v}</span></div>`).join("")}</div></div>` : "";
+    p.innerHTML = `<div class="grid" style="grid-template-columns:minmax(0,1fr);margin-bottom:14px">${ficha}</div>`
+      + (pal ? `<div class="dyn-grid">${pal}</div>` : "")
+      + `<div class="card"><p class="nota">${T("sinDatos")}</p></div>`;
+    return;
+  }
   const f=FIELDS[d.field]||FIELDS.generic;
   const cmax=Math.max(...d.countries.map(c=>c[1]));
   p.innerHTML=`
@@ -11815,7 +12186,7 @@ function wmPintarJuegos(p){
     const url = j.urls ? j.urls[p.iso] : j.url;
     const img = wjPortada(j,p);
     const sello = j.tipo==="adaptado" ? '<span class="wj-sello" style="background-image:url(banderas/'+p.iso.toLowerCase()+'.jpg)"></span>' : '';
-    const dentro = (img ? '<img src="'+img+'" alt="" loading="lazy">' : '<canvas data-anim="'+(j.anim||"emoji")+'" data-em="'+(j.em||"")+'" data-c="'+j.c+'"></canvas>')
+    const dentro = (img ? '<img src="'+img+'" alt="" loading="lazy" data-fb="'+(((window.FP_PORTADAS||{})[j.id])||"")+'" onerror="var f=this.dataset.fb;this.onerror=null;if(f&&this.getAttribute(\'src\')!==f){this.src=f;}else{this.remove();}">' : '<canvas data-anim="'+(j.anim||"emoji")+'" data-em="'+(j.em||"")+'" data-c="'+j.c+'"></canvas>')
       + sello + (clase==="estrella" && j.tag ? '<span class="wj-tag">'+L(j.tag)+'</span>' : '') + '<span class="wj-nm">'+nombre+'</span>';
     return url
       ? '<a class="wj '+clase+'" href="'+url+'" style="--c:'+j.c+'" aria-label="'+nombre+'">'+dentro+'</a>'
