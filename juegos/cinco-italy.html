@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Cinco Italy: guess the five-letter word from Italy's sporting life. A new word every day, six tries, and a fact with its source when you solve it.">
+<title>Cinco · Italy — a five-letter sports word a day · FirstPlace.games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{
+  --noche:#1A0F2E; --noche-2:#26173F; --pozo:#110A1E;
+  --papel:#F3E9D2; --tinta:#141A1F; --pizarra:#5A6672;
+  --rosa:#E6007E; --cempa:#F7A21B; --punto:#F4551D; --turq:#12A89D; --verde:#1E9E57; --amarillo:#FFC53D;
+  --display:"Archivo","Arial Black",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--noche);color:var(--papel);font-family:var(--display);overflow-x:hidden;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23F3E9D2' stroke-opacity='.06' stroke-width='1.5'%3E%3Cpath d='M32 8 L40 24 L56 32 L40 40 L32 56 L24 40 L8 32 L24 24Z'/%3E%3Ccircle cx='32' cy='32' r='5'/%3E%3C/g%3E%3C/svg%3E")}
+button{font-family:var(--display);cursor:pointer}
+button:focus-visible{outline:3px solid var(--cempa);outline-offset:2px}
+#app{min-height:100%;display:flex;flex-direction:column;padding-inline:16px;padding-bottom:18px}
+#picado{flex:none;height:74px;margin-inline:-16px;overflow:hidden}
+#picado svg{display:block;width:100%;height:100%}
+.flag{transform-origin:50% 0;animation:sway 4.5s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-2.2deg)}to{transform:rotate(2.2deg)}}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:6px 10px;max-width:1040px;width:100%;margin:0 auto}
+.brand{font-weight:800;font-stretch:112%;letter-spacing:-.012em;font-size:15px;color:var(--papel);opacity:.85;text-decoration:none}
+.brand i{font-style:normal;color:var(--punto)}
+.gname{font-weight:900;font-stretch:125%;font-size:20px;letter-spacing:.02em;text-transform:uppercase}
+.gname span{color:var(--cempa)}
+.tbtns{display:flex;gap:8px}
+.tbtn{background:transparent;color:var(--papel);border:2px solid var(--papel);padding:4px 10px;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.tbtn:hover{background:var(--papel);color:var(--tinta)}
+.stage{display:grid;grid-template-columns:minmax(0,230px) auto minmax(0,230px);gap:22px;justify-content:center;align-items:start;max-width:1040px;width:100%;margin:0 auto;padding-top:8px}
+.card{background:var(--papel);color:var(--tinta);border:3px solid var(--tinta);box-shadow:6px 6px 0 rgba(0,0,0,.45);position:relative;padding:20px 14px 14px}
+.stamp{position:absolute;top:-13px;left:-8px;transform:rotate(-2deg);background:var(--rosa);color:#fff;border:2.5px solid var(--tinta);font-weight:800;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px}
+.stamp.o{background:var(--cempa);color:var(--tinta)}
+.stamp.t{background:var(--turq);color:#fff}
+.card p{margin:0;font-family:var(--mono);font-size:12px;line-height:1.6}
+.card p+p{margin-top:8px}
+.card b.k{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--pizarra);display:block;margin-bottom:2px}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px}
+.stats div{text-align:center}
+.stats big{display:block;font-weight:900;font-size:24px;font-stretch:112%}
+.stats small{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--pizarra)}
+/* tablero */
+.mid{display:flex;flex-direction:column;align-items:center;gap:14px}
+.today{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--cempa);text-align:center}
+.today b{color:var(--papel);font-weight:600}
+#board{display:grid;grid-template-rows:repeat(6,1fr);gap:6px;padding:10px;background:#F3EEE3;border:3px solid var(--tinta);box-shadow:7px 7px 0 rgba(0,0,0,.45);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Crect width='20' height='20' fill='%23F3EEE3'/%3E%3Cpath d='M10 2 L18 10 L10 18 L2 10Z' fill='none' stroke='%231D3E9E' stroke-opacity='.25'/%3E%3C/svg%3E")}
+.row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.tile{width:58px;height:58px;display:grid;place-items:center;background:var(--pozo);color:var(--papel);border:3px solid var(--tinta);font-weight:900;font-size:28px;font-stretch:112%;text-transform:uppercase;transition:transform .12s}
+.tile.fill{transform:scale(1.06);border-color:var(--papel)}
+.tile.ok{background:var(--verde);color:#fff}
+.tile.near{background:var(--amarillo);color:var(--tinta)}
+.tile.no{background:#3a3f47;color:#cfd3d8}
+.tile.flip{animation:flip .5s ease}
+@keyframes flip{0%{transform:rotateX(0)}50%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
+.row.shake{animation:shake .35s}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.msg{min-height:22px;font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;text-align:center;color:var(--cempa)}
+/* teclado */
+#kb{display:flex;flex-direction:column;gap:6px;align-items:center;user-select:none;-webkit-user-select:none}
+#kb div{display:flex;gap:5px}
+#kb button{min-width:34px;height:48px;padding:0 6px;background:var(--papel);color:var(--tinta);border:2.5px solid var(--tinta);box-shadow:3px 3px 0 rgba(0,0,0,.45);font-weight:800;font-size:15px;text-transform:uppercase}
+#kb button.wide{min-width:58px;font-size:11px;letter-spacing:.06em}
+#kb button.ok{background:var(--verde);color:#fff}
+#kb button.near{background:var(--amarillo)}
+#kb button.no{background:#3a3f47;color:#cfd3d8;box-shadow:none}
+#kb button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 rgba(0,0,0,.45)}
+/* pistas y final */
+.hint{display:none;background:var(--noche-2);border:2px dashed var(--cempa);padding:8px 12px;font-family:var(--mono);font-size:12px;line-height:1.6;max-width:360px;text-align:center}
+.hint.on{display:block}
+.ov{position:fixed;inset:0;background:rgba(10,6,18,.78);display:flex;align-items:center;justify-content:center;padding:16px;z-index:9}
+.ov[hidden]{display:none}
+.panel{background:var(--papel);color:var(--tinta);border:3px solid var(--tinta);box-shadow:9px 9px 0 rgba(0,0,0,.55);width:min(520px,100%);padding:30px 26px 24px;position:relative}
+.panel h2{margin:0 0 6px;font-weight:900;font-stretch:125%;font-size:30px;letter-spacing:.02em;text-transform:uppercase}
+.panel .word{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--pizarra);margin-bottom:12px}
+.panel p{font-size:15px;line-height:1.55;margin:0 0 8px}
+.panel .src{font-family:var(--mono);font-size:11px;color:var(--pizarra)}
+.panel .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.big-btn{background:var(--punto);color:#fff;border:3px solid var(--tinta);box-shadow:5px 5px 0 rgba(0,0,0,.45);font-weight:900;font-size:15px;letter-spacing:.08em;text-transform:uppercase;padding:10px 18px}
+.big-btn.alt{background:var(--papel);color:var(--tinta)}
+.dyk{font-family:var(--mono);font-weight:600;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--rosa)}
+.grid{font-family:var(--mono);font-size:18px;line-height:1.15;letter-spacing:.05em;margin:10px 0}
+/* banderas */
+.cov-nav{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;margin-top:22px}
+.cov-flags{display:flex;flex-wrap:wrap;justify-content:center;gap:2px;max-width:760px}
+.cov-flags a{display:flex;flex-direction:column;align-items:center;width:44px;padding:3px 0 2px;border:2px solid transparent;border-radius:5px;text-decoration:none;color:var(--papel);line-height:1}
+.cov-flags a b{font-size:20px;font-weight:400;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.cov-flags a span{font-family:var(--mono);font-size:7.5px;letter-spacing:.03em;opacity:.75;margin-top:2px;white-space:nowrap;overflow:hidden;max-width:44px;text-overflow:ellipsis}
+.cov-flags a:hover,.cov-flags a:focus-visible{border-color:var(--cempa);background:rgba(247,162,27,.14);outline:none}
+.cov-flags a[aria-current]{border-color:var(--cempa);background:rgba(247,162,27,.22)}
+.cov-links{font-family:var(--mono);font-size:12px}
+.cov-links a{color:var(--papel);text-decoration:none;border-bottom:1px solid rgba(243,233,210,.35)}
+.cov-links a:hover{color:var(--cempa);border-color:var(--cempa)}
+.cov-links i{font-style:normal;opacity:.6;margin:0 4px}
+@media (max-width:900px){.stage{grid-template-columns:1fr;gap:16px}.side{display:none}.tile{width:52px;height:52px;font-size:24px}}
+@media (max-width:600px){.top{flex-wrap:wrap;justify-content:center;gap:6px 14px}.brand{font-size:13px}.gname{font-size:17px;width:100%;text-align:center;order:-1}}
+@media (max-width:420px){.tile{width:46px;height:46px;font-size:22px}#kb button{min-width:29px;height:44px;padding:0 4px;font-size:13px}#kb button.wide{min-width:48px}#picado{height:44px}}
+</style>
+<style>
+:root{--noche:#0F1A33;--noche-2:#172445;--pozo:#0B1428;--rosa:#D0102A;--cempa:#F4C430;--turq:#1F5FB8;--papel:#F7F1E3}
+body{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%23F4F1EA' stroke-opacity='.06' stroke-width='1.3'%3E%3Cpath d='M20 4 L36 20 L20 36 L4 20 Z'/%3E%3Ccircle cx='20' cy='20' r='5'/%3E%3C/g%3E%3C/svg%3E")}
+.frame{background-color:#F7F1E3;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Crect width='20' height='20' fill='%23F7F1E3'/%3E%3Cpath d='M10 2 L18 10 L10 18 L2 10 Z' fill='%231F5FB8'/%3E%3Ccircle cx='10' cy='10' r='3' fill='%23F4C430'/%3E%3Cg fill='%231F5FB8'%3E%3Ccircle cx='0' cy='0' r='2.4'/%3E%3Ccircle cx='20' cy='0' r='2.4'/%3E%3Ccircle cx='0' cy='20' r='2.4'/%3E%3Ccircle cx='20' cy='20' r='2.4'/%3E%3C/g%3E%3C/svg%3E")}
+.cartel .band{background:#1F5FB8}
+.stamp.o{color:var(--tinta)}
+#cover{background-size:40px 40px}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="picado" aria-hidden="true"></div>
+  <div class="top">
+    <a class="brand" href="../juegos.html">← FirstPlace<i>.</i>games</a>
+    <div class="gname">Cinco <span>· Italy</span></div>
+    <div class="tbtns"><button class="tbtn" id="btnHint">Hint</button><button class="tbtn" id="btnRandom">Practice</button></div>
+  </div>
+  <div class="stage">
+    <div class="side card"><span class="stamp">How to play</span>
+      <p>A five-letter word from Italy's sporting life: a sport, a club, a stadium, a legend, a shout from the stands. Six tries.</p>
+      <p><b class="k">Colors</b>Green: right letter, right spot. Yellow: right letter, wrong spot. Grey: not in the word.</p>
+      <p><b class="k">Words</b>Some are in Italian, as people say them there. Hint gives you the category. Practice gives you a random word from the list, no limits.</p>
+    </div>
+    <div class="mid">
+      <div class="today" id="today"></div>
+      <div id="board"></div>
+      <div class="msg" id="msg"></div>
+      <div class="hint" id="hint"></div>
+      <div id="kb"></div>
+    </div>
+    <div class="side card"><span class="stamp o">Your record</span>
+      <div class="stats"><div><big id="sPlayed">0</big><small>played</small></div><div><big id="sWon">0</big><small>solved</small></div><div><big id="sStreak">0</big><small>streak</small></div></div>
+      <p style="margin-top:12px"><b class="k">Next word</b><span id="next"></span></p>
+    </div>
+  </div>
+  <nav class="cov-nav" aria-label="Countries"><div class="cov-flags"><a href="cinco-mexico.html" title="Cinco México"><b>🇲🇽</b><span>México</span></a><a href="cinco-usa.html" title="Cinco USA"><b>🇺🇸</b><span>USA</span></a><a href="cinco-france.html" title="Cinco France"><b>🇫🇷</b><span>France</span></a><a href="cinco-india.html" title="Cinco India"><b>🇮🇳</b><span>India</span></a><a href="cinco-china.html" title="Cinco China"><b>🇨🇳</b><span>China</span></a><a href="cinco-brasil.html" title="Cinco Brasil"><b>🇧🇷</b><span>Brasil</span></a><a href="cinco-indonesia.html" title="Cinco Indonesia"><b>🇮🇩</b><span>Indonesia</span></a><a href="cinco-nigeria.html" title="Cinco Nigeria"><b>🇳🇬</b><span>Nigeria</span></a><a href="cinco-pakistan.html" title="Cinco Pakistan"><b>🇵🇰</b><span>Pakistan</span></a><a href="cinco-bangladesh.html" title="Cinco Bangladesh"><b>🇧🇩</b><span>Bangladesh</span></a><a href="cinco-russia.html" title="Cinco Russia"><b>🇷🇺</b><span>Russia</span></a><a href="cinco-ethiopia.html" title="Cinco Ethiopia"><b>🇪🇹</b><span>Ethiopia</span></a><a href="cinco-japan.html" title="Cinco Japan"><b>🇯🇵</b><span>Japan</span></a><a href="cinco-korea.html" title="Cinco Korea"><b>🇰🇷</b><span>Korea</span></a><a href="cinco-italy.html" aria-current="page" title="Cinco Italy"><b>🇮🇹</b><span>Italy</span></a><a href="cinco-spain.html" title="Cinco Spain"><b>🇪🇸</b><span>Spain</span></a><a href="cinco-uk.html" title="Cinco UK"><b>🇬🇧</b><span>UK</span></a><a href="cinco-germany.html" title="Cinco Germany"><b>🇩🇪</b><span>Germany</span></a><a href="cinco-netherlands.html" title="Cinco Netherlands"><b>🇳🇱</b><span>Netherlands</span></a><a href="cinco-portugal.html" title="Cinco Portugal"><b>🇵🇹</b><span>Portugal</span></a><a href="cinco-argentina.html" title="Cinco Argentina"><b>🇦🇷</b><span>Argentina</span></a><a href="cinco-uruguay.html" title="Cinco Uruguay"><b>🇺🇾</b><span>Uruguay</span></a><a href="cinco-chile.html" title="Cinco Chile"><b>🇨🇱</b><span>Chile</span></a><a href="cinco-colombia.html" title="Cinco Colombia"><b>🇨🇴</b><span>Colombia</span></a><a href="cinco-cuba.html" title="Cinco Cuba"><b>🇨🇺</b><span>Cuba</span></a></div><div class="cov-links"><a href="cinco.html">All countries</a> <i>·</i> <a href="../juegos.html">← All games</a> <i>·</i> <a href="../index.html">Map</a></div></nav>
+</div>
+<div class="ov" id="endOv" hidden><div class="panel">
+  <div class="dyk" id="endTag">Did you know?</div>
+  <h2 id="endH"></h2>
+  <div class="word" id="endWord"></div>
+  <p id="endFact"></p>
+  <p class="src" id="endSrc"></p>
+  <div class="grid" id="endGrid"></div>
+  <div class="btns"><button class="big-btn" id="btnShare">Copy result</button><button class="big-btn alt" id="btnClose">Close</button><button class="big-btn alt" id="btnAgain">Practice another</button></div>
+</div></div>
+<script>
+const INK='#141A1F';
+function strokeInk(c, w){ c.lineWidth = w; c.strokeStyle = INK; c.stroke(); }
+const ORDER=['I','O','T','S','Z','L','J'];
+/* ================= THEME: ITALY ================= */
+const THEME = {
+  id:'stack-it',
+  levelName:'Tappa',
+  shade:'14,24,44',
+  board:'#0B1428',
+  letters:['#1F5FB8','#F4C430','#D0102A','#2E8B57','#F28CB1'],
+  pieces:{
+    I:{ sport:'Formula 1',     thing:'race car',     bg:'#F6E7C8' },
+    O:{ sport:'Football',      thing:'ball',         bg:'#1F5FB8' },
+    T:{ sport:'Volleyball',    thing:'ball',         bg:'#F4C430' },
+    S:{ sport:'Tennis',        thing:'racket',       bg:'#C8553D' },
+    Z:{ sport:'Cycling',       thing:'pink jersey',  bg:'#F7F1E3' },
+    L:{ sport:'Ruzzola',       thing:'cheese wheel', bg:'#3E7C3A' },
+    J:{ sport:'Swimming',      thing:'goggles',      bg:'#7FD1E8' }
+  },
+  shouts:['','Bravo!','Forza!','Che bello!','CAMPIONI!'],
+  confetti:['#1F5FB8','#F4C430','#D0102A','#F4F1EA','#F28CB1'],
+  facts:[
+    { piece:'O', title:'Football first, tennis second',
+      text:'In a May 2026 poll by Ipsos Doxa, 54% of Italians said they follow football. Tennis came second with 40%, ahead of volleyball at 27%.',
+      src:'Corriere dello Sport', url:'https://www.corrieredellosport.it/news/calcio/2026/05/22-148793797/la_ricerca_di_obe_l_86_degli_italiani_segue_almeno_uno_sport_e_dopo_il_calcio_c_il_tennis' },
+    { piece:'O', title:'Four stars on the shirt',
+      text:'Italy has won the men’s World Cup four times: 1934, 1938, 1982 and 2006.',
+      src:'Wikipedia · Italy national football team', url:'https://en.wikipedia.org/wiki/Italy_national_football_team' },
+    { piece:'I', title:'The temple of speed',
+      text:'Every Italian Grand Prix of the Formula 1 World Championship has been held at Monza, except one: in 1980 it moved to Imola.',
+      src:'Wikipedia · Italian Grand Prix', url:'https://en.wikipedia.org/wiki/Italian_Grand_Prix' },
+    { piece:'S', title:'Three Davis Cups in a row',
+      text:'Italy won tennis’s Davis Cup in 2023, 2024 and 2025. The third came with a 2–0 win over Spain in the final in Bologna.',
+      src:'NBC Sports', url:'https://www.nbcsports.com/tennis/news/italy-wins-davis-cup-for-third-straight-year-by-beating-spain-in-final' },
+    { piece:'T', title:'Gold at last',
+      text:'At Paris 2024 Italy’s women beat the United States in the final and won the country’s first-ever Olympic gold in volleyball.',
+      src:'Volleyball World', url:'https://en.volleyballworld.com/volleyball/competitions/volleyball-olympic-games-paris-2024/news/italy-beat-the-usa-to-secure-first-olympic-title' },
+    { piece:'Z', title:'Why the jersey is pink',
+      text:'Since 1931 the leader of the Giro d’Italia wears pink, because La Gazzetta dello Sport, the newspaper that created the race, is printed on pink paper.',
+      src:'Wikipedia · Maglia rosa', url:'https://en.wikipedia.org/wiki/General_classification_in_the_Giro_d%27Italia' },
+    { piece:'L', title:'Rolling the cheese',
+      text:'In ruzzola, players wrap a strap around an aged wheel of pecorino and throw it down a country road. The goal: the longest distance in the fewest throws.',
+      src:'Gambero Rosso', url:'https://www.gamberorosso.it/notizie/ruzzola-formaggio/' },
+    { piece:'J', title:'Eight in a row',
+      text:'Federica Pellegrini won a medal in the 200 m freestyle at eight World Championships in a row, from 2005 to 2019. No swimmer had done that in one event.',
+      src:'SwimSwam', url:'https://swimswam.com/pellegrini-wins-record-eighth-straight-world-medal-in-200-free/' }
+  ]
+};
+
+function itBall(c){
+  c.save();
+  c.beginPath(); c.arc(.5,.5,.35,0,Math.PI*2); c.fillStyle='#FFFFFF'; c.fill(); c.clip();
+  const pent=(cx,cy,r,rot)=>{ c.beginPath(); for(let i=0;i<5;i++){const a=rot+i*Math.PI*2/5; c.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));} c.closePath(); };
+  c.fillStyle=INK; pent(.5,.5,.12,-Math.PI/2); c.fill();
+  c.lineWidth=.025; c.strokeStyle=INK;
+  for(let i=0;i<5;i++){ const a=-Math.PI/2+i*Math.PI*2/5;
+    c.beginPath(); c.moveTo(.5+.12*Math.cos(a),.5+.12*Math.sin(a)); c.lineTo(.5+.26*Math.cos(a),.5+.26*Math.sin(a)); c.stroke();
+    const b=a+Math.PI/5; pent(.5+.37*Math.cos(b),.5+.37*Math.sin(b),.11,b); c.fill(); }
+  c.restore();
+  c.beginPath(); c.arc(.5,.5,.35,0,Math.PI*2); strokeInk(c,.045);
+}
+function itVolley(c){
+  c.save();
+  c.beginPath(); c.arc(.5,.5,.34,0,Math.PI*2); c.fillStyle='#FFFFFF'; c.fill(); c.clip();
+  c.fillStyle='#1F5FB8'; c.beginPath(); c.moveTo(.1,.3); c.bezierCurveTo(.4,.36,.6,.2,.72,.08); c.lineTo(.95,.1); c.lineTo(.95,.25); c.bezierCurveTo(.7,.42,.45,.5,.1,.46); c.closePath(); c.fill();
+  c.fillStyle='#F4C430'; c.beginPath(); c.moveTo(.35,.95); c.bezierCurveTo(.4,.7,.6,.55,.95,.52); c.lineTo(.95,.7); c.bezierCurveTo(.7,.72,.56,.82,.52,.95); c.closePath(); c.fill();
+  c.strokeStyle=INK; c.lineWidth=.022;
+  c.beginPath(); c.moveTo(.1,.3); c.bezierCurveTo(.4,.36,.6,.2,.72,.08); c.stroke();
+  c.beginPath(); c.moveTo(.1,.46); c.bezierCurveTo(.45,.5,.7,.42,.95,.25); c.stroke();
+  c.beginPath(); c.moveTo(.35,.95); c.bezierCurveTo(.4,.7,.6,.55,.95,.52); c.stroke();
+  c.beginPath(); c.moveTo(.52,.95); c.bezierCurveTo(.56,.82,.7,.72,.95,.7); c.stroke();
+  c.beginPath(); c.moveTo(.1,.46); c.bezierCurveTo(.2,.62,.22,.8,.2,.9); c.stroke();
+  c.restore();
+  c.beginPath(); c.arc(.5,.5,.34,0,Math.PI*2); strokeInk(c,.045);
+}
+function itRacket(c){
+  c.save(); c.translate(.44,.42); c.rotate(-.7);
+  c.beginPath(); c.roundRect(-.045,.22,.09,.32,.025); c.fillStyle='#1F1F1F'; c.fill(); strokeInk(c,.03);
+  c.beginPath(); c.moveTo(-.035,.23); c.lineTo(-.1,.13); c.moveTo(.035,.23); c.lineTo(.1,.13); c.lineWidth=.06; c.strokeStyle=INK; c.stroke(); c.lineWidth=.035; c.strokeStyle='#F4F1EA'; c.stroke();
+  c.beginPath(); c.ellipse(0,-.1,.2,.26,0,0,Math.PI*2); c.fillStyle='#F7F1E3'; c.fill();
+  c.save(); c.clip();
+  c.strokeStyle='rgba(20,26,31,.55)'; c.lineWidth=.014;
+  for(let x=-.18;x<=.18;x+=.05){ c.beginPath(); c.moveTo(x,-.38); c.lineTo(x,.18); c.stroke(); }
+  for(let y=-.34;y<=.16;y+=.05){ c.beginPath(); c.moveTo(-.22,y); c.lineTo(.22,y); c.stroke(); }
+  c.restore();
+  c.beginPath(); c.ellipse(0,-.1,.2,.26,0,0,Math.PI*2); c.lineWidth=.08; c.strokeStyle=INK; c.stroke(); c.lineWidth=.045; c.strokeStyle='#1F5FB8'; c.stroke();
+  c.restore();
+  c.beginPath(); c.arc(.78,.76,.11,0,Math.PI*2); c.fillStyle='#D7E84A'; c.fill(); strokeInk(c,.03);
+  c.beginPath(); c.arc(.67,.76,.09,-.9,.9); c.lineWidth=.018; c.strokeStyle='#F4F1EA'; c.stroke();
+}
+function itJersey(c){
+  c.lineJoin='round';
+  c.beginPath(); c.moveTo(.36,.14); c.quadraticCurveTo(.5,.24,.64,.14); c.lineTo(.9,.28); c.lineTo(.8,.46); c.lineTo(.72,.42); c.lineTo(.72,.88); c.lineTo(.28,.88); c.lineTo(.28,.42); c.lineTo(.2,.46); c.lineTo(.1,.28); c.closePath();
+  c.fillStyle='#F28CB1'; c.fill(); strokeInk(c,.04);
+  c.beginPath(); c.moveTo(.4,.16); c.quadraticCurveTo(.5,.26,.6,.16); c.lineWidth=.03; c.strokeStyle='#F4F1EA'; c.stroke();
+  c.beginPath(); c.moveTo(.5,.24); c.lineTo(.5,.88); c.lineWidth=.012; c.strokeStyle='rgba(20,26,31,.45)'; c.stroke();
+  c.fillStyle='#D0102A'; c.fillRect(.28,.64,.44,.04);
+}
+function itCheese(c){
+  c.lineJoin='round';
+  c.beginPath(); c.ellipse(.5,.66,.34,.12,0,0,Math.PI); c.lineTo(.16,.4); c.ellipse(.5,.4,.34,.12,0,Math.PI,0,true); c.closePath();
+  c.fillStyle='#C98B3A'; c.fill(); strokeInk(c,.035);
+  c.beginPath(); c.ellipse(.5,.4,.34,.12,0,0,Math.PI*2); c.fillStyle='#F2DFA7'; c.fill(); strokeInk(c,.035);
+  c.fillStyle='rgba(201,139,58,.45)'; [[.4,.38],[.56,.42],[.62,.36],[.46,.44]].forEach(([x,y])=>{ c.beginPath(); c.ellipse(x,y,.025,.012,0,0,Math.PI*2); c.fill(); });
+  c.strokeStyle='rgba(120,70,20,.5)'; c.lineWidth=.012; for(let x=.22;x<.8;x+=.07){ c.beginPath(); c.moveTo(x,.46); c.lineTo(x,.62); c.stroke(); }
+  c.beginPath(); c.moveTo(.16,.54); c.bezierCurveTo(.08,.62,.1,.86,.26,.86); c.lineWidth=.03; c.strokeStyle='#F4F1EA'; c.stroke();
+  c.beginPath(); c.arc(.28,.86,.04,0,Math.PI*2); c.fillStyle='#8A5A2B'; c.fill(); strokeInk(c,.02);
+}
+function itGoggles(c){
+  c.lineCap='round';
+  c.beginPath(); c.moveTo(.06,.5); c.quadraticCurveTo(.5,.26,.94,.5); c.lineWidth=.05; c.strokeStyle='#1F1F1F'; c.stroke();
+  [.32,.68].forEach(x=>{ c.beginPath(); c.ellipse(x,.52,.15,.12,0,0,Math.PI*2); c.fillStyle='#1F5FB8'; c.fill(); strokeInk(c,.04);
+    c.beginPath(); c.ellipse(x-.04,.48,.05,.03,-.4,0,Math.PI*2); c.fillStyle='rgba(255,255,255,.6)'; c.fill(); });
+  c.beginPath(); c.moveTo(.47,.52); c.quadraticCurveTo(.5,.46,.53,.52); c.lineWidth=.04; c.strokeStyle=INK; c.stroke();
+  c.lineCap='butt';
+}
+function itCar(c){ // 4x1 strip: red race car, no logos
+  c.lineJoin='round';
+  // rear wing
+  c.beginPath(); c.rect(.14,.18,.3,.1); c.fillStyle='#1F1F1F'; c.fill(); strokeInk(c,.03);
+  c.beginPath(); c.moveTo(.3,.28); c.lineTo(.3,.44); c.lineWidth=.05; c.strokeStyle=INK; c.stroke();
+  // body
+  c.beginPath(); c.moveTo(.2,.62); c.lineTo(.3,.42); c.lineTo(1.5,.4); c.lineTo(1.8,.3); c.lineTo(2.2,.3); c.lineTo(2.4,.42); c.lineTo(3.7,.52); c.lineTo(3.7,.66); c.lineTo(.2,.7); c.closePath();
+  c.fillStyle='#D0102A'; c.fill(); strokeInk(c,.04);
+  // cockpit and halo
+  c.beginPath(); c.ellipse(2.0,.34,.22,.07,0,Math.PI,0); c.fillStyle='#1F1F1F'; c.fill();
+  c.beginPath(); c.moveTo(1.72,.34); c.quadraticCurveTo(2.0,.14,2.28,.34); c.lineWidth=.04; c.strokeStyle='#1F1F1F'; c.stroke();
+  c.beginPath(); c.arc(1.98,.27,.07,0,Math.PI*2); c.fillStyle='#F4C430'; c.fill(); strokeInk(c,.02);
+  // stripe and number roundel
+  c.fillStyle='#F4F1EA'; c.fillRect(2.5,.5,.9,.04);
+  c.beginPath(); c.arc(1.2,.54,.09,0,Math.PI*2); c.fillStyle='#F4F1EA'; c.fill(); strokeInk(c,.02);
+  // front wing
+  c.beginPath(); c.moveTo(3.5,.72); c.lineTo(3.95,.72); c.lineTo(3.95,.8); c.lineTo(3.5,.8); c.closePath(); c.fillStyle='#1F1F1F'; c.fill(); strokeInk(c,.025);
+  // wheels
+  [[.62,.7,.24],[3.18,.72,.2]].forEach(([x,y,r])=>{ c.beginPath(); c.arc(x,y,r,0,Math.PI*2); c.fillStyle='#1A1A1A'; c.fill(); strokeInk(c,.03);
+    c.beginPath(); c.arc(x,y,r*.45,0,Math.PI*2); c.fillStyle='#A9B3BC'; c.fill(); });
+}
+THEME.pieces.O.draw=itBall; THEME.pieces.T.draw=itVolley; THEME.pieces.S.draw=itRacket;
+THEME.pieces.Z.draw=itJersey; THEME.pieces.L.draw=itCheese; THEME.pieces.J.draw=itGoggles;
+THEME.long=itCar;
+
+/* ---------- decoration: majolica tiles, lemons, moka & gelato ---------- */
+function itBanner(W,H){
+  const fw=Math.max(30,Math.min(50,H*.66)), gap=4, n=Math.ceil(W/(fw+gap))+1, fh=H-10;
+  let svg=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">`;
+  svg+=`<path d="M0 4 Q ${W/2} 12 ${W} 4" stroke="#F4F1EA" stroke-opacity=".7" stroke-width="1.6" fill="none"/>`;
+  for(let i=0;i<n;i++){
+    const x=i*(fw+gap)-fw/3, y=4+Math.sin(((x+fw/2)/W)*Math.PI)*7, cx=x+fw/2, blue=i%2===0;
+    svg+=`<g class="flag" style="animation-delay:${-(i*0.33)%4}s;transform-origin:${cx}px ${y}px">`;
+    svg+=`<path d="M${x} ${y} H${x+fw} L${cx} ${y+fh} Z" fill="${blue?'#1F5FB8':'#F7F1E3'}" stroke="#141A1F" stroke-width="1.2"/>`;
+    const ly=y+fh*.3, r=fw*.14;
+    svg+=`<ellipse cx="${cx}" cy="${ly}" rx="${r}" ry="${r*.75}" fill="#F4C430" stroke="#141A1F" stroke-width="1"/>`;
+    svg+=`<path d="M${cx+r*.6} ${ly-r*.5} q ${r*.7} ${-r*.6} ${r*1.2} ${-r*.1} q ${-r*.5} ${r*.5} ${-r*1.2} ${r*.1}" fill="#2E8B57"/>`;
+    svg+=`<path d="M${cx-fw*.26} ${y+fh*.08} H${cx+fw*.26}" stroke="${blue?'#F4C430':'#1F5FB8'}" stroke-width="1.6"/>`;
+    svg+=`</g>`;
+  }
+  return svg+'</svg>';
+}
+function moka(c,w,h){ // stovetop coffee pot, 120x130
+  c.save(); c.scale(w/120,h/130); c.lineJoin='round'; c.lineWidth=3; c.strokeStyle=INK;
+  c.beginPath(); c.moveTo(34,124); c.lineTo(86,124); c.lineTo(78,76); c.lineTo(42,76); c.closePath(); c.fillStyle='#C9CED3'; c.fill(); c.stroke();
+  c.beginPath(); c.rect(38,68,44,8); c.fillStyle='#1F1F1F'; c.fill(); c.stroke();
+  c.beginPath(); c.moveTo(42,68); c.lineTo(34,24); c.lineTo(86,24); c.lineTo(78,68); c.closePath(); c.fillStyle='#DCE1E6'; c.fill(); c.stroke();
+  c.beginPath(); c.moveTo(86,24); c.lineTo(100,18); c.lineTo(94,30); c.fillStyle='#DCE1E6'; c.fill(); c.stroke();
+  c.beginPath(); c.moveTo(34,24); c.lineTo(60,12); c.lineTo(86,24); c.closePath(); c.fillStyle='#C9CED3'; c.fill(); c.stroke();
+  c.beginPath(); c.arc(60,11,4,0,Math.PI*2); c.fillStyle='#1F1F1F'; c.fill();
+  c.beginPath(); c.moveTo(34,34); c.lineTo(16,40); c.lineTo(20,70); c.lineTo(38,62); c.fillStyle='#1F1F1F'; c.fill(); c.stroke();
+  c.strokeStyle='rgba(20,26,31,.35)'; c.lineWidth=2; [48,60,72].forEach(x=>{ c.beginPath(); c.moveTo(x,30); c.lineTo(x+(x-60)*.2,64); c.stroke(); c.beginPath(); c.moveTo(x,82); c.lineTo(x+(x-60)*.15,118); c.stroke(); });
+  c.restore();
+}
+function gelato(c,w,h){ // cone with two scoops, 120x130
+  c.save(); c.scale(w/120,h/130); c.lineJoin='round'; c.lineWidth=3; c.strokeStyle=INK;
+  c.beginPath(); c.moveTo(38,66); c.lineTo(82,66); c.lineTo(60,124); c.closePath(); c.fillStyle='#D9A15B'; c.fill(); c.stroke();
+  c.strokeStyle='rgba(120,70,20,.6)'; c.lineWidth=2; for(let k=0;k<4;k++){ c.beginPath(); c.moveTo(42+k*10,66); c.lineTo(58+k*4,110); c.stroke(); c.beginPath(); c.moveTo(78-k*10,66); c.lineTo(62-k*4,110); c.stroke(); }
+  c.strokeStyle=INK; c.lineWidth=3;
+  c.beginPath(); c.arc(60,58,24,Math.PI*.95,Math.PI*2.05); c.fillStyle='#F28CB1'; c.fill(); c.stroke();
+  c.beginPath(); c.arc(60,34,20,Math.PI*.9,Math.PI*2.1); c.fillStyle='#8FCB6E'; c.fill(); c.stroke();
+  c.beginPath(); c.arc(60,14,5,0,Math.PI*2); c.fillStyle='#D0102A'; c.fill(); c.lineWidth=2; c.stroke();
+  c.restore();
+}
+function espresso(c,w,h){ // 70x70
+  c.save(); c.scale(w/70,h/70); c.lineJoin='round'; c.lineWidth=2.2; c.strokeStyle=INK;
+  c.beginPath(); c.ellipse(35,58,26,6,0,0,Math.PI*2); c.fillStyle='#F4F1EA'; c.fill(); c.stroke();
+  c.beginPath(); c.moveTo(18,30); c.lineTo(52,30); c.quadraticCurveTo(50,56,35,56); c.quadraticCurveTo(20,56,18,30); c.closePath(); c.fillStyle='#FFFFFF'; c.fill(); c.stroke();
+  c.beginPath(); c.arc(54,40,6,-Math.PI/2,Math.PI/2); c.stroke();
+  c.beginPath(); c.ellipse(35,30,17,4,0,0,Math.PI*2); c.fillStyle='#5A3A22'; c.fill(); c.stroke();
+  c.fillStyle='#1F5FB8'; c.fillRect(20,40,30,3);
+  c.strokeStyle='rgba(244,241,234,.7)'; c.lineWidth=2; [[30,0],[38,-3]].forEach(([x,d])=>{ c.beginPath(); c.moveTo(x,24); c.quadraticCurveTo(x-4,16+d,x,8+d); c.stroke(); });
+  c.restore();
+}
+function pizza(c,w,h){ // slice, 70x70
+  c.save(); c.scale(w/70,h/70); c.lineJoin='round'; c.lineWidth=2.2; c.strokeStyle=INK;
+  c.beginPath(); c.moveTo(35,64); c.lineTo(10,14); c.quadraticCurveTo(35,4,60,14); c.closePath(); c.fillStyle='#F2C14E'; c.fill(); c.stroke();
+  c.beginPath(); c.moveTo(10,14); c.quadraticCurveTo(35,4,60,14); c.lineWidth=6; c.strokeStyle='#C98B3A'; c.stroke(); c.lineWidth=2.2; c.strokeStyle=INK;
+  c.fillStyle='#D0102A'; [[28,24],[42,26],[34,40]].forEach(([x,y])=>{ c.beginPath(); c.arc(x,y,5,0,Math.PI*2); c.fill(); c.stroke(); });
+  c.fillStyle='#2E8B57'; [[24,34],[44,36]].forEach(([x,y])=>{ c.beginPath(); c.ellipse(x,y,4,2,.6,0,Math.PI*2); c.fill(); });
+  c.restore();
+}
+THEME.deco={
+  banner:itBanner,
+  coverSide(c,w,h,i){ i?gelato(c,w,h):moka(c,w,h); },
+  corner(c){ espresso(c,70,70); },
+  pause(c,w,h){ c.save(); c.translate(8,8); pizza(c,68,68); c.restore(); c.save(); c.translate(76,8); espresso(c,62,62); c.restore(); }
+};
+
+const CINCO={"code": "it", "name": "Italy", "tz": "Europe/Rome", "seed": 20260930, "lang": "Italian", "words": [{"w": "STARS", "cat": "Football", "hint": "Four on the Azzurri shirt", "fact": "Italy has won the men’s World Cup four times: 1934, 1938, 1982 and 2006.", "src": "Wikipedia · Italy national football team"}, {"w": "MONZA", "cat": "Formula 1", "hint": "The temple of speed", "fact": "Every Italian Grand Prix of the Formula 1 World Championship has been held at Monza, except one: in 1980 it moved to Imola.", "src": "Wikipedia · Italian Grand Prix"}, {"w": "DAVIS", "cat": "Tennis", "hint": "___ Cup, won three years in a row", "fact": "Italy won tennis’s Davis Cup in 2023, 2024 and 2025. The third came with a 2–0 win over Spain in the final in Bologna.", "src": "NBC Sports"}, {"w": "SPIKE", "cat": "Volleyball", "hint": "Italy's women hit gold at Paris 2024", "fact": "At Paris 2024 Italy’s women beat the United States in the final and won the country’s first-ever Olympic gold in volleyball.", "src": "Volleyball World"}, {"w": "TAPPA", "cat": "Cycling", "lang": "Italian", "hint": "A stage of the Giro", "fact": "Since 1931 the leader of the Giro d’Italia wears pink, because La Gazzetta dello Sport, the newspaper that created the race, is printed on pink paper.", "src": "Wikipedia · Maglia rosa"}, {"w": "FORMA", "cat": "Ruzzola", "lang": "Italian", "hint": "A wheel of pecorino, in Italian", "fact": "In ruzzola, players wrap a strap around an aged wheel of pecorino and throw it down a country road. The goal: the longest distance in the fewest throws.", "src": "Gambero Rosso"}, {"w": "STILE", "cat": "Swimming", "lang": "Italian", "hint": "___ libero: Federica Pellegrini's stroke", "fact": "Federica Pellegrini won a medal in the 200 m freestyle at eight World Championships in a row, from 2005 to 2019. No swimmer had done that in one event.", "src": "SwimSwam"}, {"w": "FORZA", "cat": "Fans", "lang": "Italian", "hint": "___ Azzurri!", "fact": "Italy won the World Cup in 1934 and 1938, the first country ever to win it twice in a row.", "src": "FIFA"}, {"w": "SERIE", "cat": "Football", "lang": "Italian", "hint": "___ A, the top league", "fact": "Juventus has won more Serie A titles than any other Italian club; Inter and Milan follow.", "src": "Wikipedia · Serie A"}, {"w": "ROSSO", "cat": "Formula 1", "lang": "Italian", "hint": "The colour of Ferrari", "fact": "Ferrari is the only team to have raced in every Formula 1 season since the championship began in 1950.", "src": "Formula1.com"}, {"w": "BOCCE", "cat": "Bocce", "lang": "Italian", "hint": "Italy's bowls, played since Roman times", "fact": "Bocce, the Italian game of bowls, descends from games played in ancient Rome. Today it is played in villages and parks all over Italy and wherever Italians emigrated.", "src": "Wikipedia · Bocce"}]};
+
+(function(){
+const $=id=>document.getElementById(id);
+const TZ=CINCO.tz||0, KEY='cinco-'+CINCO.code, TEST=/[?&]test=1/.test(location.search);
+const W=CINCO.words.map(w=>({...w,w:w.w.toUpperCase()}));
+// banner de papel picado (del tema de Stack)
+(function(){ const el=$('picado'); const W_=el.clientWidth||1000,H=el.clientHeight||74; el.innerHTML=THEME.deco.banner(W_,H); })();
+// ---- día ----
+function partes(){ try{ const f=new Intl.DateTimeFormat('en-CA',{timeZone:typeof TZ==='string'?TZ:'UTC',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}); const o={}; f.formatToParts(new Date()).forEach(p=>o[p.type]=p.value); return {date:o.year+'-'+o.month+'-'+o.day,h:+o.hour%24,m:+o.minute}; }catch(e){ const off=typeof TZ==='number'?TZ:0; const d=new Date(Date.now()+off*3600*1000); return {date:d.toISOString().slice(0,10),h:d.getUTCHours(),m:d.getUTCMinutes()}; } }
+function fechaDeHoy(){ return partes().date; }
+function restoDelDia(){ const a=partes(); const min=(23-a.h)*60+(60-a.m); const h=Math.floor(min/60),m=min%60; return (h?h+' h ':'')+m+' min'; }
+function numeroDeDia(){ return Math.floor(Date.parse(fechaDeHoy()+'T00:00:00Z')/86400000); }
+function azarFijo(semilla){ let s=semilla>>>0; return function(){ s=(s+0x6D2B79F5)>>>0; let t=s; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }; }
+let ORDEN=null; function ordenDeItems(){ if(ORDEN) return ORDEN; const a=W.slice(); const r=azarFijo(CINCO.seed||20260930); for(let i=a.length-1;i>0;i--){ const j=Math.floor(r()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return (ORDEN=a); }
+function delDia(){ const o=ordenDeItems(); const d=numeroDeDia(); return o[((d%o.length)+o.length)%o.length]; }
+// ---- estado ----
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ return {}; } }
+function save(d){ if(TEST||practice) return; try{ localStorage.setItem(KEY,JSON.stringify(d)); }catch(e){} }
+let S=load(); if(!S.stats) S.stats={played:0,won:0,streak:0,best:0,last:''};
+let practice=false, target=null, guesses=[], cur='', done=false, hinted=false;
+const ROWS=['QWERTYUIOP','ASDFGHJKL','ZXCVBNM'];
+function start(word,isPractice){ practice=!!isPractice; target=word; guesses=[]; cur=''; done=false; hinted=false; $('hint').className='hint'; $('hint').textContent=''; $('msg').textContent='';
+  if(!practice&&S.today&&S.today.date===fechaDeHoy()){ guesses=S.today.guesses.slice(); done=S.today.done; }
+  $('today').innerHTML=practice?'Practice · <b>random word</b>':'Word of the day · <b>'+fechaDeHoy()+'</b>'+(TEST?' · <b>TEST</b>':'');
+  draw(); drawKb(); stats();
+  if(done) setTimeout(()=>finish(guesses[guesses.length-1]===target.w,false),300); }
+function evalGuess(g){ const t=target.w.split(''), r=Array(5).fill('no'), used=Array(5).fill(false);
+  for(let i=0;i<5;i++) if(g[i]===t[i]){ r[i]='ok'; used[i]=true; }
+  for(let i=0;i<5;i++){ if(r[i]==='ok') continue; for(let k=0;k<5;k++){ if(!used[k]&&t[k]===g[i]){ r[i]='near'; used[k]=true; break; } } }
+  return r; }
+function draw(anim){ const b=$('board'); b.innerHTML=''; for(let r=0;r<6;r++){ const row=document.createElement('div'); row.className='row'; const g=guesses[r]||(r===guesses.length?cur:''); const ev=guesses[r]?evalGuess(guesses[r]):null;
+    for(let i=0;i<5;i++){ const t=document.createElement('div'); t.className='tile'+(ev?' '+ev[i]:(g[i]?' fill':'')); if(ev&&anim&&r===guesses.length-1){ t.classList.add('flip'); t.style.animationDelay=(i*0.12)+'s'; } t.textContent=g[i]||''; row.appendChild(t); }
+    b.appendChild(row); } }
+function kbState(){ const st={}; guesses.forEach(g=>{ const ev=evalGuess(g); for(let i=0;i<5;i++){ const L=g[i], v=ev[i]; if(v==='ok'||(v==='near'&&st[L]!=='ok')||(!st[L])) st[L]=v; } }); return st; }
+function drawKb(){ const kb=$('kb'); kb.innerHTML=''; const st=kbState(); ROWS.forEach((r,ri)=>{ const d=document.createElement('div'); if(ri===2){ d.appendChild(key('ENTER','wide')); } r.split('').forEach(L=>{ d.appendChild(key(L,st[L]||'')); }); if(ri===2){ d.appendChild(key('⌫','wide')); } kb.appendChild(d); }); }
+function key(L,cls){ const b=document.createElement('button'); b.textContent=L; b.className=cls; b.dataset.k=L; return b; }
+$('kb').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b) press(b.dataset.k); });
+document.addEventListener('keydown',e=>{ if(e.metaKey||e.ctrlKey||e.altKey) return; if(!$('endOv').hidden) return; const k=e.key; if(k==='Enter') press('ENTER'); else if(k==='Backspace') press('⌫'); else if(/^[a-zA-Z]$/.test(k)) press(k.toUpperCase()); });
+function press(k){ if(done) return; if(k==='ENTER'){ submit(); return; } if(k==='⌫'){ cur=cur.slice(0,-1); draw(); return; } if(cur.length<5){ cur+=k; draw(); } }
+function submit(){ if(cur.length<5){ shake('Five letters'); return; } guesses.push(cur); const won=cur===target.w; cur=''; draw(true); drawKb();
+  if(!practice){ S.today={date:fechaDeHoy(),guesses:guesses.slice(),done:won||guesses.length===6}; save(S); }
+  if(won||guesses.length===6){ done=true; if(!practice){ const st=S.stats; if(st.last!==fechaDeHoy()){ st.played++; if(won){ st.streak=(st.lastWon===prevDay()?st.streak:0)+1; st.won++; st.lastWon=fechaDeHoy(); } else st.streak=0; st.best=Math.max(st.best,st.streak); st.last=fechaDeHoy(); save(S); } }
+    setTimeout(()=>finish(won,true),5*120+500); } else { $('msg').textContent=['','Good start.','Warmer.','Keep going.','Two left.','Last one!'][guesses.length]||''; } }
+function prevDay(){ const d=new Date(Date.parse(fechaDeHoy()+'T00:00:00Z')-86400000); return d.toISOString().slice(0,10); }
+function shake(m){ const row=$('board').children[guesses.length]; if(row){ row.classList.add('shake'); setTimeout(()=>row.classList.remove('shake'),400); } $('msg').textContent=m; }
+function stats(){ const st=S.stats; $('sPlayed').textContent=st.played; $('sWon').textContent=st.won; $('sStreak').textContent=st.streak; $('next').textContent='in '+restoDelDia(); }
+setInterval(()=>{ $('next').textContent='in '+restoDelDia(); },60000);
+function finish(won,fresh){ const t=target; $('endTag').textContent=won?'Did you know?':'The word was';
+  $('endH').textContent=won?['Perfect!','Brilliant!','Great!','Nice one!','Got it!','Phew!'][guesses.length-1]:t.w; $('endWord').textContent=t.w+' · '+t.cat+(t.lang?' · '+t.lang:'');
+  $('endFact').textContent=t.fact; $('endSrc').textContent=t.src?'Source: '+t.src:'';
+  $('endGrid').textContent=guesses.map(g=>evalGuess(g).map(v=>v==='ok'?'🟩':v==='near'?'🟨':'⬛').join('')).join('\n');
+  $('btnAgain').hidden=false; $('endOv').hidden=false; stats(); }
+$('btnClose').onclick=()=>{ $('endOv').hidden=true; };
+$('btnAgain').onclick=()=>{ $('endOv').hidden=true; random(); };
+$('btnShare').onclick=()=>{ const txt='Cinco · '+CINCO.name+' · '+(practice?'practice':fechaDeHoy())+' · '+(guesses[guesses.length-1]===target.w?guesses.length:'X')+'/6\n'+$('endGrid').textContent+'\nfirstplace.games'; const ok=()=>{ $('btnShare').textContent='Copied!'; setTimeout(()=>$('btnShare').textContent='Copy result',1500); }; if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(ok,()=>{ $('endGrid').textContent=txt; }); else $('endGrid').textContent=txt; };
+$('btnHint').onclick=()=>{ if(done) return; hinted=true; const h=$('hint'); h.className='hint on'; h.innerHTML='<b>'+target.cat+'</b>'+(target.hint?' — '+target.hint:'')+(target.lang?'<br><span style="opacity:.7">A word in '+target.lang+'</span>':''); };
+function random(){ let w; do{ w=W[Math.floor(Math.random()*W.length)]; }while(W.length>1&&w===target); start(w,true); }
+$('btnRandom').onclick=()=>{ if(practice||done) random(); else if(confirmLeave()) random(); };
+function confirmLeave(){ if(guesses.length===0) return true; $('msg').textContent='Finish today\'s word first, or press Practice again to leave it.'; $('btnRandom').onclick=()=>random(); return false; }
+start(delDia(),false);
+})();
+</script>
+
+</body>
+</html>

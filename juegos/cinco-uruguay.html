@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Cinco Uruguay: guess the five-letter word from Uruguay's sporting life. A new word every day, six tries, and a fact with its source when you solve it.">
+<title>Cinco · Uruguay — a five-letter sports word a day · FirstPlace.games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{
+  --noche:#1A0F2E; --noche-2:#26173F; --pozo:#110A1E;
+  --papel:#F3E9D2; --tinta:#141A1F; --pizarra:#5A6672;
+  --rosa:#E6007E; --cempa:#F7A21B; --punto:#F4551D; --turq:#12A89D; --verde:#1E9E57; --amarillo:#FFC53D;
+  --display:"Archivo","Arial Black",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--noche);color:var(--papel);font-family:var(--display);overflow-x:hidden;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23F3E9D2' stroke-opacity='.06' stroke-width='1.5'%3E%3Cpath d='M32 8 L40 24 L56 32 L40 40 L32 56 L24 40 L8 32 L24 24Z'/%3E%3Ccircle cx='32' cy='32' r='5'/%3E%3C/g%3E%3C/svg%3E")}
+button{font-family:var(--display);cursor:pointer}
+button:focus-visible{outline:3px solid var(--cempa);outline-offset:2px}
+#app{min-height:100%;display:flex;flex-direction:column;padding-inline:16px;padding-bottom:18px}
+#picado{flex:none;height:74px;margin-inline:-16px;overflow:hidden}
+#picado svg{display:block;width:100%;height:100%}
+.flag{transform-origin:50% 0;animation:sway 4.5s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-2.2deg)}to{transform:rotate(2.2deg)}}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:6px 10px;max-width:1040px;width:100%;margin:0 auto}
+.brand{font-weight:800;font-stretch:112%;letter-spacing:-.012em;font-size:15px;color:var(--papel);opacity:.85;text-decoration:none}
+.brand i{font-style:normal;color:var(--punto)}
+.gname{font-weight:900;font-stretch:125%;font-size:20px;letter-spacing:.02em;text-transform:uppercase}
+.gname span{color:var(--cempa)}
+.tbtns{display:flex;gap:8px}
+.tbtn{background:transparent;color:var(--papel);border:2px solid var(--papel);padding:4px 10px;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.tbtn:hover{background:var(--papel);color:var(--tinta)}
+.stage{display:grid;grid-template-columns:minmax(0,230px) auto minmax(0,230px);gap:22px;justify-content:center;align-items:start;max-width:1040px;width:100%;margin:0 auto;padding-top:8px}
+.card{background:var(--papel);color:var(--tinta);border:3px solid var(--tinta);box-shadow:6px 6px 0 rgba(0,0,0,.45);position:relative;padding:20px 14px 14px}
+.stamp{position:absolute;top:-13px;left:-8px;transform:rotate(-2deg);background:var(--rosa);color:#fff;border:2.5px solid var(--tinta);font-weight:800;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px}
+.stamp.o{background:var(--cempa);color:var(--tinta)}
+.stamp.t{background:var(--turq);color:#fff}
+.card p{margin:0;font-family:var(--mono);font-size:12px;line-height:1.6}
+.card p+p{margin-top:8px}
+.card b.k{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--pizarra);display:block;margin-bottom:2px}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px}
+.stats div{text-align:center}
+.stats big{display:block;font-weight:900;font-size:24px;font-stretch:112%}
+.stats small{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--pizarra)}
+/* tablero */
+.mid{display:flex;flex-direction:column;align-items:center;gap:14px}
+.today{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--cempa);text-align:center}
+.today b{color:var(--papel);font-weight:600}
+#board{display:grid;grid-template-rows:repeat(6,1fr);gap:6px;padding:10px;background:#F3EEE3;border:3px solid var(--tinta);box-shadow:7px 7px 0 rgba(0,0,0,.45);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Crect width='20' height='20' fill='%23F3EEE3'/%3E%3Cpath d='M10 2 L18 10 L10 18 L2 10Z' fill='none' stroke='%231D3E9E' stroke-opacity='.25'/%3E%3C/svg%3E")}
+.row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.tile{width:58px;height:58px;display:grid;place-items:center;background:var(--pozo);color:var(--papel);border:3px solid var(--tinta);font-weight:900;font-size:28px;font-stretch:112%;text-transform:uppercase;transition:transform .12s}
+.tile.fill{transform:scale(1.06);border-color:var(--papel)}
+.tile.ok{background:var(--verde);color:#fff}
+.tile.near{background:var(--amarillo);color:var(--tinta)}
+.tile.no{background:#3a3f47;color:#cfd3d8}
+.tile.flip{animation:flip .5s ease}
+@keyframes flip{0%{transform:rotateX(0)}50%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
+.row.shake{animation:shake .35s}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.msg{min-height:22px;font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;text-align:center;color:var(--cempa)}
+/* teclado */
+#kb{display:flex;flex-direction:column;gap:6px;align-items:center;user-select:none;-webkit-user-select:none}
+#kb div{display:flex;gap:5px}
+#kb button{min-width:34px;height:48px;padding:0 6px;background:var(--papel);color:var(--tinta);border:2.5px solid var(--tinta);box-shadow:3px 3px 0 rgba(0,0,0,.45);font-weight:800;font-size:15px;text-transform:uppercase}
+#kb button.wide{min-width:58px;font-size:11px;letter-spacing:.06em}
+#kb button.ok{background:var(--verde);color:#fff}
+#kb button.near{background:var(--amarillo)}
+#kb button.no{background:#3a3f47;color:#cfd3d8;box-shadow:none}
+#kb button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 rgba(0,0,0,.45)}
+/* pistas y final */
+.hint{display:none;background:var(--noche-2);border:2px dashed var(--cempa);padding:8px 12px;font-family:var(--mono);font-size:12px;line-height:1.6;max-width:360px;text-align:center}
+.hint.on{display:block}
+.ov{position:fixed;inset:0;background:rgba(10,6,18,.78);display:flex;align-items:center;justify-content:center;padding:16px;z-index:9}
+.ov[hidden]{display:none}
+.panel{background:var(--papel);color:var(--tinta);border:3px solid var(--tinta);box-shadow:9px 9px 0 rgba(0,0,0,.55);width:min(520px,100%);padding:30px 26px 24px;position:relative}
+.panel h2{margin:0 0 6px;font-weight:900;font-stretch:125%;font-size:30px;letter-spacing:.02em;text-transform:uppercase}
+.panel .word{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--pizarra);margin-bottom:12px}
+.panel p{font-size:15px;line-height:1.55;margin:0 0 8px}
+.panel .src{font-family:var(--mono);font-size:11px;color:var(--pizarra)}
+.panel .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.big-btn{background:var(--punto);color:#fff;border:3px solid var(--tinta);box-shadow:5px 5px 0 rgba(0,0,0,.45);font-weight:900;font-size:15px;letter-spacing:.08em;text-transform:uppercase;padding:10px 18px}
+.big-btn.alt{background:var(--papel);color:var(--tinta)}
+.dyk{font-family:var(--mono);font-weight:600;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--rosa)}
+.grid{font-family:var(--mono);font-size:18px;line-height:1.15;letter-spacing:.05em;margin:10px 0}
+/* banderas */
+.cov-nav{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;margin-top:22px}
+.cov-flags{display:flex;flex-wrap:wrap;justify-content:center;gap:2px;max-width:760px}
+.cov-flags a{display:flex;flex-direction:column;align-items:center;width:44px;padding:3px 0 2px;border:2px solid transparent;border-radius:5px;text-decoration:none;color:var(--papel);line-height:1}
+.cov-flags a b{font-size:20px;font-weight:400;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.cov-flags a span{font-family:var(--mono);font-size:7.5px;letter-spacing:.03em;opacity:.75;margin-top:2px;white-space:nowrap;overflow:hidden;max-width:44px;text-overflow:ellipsis}
+.cov-flags a:hover,.cov-flags a:focus-visible{border-color:var(--cempa);background:rgba(247,162,27,.14);outline:none}
+.cov-flags a[aria-current]{border-color:var(--cempa);background:rgba(247,162,27,.22)}
+.cov-links{font-family:var(--mono);font-size:12px}
+.cov-links a{color:var(--papel);text-decoration:none;border-bottom:1px solid rgba(243,233,210,.35)}
+.cov-links a:hover{color:var(--cempa);border-color:var(--cempa)}
+.cov-links i{font-style:normal;opacity:.6;margin:0 4px}
+@media (max-width:900px){.stage{grid-template-columns:1fr;gap:16px}.side{display:none}.tile{width:52px;height:52px;font-size:24px}}
+@media (max-width:600px){.top{flex-wrap:wrap;justify-content:center;gap:6px 14px}.brand{font-size:13px}.gname{font-size:17px;width:100%;text-align:center;order:-1}}
+@media (max-width:420px){.tile{width:46px;height:46px;font-size:22px}#kb button{min-width:29px;height:44px;padding:0 4px;font-size:13px}#kb button.wide{min-width:48px}#picado{height:44px}}
+</style>
+<style>
+:root{--noche:#0E1A33;--noche-2:#162644;--pozo:#0A1426;--rosa:#C8102E;--cempa:#F6B40E;--turq:#5EA9DD;--papel:#F4F1EA}
+body{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%23F4F1EA' stroke-opacity='.05' stroke-width='1.3'%3E%3Ccircle cx='20' cy='20' r='5'/%3E%3Cpath d='M20 8 V12 M20 28 V32 M8 20 H12 M28 20 H32'/%3E%3C/g%3E%3C/svg%3E")}
+.frame{background-color:#F4F1EA;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Crect width='20' height='20' fill='%23F4F1EA'/%3E%3Crect y='0' width='20' height='5' fill='%235EA9DD'/%3E%3Crect y='10' width='20' height='5' fill='%235EA9DD'/%3E%3Ccircle cx='10' cy='7.5' r='1.6' fill='%23F6B40E'/%3E%3C/svg%3E")}
+.cartel .band{background:#5EA9DD}
+.stamp.o{color:var(--tinta)}
+#cover{background-size:40px 40px}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="picado" aria-hidden="true"></div>
+  <div class="top">
+    <a class="brand" href="../juegos.html">← FirstPlace<i>.</i>games</a>
+    <div class="gname">Cinco <span>· Uruguay</span></div>
+    <div class="tbtns"><button class="tbtn" id="btnHint">Hint</button><button class="tbtn" id="btnRandom">Practice</button></div>
+  </div>
+  <div class="stage">
+    <div class="side card"><span class="stamp">How to play</span>
+      <p>A five-letter word from Uruguay's sporting life: a sport, a club, a stadium, a legend, a shout from the stands. Six tries.</p>
+      <p><b class="k">Colors</b>Green: right letter, right spot. Yellow: right letter, wrong spot. Grey: not in the word.</p>
+      <p><b class="k">Words</b>Some are in Spanish, as people say them there. Hint gives you the category. Practice gives you a random word from the list, no limits.</p>
+    </div>
+    <div class="mid">
+      <div class="today" id="today"></div>
+      <div id="board"></div>
+      <div class="msg" id="msg"></div>
+      <div class="hint" id="hint"></div>
+      <div id="kb"></div>
+    </div>
+    <div class="side card"><span class="stamp o">Your record</span>
+      <div class="stats"><div><big id="sPlayed">0</big><small>played</small></div><div><big id="sWon">0</big><small>solved</small></div><div><big id="sStreak">0</big><small>streak</small></div></div>
+      <p style="margin-top:12px"><b class="k">Next word</b><span id="next"></span></p>
+    </div>
+  </div>
+  <nav class="cov-nav" aria-label="Countries"><div class="cov-flags"><a href="cinco-mexico.html" title="Cinco México"><b>🇲🇽</b><span>México</span></a><a href="cinco-usa.html" title="Cinco USA"><b>🇺🇸</b><span>USA</span></a><a href="cinco-france.html" title="Cinco France"><b>🇫🇷</b><span>France</span></a><a href="cinco-india.html" title="Cinco India"><b>🇮🇳</b><span>India</span></a><a href="cinco-china.html" title="Cinco China"><b>🇨🇳</b><span>China</span></a><a href="cinco-brasil.html" title="Cinco Brasil"><b>🇧🇷</b><span>Brasil</span></a><a href="cinco-indonesia.html" title="Cinco Indonesia"><b>🇮🇩</b><span>Indonesia</span></a><a href="cinco-nigeria.html" title="Cinco Nigeria"><b>🇳🇬</b><span>Nigeria</span></a><a href="cinco-pakistan.html" title="Cinco Pakistan"><b>🇵🇰</b><span>Pakistan</span></a><a href="cinco-bangladesh.html" title="Cinco Bangladesh"><b>🇧🇩</b><span>Bangladesh</span></a><a href="cinco-russia.html" title="Cinco Russia"><b>🇷🇺</b><span>Russia</span></a><a href="cinco-ethiopia.html" title="Cinco Ethiopia"><b>🇪🇹</b><span>Ethiopia</span></a><a href="cinco-japan.html" title="Cinco Japan"><b>🇯🇵</b><span>Japan</span></a><a href="cinco-korea.html" title="Cinco Korea"><b>🇰🇷</b><span>Korea</span></a><a href="cinco-italy.html" title="Cinco Italy"><b>🇮🇹</b><span>Italy</span></a><a href="cinco-spain.html" title="Cinco Spain"><b>🇪🇸</b><span>Spain</span></a><a href="cinco-uk.html" title="Cinco UK"><b>🇬🇧</b><span>UK</span></a><a href="cinco-germany.html" title="Cinco Germany"><b>🇩🇪</b><span>Germany</span></a><a href="cinco-netherlands.html" title="Cinco Netherlands"><b>🇳🇱</b><span>Netherlands</span></a><a href="cinco-portugal.html" title="Cinco Portugal"><b>🇵🇹</b><span>Portugal</span></a><a href="cinco-argentina.html" title="Cinco Argentina"><b>🇦🇷</b><span>Argentina</span></a><a href="cinco-uruguay.html" aria-current="page" title="Cinco Uruguay"><b>🇺🇾</b><span>Uruguay</span></a><a href="cinco-chile.html" title="Cinco Chile"><b>🇨🇱</b><span>Chile</span></a><a href="cinco-colombia.html" title="Cinco Colombia"><b>🇨🇴</b><span>Colombia</span></a><a href="cinco-cuba.html" title="Cinco Cuba"><b>🇨🇺</b><span>Cuba</span></a></div><div class="cov-links"><a href="cinco.html">All countries</a> <i>·</i> <a href="../juegos.html">← All games</a> <i>·</i> <a href="../index.html">Map</a></div></nav>
+</div>
+<div class="ov" id="endOv" hidden><div class="panel">
+  <div class="dyk" id="endTag">Did you know?</div>
+  <h2 id="endH"></h2>
+  <div class="word" id="endWord"></div>
+  <p id="endFact"></p>
+  <p class="src" id="endSrc"></p>
+  <div class="grid" id="endGrid"></div>
+  <div class="btns"><button class="big-btn" id="btnShare">Copy result</button><button class="big-btn alt" id="btnClose">Close</button><button class="big-btn alt" id="btnAgain">Practice another</button></div>
+</div></div>
+<script>
+const INK='#141A1F';
+function strokeInk(c, w){ c.lineWidth = w; c.strokeStyle = INK; c.stroke(); }
+const ORDER=['I','O','T','S','Z','L','J'];
+/* ---------- shared icon library (k*) for the second wave of Stack countries ---------- */
+function kSoccer(c, ink){
+  c.save();
+  c.beginPath(); c.arc(.5,.5,.35,0,Math.PI*2); c.fillStyle='#FFFFFF'; c.fill(); c.clip();
+  const pent=(cx,cy,r,rot)=>{ c.beginPath(); for(let i=0;i<5;i++){const a=rot+i*Math.PI*2/5; c.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));} c.closePath(); };
+  c.fillStyle=ink||INK; pent(.5,.5,.12,-Math.PI/2); c.fill();
+  c.lineWidth=.025; c.strokeStyle=ink||INK;
+  for(let i=0;i<5;i++){ const a=-Math.PI/2+i*Math.PI*2/5;
+    c.beginPath(); c.moveTo(.5+.12*Math.cos(a),.5+.12*Math.sin(a)); c.lineTo(.5+.26*Math.cos(a),.5+.26*Math.sin(a)); c.stroke();
+    const b=a+Math.PI/5; pent(.5+.37*Math.cos(b),.5+.37*Math.sin(b),.11,b); c.fill(); }
+  c.restore();
+  c.beginPath(); c.arc(.5,.5,.35,0,Math.PI*2); strokeInk(c,.045);
+}
+function kBasket(c){
+  c.beginPath(); c.arc(.5,.5,.34,0,Math.PI*2); c.fillStyle='#E8742A'; c.fill(); strokeInk(c,.04);
+  c.save(); c.beginPath(); c.arc(.5,.5,.34,0,Math.PI*2); c.clip();
+  c.strokeStyle=INK; c.lineWidth=.028;
+  c.beginPath(); c.moveTo(.5,.16); c.lineTo(.5,.84); c.moveTo(.16,.5); c.lineTo(.84,.5); c.stroke();
+  c.beginPath(); c.arc(.12,.5,.26,-1.1,1.1); c.stroke(); c.beginPath(); c.arc(.88,.5,.26,Math.PI-1.1,Math.PI+1.1); c.stroke();
+  c.restore();
+}
+function kBall(c, cols){ // panelled ball: volleyball / handball / futsal
+  const [a,b,d]=cols||['#FFFFFF','#1F5FB8','#F4C430'];
+  c.save();
+  c.beginPath(); c.arc(.5,.5,.34,0,Math.PI*2); c.fillStyle=a; c.fill(); c.clip();
+  c.fillStyle=b; c.beginPath(); c.moveTo(.1,.3); c.bezierCurveTo(.4,.36,.6,.2,.72,.08); c.lineTo(.95,.1); c.lineTo(.95,.25); c.bezierCurveTo(.7,.42,.45,.5,.1,.46); c.closePath(); c.fill();
+  c.fillStyle=d; c.beginPath(); c.moveTo(.35,.95); c.bezierCurveTo(.4,.7,.6,.55,.95,.52); c.lineTo(.95,.7); c.bezierCurveTo(.7,.72,.56,.82,.52,.95); c.closePath(); c.fill();
+  c.strokeStyle=INK; c.lineWidth=.022;
+  [[.1,.3,.4,.36,.6,.2,.72,.08],[.1,.46,.45,.5,.7,.42,.95,.25],[.35,.95,.4,.7,.6,.55,.95,.52],[.52,.95,.56,.82,.7,.72,.95,.7],[.1,.46,.2,.62,.22,.8,.2,.9]]
+    .forEach(p=>{ c.beginPath(); c.moveTo(p[0],p[1]); c.bezierCurveTo(p[2],p[3],p[4],p[5],p[6],p[7]); c.stroke(); });
+  c.restore();
+  c.beginPath(); c.arc(.5,.5,.34,0,Math.PI*2); strokeInk(c,.045);
+}
+function kRugby(c, col){
+  c.save(); c.translate(.5,.5); c.rotate(-.6);
+  c.beginPath(); c.ellipse(0,0,.38,.22,0,0,Math.PI*2); c.fillStyle=col||'#8A4B22'; c.fill(); strokeInk(c,.04);
+  c.beginPath(); c.moveTo(-.12,0); c.lineTo(.12,0); c.lineWidth=.03; c.strokeStyle='#F4F1EA'; c.stroke();
+  [-.08,-.03,.02,.07].forEach(x=>{ c.beginPath(); c.moveTo(x,-.04); c.lineTo(x,.04); c.stroke(); });
+  c.beginPath(); c.ellipse(0,0,.38,.22,0,-1.2,-.4); c.lineWidth=.02; c.strokeStyle='rgba(255,255,255,.35)'; c.stroke();
+  c.restore();
+}
+function kRacket(c, frame){
+  c.save(); c.translate(.44,.42); c.rotate(-.7);
+  c.beginPath(); c.roundRect(-.045,.22,.09,.32,.025); c.fillStyle='#1F1F1F'; c.fill(); strokeInk(c,.03);
+  c.beginPath(); c.moveTo(-.035,.23); c.lineTo(-.1,.13); c.moveTo(.035,.23); c.lineTo(.1,.13); c.lineWidth=.06; c.strokeStyle=INK; c.stroke(); c.lineWidth=.035; c.strokeStyle='#F4F1EA'; c.stroke();
+  c.beginPath(); c.ellipse(0,-.1,.2,.26,0,0,Math.PI*2); c.fillStyle='#F7F1E3'; c.fill();
+  c.save(); c.clip(); c.strokeStyle='rgba(20,26,31,.55)'; c.lineWidth=.014;
+  for(let x=-.18;x<=.18;x+=.05){ c.beginPath(); c.moveTo(x,-.38); c.lineTo(x,.18); c.stroke(); }
+  for(let y=-.34;y<=.16;y+=.05){ c.beginPath(); c.moveTo(-.22,y); c.lineTo(.22,y); c.stroke(); }
+  c.restore();
+  c.beginPath(); c.ellipse(0,-.1,.2,.26,0,0,Math.PI*2); c.lineWidth=.08; c.strokeStyle=INK; c.stroke(); c.lineWidth=.045; c.strokeStyle=frame||'#1F5FB8'; c.stroke();
+  c.restore();
+  c.beginPath(); c.arc(.78,.76,.11,0,Math.PI*2); c.fillStyle='#D7E84A'; c.fill(); strokeInk(c,.03);
+  c.beginPath(); c.arc(.67,.76,.09,-.9,.9); c.lineWidth=.018; c.strokeStyle='#F4F1EA'; c.stroke();
+}
+function kHelmet(c, col, stripe){
+  c.lineJoin='round';
+  c.beginPath(); c.moveTo(.16,.66); c.bezierCurveTo(.12,.26,.44,.14,.62,.16); c.bezierCurveTo(.86,.2,.9,.44,.86,.62); c.lineTo(.8,.74); c.lineTo(.3,.76); c.closePath();
+  c.fillStyle=col||'#D0102A'; c.fill(); strokeInk(c,.04);
+  c.beginPath(); c.moveTo(.4,.4); c.quadraticCurveTo(.62,.34,.86,.42); c.lineTo(.86,.56); c.quadraticCurveTo(.62,.52,.42,.56); c.closePath(); c.fillStyle='#1F2A36'; c.fill(); strokeInk(c,.03);
+  c.beginPath(); c.moveTo(.46,.44); c.quadraticCurveTo(.6,.4,.74,.43); c.lineWidth=.02; c.strokeStyle='rgba(255,255,255,.5)'; c.stroke();
+  c.beginPath(); c.moveTo(.2,.5); c.bezierCurveTo(.22,.3,.4,.22,.56,.22); c.lineWidth=.05; c.strokeStyle=stripe||'#F4F1EA'; c.stroke();
+}
+function kJersey(c, col, trim){
+  c.lineJoin='round';
+  c.beginPath(); c.moveTo(.36,.14); c.quadraticCurveTo(.5,.24,.64,.14); c.lineTo(.9,.28); c.lineTo(.8,.46); c.lineTo(.72,.42); c.lineTo(.72,.88); c.lineTo(.28,.88); c.lineTo(.28,.42); c.lineTo(.2,.46); c.lineTo(.1,.28); c.closePath();
+  c.fillStyle=col; c.fill(); strokeInk(c,.04);
+  c.beginPath(); c.moveTo(.4,.16); c.quadraticCurveTo(.5,.26,.6,.16); c.lineWidth=.03; c.strokeStyle=trim||'#F4F1EA'; c.stroke();
+  c.beginPath(); c.moveTo(.5,.24); c.lineTo(.5,.88); c.lineWidth=.012; c.strokeStyle='rgba(20,26,31,.45)'; c.stroke();
+}
+function kBike(c, col){ // 1x1 bicycle
+  c.lineCap='round'; c.lineJoin='round';
+  [[.25,.64],[.75,.64]].forEach(([x,y])=>{ c.beginPath(); c.arc(x,y,.18,0,Math.PI*2); c.lineWidth=.07; c.strokeStyle=INK; c.stroke(); c.lineWidth=.035; c.strokeStyle='#F4F1EA'; c.stroke();
+    c.beginPath(); c.arc(x,y,.03,0,Math.PI*2); c.fillStyle=INK; c.fill(); });
+  c.beginPath(); c.moveTo(.25,.64); c.lineTo(.46,.64); c.lineTo(.4,.4); c.closePath(); c.moveTo(.4,.4); c.lineTo(.66,.4); c.lineTo(.46,.64); c.moveTo(.66,.4); c.lineTo(.75,.64);
+  c.lineWidth=.07; c.strokeStyle=INK; c.stroke(); c.lineWidth=.04; c.strokeStyle=col||'#FCDD09'; c.stroke();
+  c.beginPath(); c.moveTo(.4,.4); c.lineTo(.38,.3); c.moveTo(.32,.3); c.lineTo(.44,.3); c.lineWidth=.05; c.strokeStyle=INK; c.stroke();
+  c.beginPath(); c.moveTo(.66,.4); c.lineTo(.64,.28); c.quadraticCurveTo(.74,.26,.74,.36); c.lineWidth=.045; c.strokeStyle=INK; c.stroke();
+  c.lineCap='butt';
+}
+function kBike4(c, col){ // 4x1 racing bike
+  c.lineCap='round'; c.lineJoin='round';
+  [[.7,.56],[3.3,.56]].forEach(([x,y])=>{ c.beginPath(); c.arc(x,y,.4,0,Math.PI*2); c.lineWidth=.1; c.strokeStyle=INK; c.stroke(); c.lineWidth=.05; c.strokeStyle='#F4F1EA'; c.stroke();
+    for(let k=0;k<8;k++){ const a=k*Math.PI/4; c.beginPath(); c.moveTo(x,y); c.lineTo(x+.36*Math.cos(a),y+.36*Math.sin(a)); c.lineWidth=.012; c.strokeStyle='rgba(244,241,234,.6)'; c.stroke(); }
+    c.beginPath(); c.arc(x,y,.05,0,Math.PI*2); c.fillStyle=INK; c.fill(); });
+  c.beginPath(); c.moveTo(.7,.56); c.lineTo(1.9,.56); c.lineTo(1.5,.2); c.closePath(); c.moveTo(1.5,.2); c.lineTo(2.9,.2); c.lineTo(1.9,.56); c.moveTo(2.9,.2); c.lineTo(3.3,.56);
+  c.lineWidth=.1; c.strokeStyle=INK; c.stroke(); c.lineWidth=.06; c.strokeStyle=col||'#FCD116'; c.stroke();
+  c.beginPath(); c.moveTo(1.5,.2); c.lineTo(1.44,.08); c.moveTo(1.3,.08); c.lineTo(1.6,.08); c.lineWidth=.07; c.strokeStyle=INK; c.stroke();
+  c.beginPath(); c.moveTo(2.9,.2); c.lineTo(2.88,.08); c.quadraticCurveTo(3.1,.04,3.08,.22); c.lineWidth=.06; c.strokeStyle=INK; c.stroke();
+  c.beginPath(); c.arc(1.9,.56,.1,0,Math.PI*2); c.lineWidth=.04; c.strokeStyle=INK; c.stroke();
+  c.lineCap='butt';
+}
+function kOar4(c, blade, stripe){ // 4x1 rowing oar
+  c.beginPath(); c.roundRect(.1,.44,2.9,.12,.06); c.fillStyle='#E8D2A6'; c.fill(); strokeInk(c,.035);
+  c.beginPath(); c.roundRect(.1,.42,.5,.16,.08); c.fillStyle='#1F1F1F'; c.fill(); strokeInk(c,.03);
+  c.beginPath(); c.rect(1.3,.4,.16,.2); c.fillStyle='#A9B3BC'; c.fill(); strokeInk(c,.025);
+  c.beginPath(); c.moveTo(2.9,.44); c.quadraticCurveTo(3.4,.14,3.92,.22); c.lineTo(3.92,.78); c.quadraticCurveTo(3.4,.86,2.9,.56); c.closePath(); c.fillStyle=blade||'#1D2B5A'; c.fill(); strokeInk(c,.04);
+  if(stripe){ c.beginPath(); c.moveTo(3.5,.2); c.lineTo(3.5,.8); c.lineWidth=.1; c.strokeStyle=stripe; c.stroke(); }
+}
+function kHockey(c, col){ // field hockey / palín stick with ball
+  c.lineCap='round';
+  c.beginPath(); c.moveTo(.3,.12); c.lineTo(.5,.72); c.quadraticCurveTo(.56,.88,.72,.84); c.lineTo(.8,.8);
+  c.lineWidth=.11; c.strokeStyle=INK; c.stroke(); c.lineWidth=.07; c.strokeStyle=col||'#E8D2A6'; c.stroke();
+  c.beginPath(); c.moveTo(.3,.12); c.lineTo(.36,.3); c.lineWidth=.08; c.strokeStyle='#1F1F1F'; c.stroke();
+  c.beginPath(); c.arc(.28,.78,.08,0,Math.PI*2); c.fillStyle='#FFFFFF'; c.fill(); strokeInk(c,.025);
+  c.lineCap='butt';
+}
+function kGolf(c, flag){
+  c.beginPath(); c.moveTo(.62,.1); c.lineTo(.62,.66); c.lineWidth=.035; c.strokeStyle=INK; c.stroke();
+  c.beginPath(); c.moveTo(.62,.1); c.lineTo(.88,.2); c.lineTo(.62,.3); c.closePath(); c.fillStyle=flag||'#C8102E'; c.fill(); strokeInk(c,.025);
+  c.beginPath(); c.ellipse(.62,.68,.14,.04,0,0,Math.PI*2); c.fillStyle='#141A1F'; c.fill();
+  c.beginPath(); c.moveTo(.3,.84); c.lineTo(.34,.68); c.lineTo(.26,.68); c.closePath(); c.fillStyle='#F2B632'; c.fill(); strokeInk(c,.02);
+  c.beginPath(); c.arc(.3,.58,.11,0,Math.PI*2); c.fillStyle='#FFFFFF'; c.fill(); strokeInk(c,.03);
+  c.fillStyle='rgba(20,26,31,.3)'; [[.27,.55],[.33,.55],[.3,.61],[.26,.61],[.34,.61]].forEach(([x,y])=>{ c.beginPath(); c.arc(x,y,.012,0,Math.PI*2); c.fill(); });
+}
+function kGlove(c, col){ // boxing glove
+  c.lineJoin='round';
+  c.beginPath(); c.moveTo(.3,.84); c.lineTo(.3,.64); c.bezierCurveTo(.16,.6,.14,.3,.3,.2); c.bezierCurveTo(.46,.1,.8,.14,.84,.36); c.bezierCurveTo(.88,.56,.78,.66,.7,.66); c.lineTo(.7,.84); c.closePath();
+  c.fillStyle=col||'#C8102E'; c.fill(); strokeInk(c,.04);
+  c.beginPath(); c.moveTo(.28,.46); c.bezierCurveTo(.3,.6,.46,.62,.52,.52); c.lineWidth=.03; c.strokeStyle=INK; c.stroke();
+  c.beginPath(); c.rect(.3,.72,.4,.12); c.fillStyle='#F4F1EA'; c.fill(); strokeInk(c,.03);
+  c.beginPath(); c.ellipse(.56,.28,.12,.05,-.3,0,Math.PI*2); c.fillStyle='rgba(255,255,255,.3)'; c.fill();
+}
+function kBat4(c, wood){ // 4x1 baseball bat
+  c.beginPath(); c.moveTo(.12,.44); c.lineTo(1.6,.42); c.bezierCurveTo(2.6,.3,3.4,.26,3.8,.28); c.quadraticCurveTo(3.95,.5,3.8,.72); c.bezierCurveTo(3.4,.74,2.6,.7,1.6,.58); c.lineTo(.12,.56); c.closePath();
+  c.fillStyle=wood||'#D9A15B'; c.fill(); strokeInk(c,.04);
+  c.beginPath(); c.ellipse(.12,.5,.06,.14,0,0,Math.PI*2); c.fillStyle='#8A5A2B'; c.fill(); strokeInk(c,.03);
+  c.beginPath(); c.rect(.2,.42,.8,.16); c.fillStyle='#1F1F1F'; c.fill();
+  c.beginPath(); c.moveTo(2,.42); c.bezierCurveTo(2.8,.34,3.4,.32,3.7,.34); c.lineWidth=.03; c.strokeStyle='rgba(255,255,255,.35)'; c.stroke();
+}
+function kSurf4(c, col, stripe){ // 4x1 surfboard
+  c.beginPath(); c.moveTo(.1,.5); c.bezierCurveTo(.3,.2,1.4,.18,2.6,.2); c.bezierCurveTo(3.4,.22,3.85,.36,3.95,.5); c.bezierCurveTo(3.85,.64,3.4,.78,2.6,.8); c.bezierCurveTo(1.4,.82,.3,.8,.1,.5); c.closePath();
+  c.fillStyle=col||'#F4F1EA'; c.fill(); strokeInk(c,.04);
+  c.beginPath(); c.moveTo(.3,.5); c.lineTo(3.7,.5); c.lineWidth=.015; c.strokeStyle='rgba(20,26,31,.4)'; c.stroke();
+  if(stripe){ c.beginPath(); c.moveTo(2.2,.2); c.lineTo(2.2,.8); c.moveTo(2.4,.2); c.lineTo(2.4,.8); c.lineWidth=.08; c.strokeStyle=stripe; c.stroke(); }
+  c.beginPath(); c.moveTo(.5,.66); c.lineTo(.38,.86); c.lineTo(.66,.7); c.fillStyle='#1F1F1F'; c.fill();
+}
+function kPaddleTT(c, col){ // table tennis bat
+  c.save(); c.translate(.46,.44); c.rotate(-.6);
+  c.beginPath(); c.roundRect(-.05,.18,.1,.3,.03); c.fillStyle='#C98B3A'; c.fill(); strokeInk(c,.03);
+  c.beginPath(); c.arc(0,-.06,.26,0,Math.PI*2); c.fillStyle=col||'#C8102E'; c.fill(); strokeInk(c,.04);
+  c.restore();
+  c.beginPath(); c.arc(.78,.74,.08,0,Math.PI*2); c.fillStyle='#FFFFFF'; c.fill(); strokeInk(c,.025);
+}
+function kSkate(c, boot, blade){ // long-blade speed skate
+  c.lineJoin='round';
+  c.beginPath(); c.moveTo(.2,.3); c.lineTo(.44,.3); c.lineTo(.48,.5); c.quadraticCurveTo(.76,.5,.8,.6); c.lineTo(.8,.66); c.lineTo(.18,.66); c.closePath();
+  c.fillStyle=boot||'#1A1A1A'; c.fill(); strokeInk(c,.035);
+  c.beginPath(); c.moveTo(.22,.66); c.lineTo(.24,.74); c.moveTo(.72,.66); c.lineTo(.7,.74); c.lineWidth=.035; c.strokeStyle='#A9B3BC'; c.stroke();
+  c.beginPath(); c.moveTo(.06,.76); c.quadraticCurveTo(.06,.72,.12,.72); c.lineTo(.94,.72); c.lineTo(.94,.78); c.lineTo(.1,.78); c.closePath();
+  c.fillStyle=blade||'#D9DEE3'; c.fill(); strokeInk(c,.025);
+}
+function kShoe(c, col){ // running spike
+  c.lineJoin='round';
+  c.beginPath(); c.moveTo(.12,.66); c.lineTo(.16,.4); c.quadraticCurveTo(.3,.34,.4,.42); c.quadraticCurveTo(.6,.5,.86,.56); c.quadraticCurveTo(.94,.62,.88,.7); c.lineTo(.14,.7); c.closePath();
+  c.fillStyle=col||'#F4F1EA'; c.fill(); strokeInk(c,.035);
+  c.beginPath(); c.rect(.12,.7,.78,.06); c.fillStyle='#1F1F1F'; c.fill();
+  c.fillStyle='#A9B3BC'; [.3,.5,.7].forEach(x=>{ c.beginPath(); c.moveTo(x-.03,.76); c.lineTo(x,.84); c.lineTo(x+.03,.76); c.fill(); });
+  c.strokeStyle=INK; c.lineWidth=.015; [.46,.52,.58].forEach(x=>{ c.beginPath(); c.moveTo(x,.46); c.lineTo(x+.05,.42); c.stroke(); });
+}
+function kBarbell(c){
+  c.beginPath(); c.rect(.08,.47,.84,.06); c.fillStyle='#A9B3BC'; c.fill(); strokeInk(c,.025);
+  [[.18,'#C8102E'],[.82,'#C8102E'],[.27,'#003893'],[.73,'#003893']].forEach(([x,col])=>{ const h=col==='#C8102E'?.5:.36; c.beginPath(); c.roundRect(x-.045,.5-h/2,.09,h,.02); c.fillStyle=col; c.fill(); strokeInk(c,.025); });
+}
+function kHorseshoe(c){
+  c.beginPath(); c.arc(.5,.44,.28,Math.PI*.95,Math.PI*2.05,true); c.lineWidth=.16; c.strokeStyle=INK; c.stroke(); c.lineWidth=.11; c.strokeStyle='#A9B3BC'; c.stroke();
+  c.fillStyle=INK; for(let k=0;k<6;k++){ const a=Math.PI*(1-.14-k*.144); c.beginPath(); c.arc(.5+.28*Math.cos(a),.44-.28*Math.sin(a)*-1,.018,0,Math.PI*2); c.fill(); }
+}
+/* pennant banner builder: deco(svgParts, x, y, fw, fh, cx, i) returns inner svg */
+function kBanner(W,H,fill,deco,rope){
+  const fw=Math.max(30,Math.min(50,H*.66)), gap=4, n=Math.ceil(W/(fw+gap))+1, fh=H-10;
+  let svg=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">`;
+  svg+=`<path d="M0 4 Q ${W/2} 12 ${W} 4" stroke="${rope||'#F4F1EA'}" stroke-opacity=".7" stroke-width="1.6" fill="none"/>`;
+  for(let i=0;i<n;i++){
+    const x=i*(fw+gap)-fw/3, y=4+Math.sin(((x+fw/2)/W)*Math.PI)*7, cx=x+fw/2;
+    svg+=`<g class="flag" style="animation-delay:${-(i*0.33)%4}s;transform-origin:${cx}px ${y}px">`;
+    svg+=`<path d="M${x} ${y} H${x+fw} L${cx} ${y+fh} Z" fill="${fill(i)}" stroke="#141A1F" stroke-width="1.2"/>`;
+    svg+=deco?deco(x,y,fw,fh,cx,i):'';
+    svg+=`</g>`;
+  }
+  return svg+'</svg>';
+}
+/* small generic food/deco helpers */
+function kCup(c,w,h,cup,drink,band){ // 70x70 cup with saucer
+  c.save(); c.scale(w/70,h/70); c.lineJoin='round'; c.lineWidth=2.2; c.strokeStyle=INK;
+  c.beginPath(); c.ellipse(35,58,26,6,0,0,Math.PI*2); c.fillStyle='#F4F1EA'; c.fill(); c.stroke();
+  c.beginPath(); c.moveTo(16,26); c.lineTo(54,26); c.quadraticCurveTo(52,56,35,56); c.quadraticCurveTo(18,56,16,26); c.closePath(); c.fillStyle=cup||'#FFFFFF'; c.fill(); c.stroke();
+  c.beginPath(); c.arc(56,38,7,-Math.PI/2,Math.PI/2); c.stroke();
+  c.beginPath(); c.ellipse(35,26,19,4.5,0,0,Math.PI*2); c.fillStyle=drink||'#5A3A22'; c.fill(); c.stroke();
+  if(band){ c.fillStyle=band; c.fillRect(19,36,32,3); }
+  c.strokeStyle='rgba(244,241,234,.75)'; c.lineWidth=2; [[30,0],[39,-3]].forEach(([x,d])=>{ c.beginPath(); c.moveTo(x,20); c.quadraticCurveTo(x-4,12+d,x,4+d); c.stroke(); });
+  c.restore();
+}
+/* ================= THEME: URUGUAY ================= */
+const THEME = {
+  id:'stack-uy', levelName:'Tiempo', shade:'12,24,44', board:'#0A1426',
+  letters:['#5EA9DD','#F6B40E','#1F4E9E','#C8102E','#2E8B57'],
+  pieces:{
+    I:{ sport:'Rowing',        thing:'oar',          bg:'#CFE3F0' },
+    O:{ sport:'Football',      thing:'ball',         bg:'#5EA9DD' },
+    T:{ sport:'Basketball',    thing:'ball',         bg:'#1F4E9E' },
+    S:{ sport:'Rugby',         thing:'ball',         bg:'#2E8B57' },
+    Z:{ sport:'Horse racing',  thing:'horseshoe',    bg:'#F6B40E' },
+    L:{ sport:'Cycling',       thing:'bike',         bg:'#C8102E' },
+    J:{ sport:'Olympic football', thing:'boot',      bg:'#F4F1EA' }
+  },
+  shouts:['','¡Arriba!','¡Tremendo!','¡Golazo!','¡CAMPEONES!'],
+  confetti:['#5EA9DD','#F4F1EA','#F6B40E','#1F4E9E','#C8102E'],
+  facts:[
+    { piece:'O', title:'The first world champion',
+      text:'Uruguay hosted and won the first football World Cup in 1930, beating Argentina 4–2 at the brand-new Estadio Centenario in Montevideo.',
+      src:'FIFA', url:'https://inside.fifa.com/news/world-first-for-uruguay-2053846' },
+    { piece:'O', title:'The Maracanazo',
+      text:'On 16 July 1950 Uruguay beat hosts Brazil 2–1 at the Maracanã to win its second World Cup, in front of 173,850 people: still the biggest official World Cup crowd.',
+      src:'Guinness World Records', url:'https://www.guinnessworldrecords.es/world-records/101615-largest-attendance-at-a-football-soccer-fifa-world-cup-match' },
+    { piece:'J', title:'Olympic champions first',
+      text:'Before any World Cup existed, Uruguay had already won Olympic football gold twice, in 1924 and 1928.',
+      src:'FIFA', url:'https://inside.fifa.com/news/world-first-for-uruguay-2053846' },
+    { piece:'I', title:'Bronze on the water',
+      text:'Rower Guillermo Douglas won bronze in the single sculls at the 1932 Los Angeles Olympics, Uruguay’s first Olympic medal in an individual event.',
+      src:'Olympics.com', url:'https://olympics.com/pt/atletas/guillermo-douglas' },
+    { piece:'T', title:'A basketball pioneer',
+      text:'Uruguay’s basketball federation was founded in 1915; according to FIBA it is the oldest in the world. The national team won Olympic bronze in 1952 and 1956.',
+      src:'FIBA', url:'https://about.fiba.basketball/en/news/the-uruguayan-basketball-federation-a-global-pioneer-in-basketbal' },
+    { piece:'S', title:'Los Teros’ big upset',
+      text:'At the 2019 Rugby World Cup in Japan, Uruguay’s mostly amateur team, Los Teros, beat Fiji 30–27.',
+      src:'Sowetan / AFP', url:'https://www.sowetan.co.za/sport/rugby/2019-09-25-uruguay-stun-fiji-in-kamaishi-in-first-rugby-world-cup-shock' },
+    { piece:'Z', title:'A race every 6 January',
+      text:'The Gran Premio José Pedro Ramírez horse race has been run since 1889, every 6 January, over 2,400 m at Maroñas in Montevideo.',
+      src:'Wikipedia · Gran Premio José Pedro Ramírez', url:'https://en.wikipedia.org/wiki/Gran_Premio_Jos%C3%A9_Pedro_Ram%C3%ADrez' },
+    { piece:'L', title:'Silver on wheels',
+      text:'Cyclist Milton Wynants won silver in the points race at Sydney 2000, Uruguay’s first Olympic medal in 36 years.',
+      src:'Wikipedia · Milton Wynants', url:'https://en.wikipedia.org/wiki/Milton_Wynants' }
+  ]
+};
+function uyBoot(c){
+  c.lineJoin='round';
+  c.beginPath(); c.moveTo(.2,.2); c.lineTo(.46,.2); c.lineTo(.5,.46); c.quadraticCurveTo(.84,.5,.88,.66); c.lineTo(.88,.72); c.lineTo(.16,.72); c.lineTo(.18,.4); c.closePath();
+  c.fillStyle='#1A1A1A'; c.fill(); strokeInk(c,.035);
+  c.strokeStyle='#F4F1EA'; c.lineWidth=.02; [.3,.38,.46].forEach(y=>{ c.beginPath(); c.moveTo(.36,y); c.lineTo(.5,y+.04); c.stroke(); });
+  c.beginPath(); c.moveTo(.2,.6); c.lineTo(.84,.64); c.lineWidth=.04; c.strokeStyle='#5EA9DD'; c.stroke();
+  c.fillStyle='#A9B3BC'; [.26,.42,.62,.8].forEach(x=>{ c.beginPath(); c.rect(x-.03,.72,.06,.08); c.fill(); });
+}
+function uyShoe(c){
+  c.beginPath(); c.arc(.5,.42,.26,Math.PI*.9,Math.PI*2.1); c.lineWidth=.14; c.strokeStyle=INK; c.stroke(); c.lineWidth=.09; c.strokeStyle='#A9B3BC'; c.stroke();
+  c.fillStyle=INK; [-.7,-.35,0,.35,.7].forEach(t=>{ const a=-Math.PI/2+t*1.3; c.beginPath(); c.arc(.5+.26*Math.cos(a),.42+.26*Math.sin(a),.02,0,Math.PI*2); c.fill(); });
+  [[.24,.5],[.76,.5]].forEach(([x,y])=>{ c.beginPath(); c.rect(x-.05,y,.1,.24); c.fillStyle='#A9B3BC'; c.fill(); strokeInk(c,.025); });
+}
+THEME.pieces.O.draw=c=>kSoccer(c); THEME.pieces.T.draw=kBasket; THEME.pieces.S.draw=c=>kRugby(c,'#F4F1EA');
+THEME.pieces.Z.draw=uyShoe; THEME.pieces.L.draw=c=>kBike(c,'#5EA9DD'); THEME.pieces.J.draw=uyBoot;
+THEME.long=c=>kOar4(c,'#5EA9DD','#F6B40E');
+
+function uyBanner(W,H){ return kBanner(W,H,i=>i%2?'#5EA9DD':'#F4F1EA',(x,y,fw,fh,cx,i)=>{
+  const ty=y+fh*.3, r=fw*.1; let s=`<circle cx="${cx}" cy="${ty}" r="${r}" fill="#F6B40E" stroke="#141A1F" stroke-width="1"/>`;
+  for(let k=0;k<8;k++){ const a=k*Math.PI/4; s+=`<path d="M${cx+Math.cos(a)*r*1.3} ${ty+Math.sin(a)*r*1.3} L${cx+Math.cos(a)*r*2} ${ty+Math.sin(a)*r*2}" stroke="#F6B40E" stroke-width="1.6"/>`; }
+  return s; }); }
+function mateTermo(c,w,h){ c.save(); c.scale(w/120,h/130); c.lineJoin='round'; c.lineWidth=3; c.strokeStyle=INK;
+  c.beginPath(); c.roundRect(66,20,34,104,8); c.fillStyle='#1F4E9E'; c.fill(); c.stroke();
+  c.beginPath(); c.roundRect(70,8,26,14,4); c.fillStyle='#1A1A1A'; c.fill(); c.stroke();
+  c.fillStyle='#F4F1EA'; c.fillRect(68,60,30,6);
+  c.beginPath(); c.moveTo(40,70); c.lineTo(58,26); c.lineWidth=5; c.stroke(); c.lineWidth=3; c.strokeStyle='#C9CED3'; c.stroke(); c.strokeStyle=INK;
+  c.beginPath(); c.moveTo(14,72); c.bezierCurveTo(6,98,16,122,34,122); c.bezierCurveTo(52,122,62,98,54,72); c.closePath(); c.fillStyle='#8A5A2B'; c.fill(); c.stroke();
+  c.beginPath(); c.ellipse(34,72,20,6,0,0,Math.PI*2); c.fillStyle='#6B8E3A'; c.fill(); c.stroke(); c.restore(); }
+function tamboril(c,w,h){ c.save(); c.scale(w/120,h/130); c.lineJoin='round'; c.lineWidth=3; c.strokeStyle=INK;
+  c.beginPath(); c.moveTo(30,30); c.lineTo(90,30); c.lineTo(80,124); c.lineTo(40,124); c.closePath(); c.fillStyle='#C8102E'; c.fill(); c.stroke();
+  c.beginPath(); c.ellipse(60,30,30,9,0,0,Math.PI*2); c.fillStyle='#F3E3C3'; c.fill(); c.stroke();
+  c.strokeStyle='#F6B40E'; c.lineWidth=2.4; for(let k=0;k<5;k++){ c.beginPath(); c.moveTo(34+k*12,36); c.lineTo(42+k*8,120); c.stroke(); }
+  c.strokeStyle=INK; c.lineWidth=3; c.beginPath(); c.moveTo(88,6); c.lineTo(66,26); c.lineWidth=5; c.strokeStyle='#8A5A2B'; c.stroke(); c.restore(); }
+function bizcochos(c,w,h){ c.save(); c.scale(w/70,h/70); c.lineWidth=2.2; c.strokeStyle=INK;
+  [[24,44],[46,44],[35,30]].forEach(([x,y])=>{ c.beginPath(); c.moveTo(x-12,y+6); c.quadraticCurveTo(x,y-14,x+12,y+6); c.quadraticCurveTo(x,y+12,x-12,y+6); c.fillStyle='#E0A553'; c.fill(); c.stroke();
+    c.beginPath(); c.moveTo(x-6,y); c.quadraticCurveTo(x,y-6,x+6,y); c.lineWidth=1.4; c.stroke(); c.lineWidth=2.2; }); c.restore(); }
+THEME.deco={ banner:uyBanner, coverSide(c,w,h,i){ i?tamboril(c,w,h):mateTermo(c,w,h); },
+  corner(c){ bizcochos(c,70,70); },
+  pause(c,w,h){ c.save(); c.translate(4,2); mateTermo(c,62,70); c.restore(); c.save(); c.translate(76,8); bizcochos(c,62,62); c.restore(); } };
+
+const CINCO={"code": "uy", "name": "Uruguay", "tz": "America/Montevideo", "seed": 20260930, "lang": "Spanish", "words": [{"w": "CIELO", "cat": "Football", "lang": "Spanish", "hint": "The sky the Celeste shirt is named after", "fact": "Uruguay hosted and won the first football World Cup in 1930, beating Argentina 4–2 at the brand-new Estadio Centenario in Montevideo.", "src": "FIFA"}, {"w": "GARRA", "cat": "Football", "lang": "Spanish", "hint": "___ charrúa: the grit of the Maracanazo", "fact": "On 16 July 1950 Uruguay beat hosts Brazil 2–1 at the Maracanã to win its second World Cup, in front of 173,850 people: still the biggest official World Cup crowd.", "src": "Guinness World Records"}, {"w": "STARS", "cat": "Football", "hint": "Four on the shirt, counting 1924 and 1928", "fact": "Before any World Cup existed, Uruguay had already won Olympic football gold twice, in 1924 and 1928.", "src": "FIFA"}, {"w": "SCULL", "cat": "Rowing", "hint": "Guillermo Douglas's single ___", "fact": "Rower Guillermo Douglas won bronze in the single sculls at the 1932 Los Angeles Olympics, Uruguay’s first Olympic medal in an individual event.", "src": "Olympics.com"}, {"w": "PIVOT", "cat": "Basketball", "hint": "The oldest federation in the world plays it", "fact": "Uruguay’s basketball federation was founded in 1915; according to FIBA it is the oldest in the world. The national team won Olympic bronze in 1952 and 1956.", "src": "FIBA"}, {"w": "TEROS", "cat": "Rugby", "lang": "Spanish", "hint": "Los ___, the bird-named team that beat Fiji", "fact": "At the 2019 Rugby World Cup in Japan, Uruguay’s mostly amateur team, Los Teros, beat Fiji 30–27.", "src": "Sowetan / AFP"}, {"w": "REYES", "cat": "Horse racing", "lang": "Spanish", "hint": "The holiday the Ramírez race is run on", "fact": "The Gran Premio José Pedro Ramírez horse race has been run since 1889, every 6 January, over 2,400 m at Maroñas in Montevideo.", "src": "Wikipedia · Gran Premio José Pedro Ramírez"}, {"w": "PLATA", "cat": "Cycling", "lang": "Spanish", "hint": "Milton Wynants's medal, in Spanish", "fact": "Cyclist Milton Wynants won silver in the points race at Sydney 2000, Uruguay’s first Olympic medal in 36 years.", "src": "Wikipedia · Milton Wynants"}, {"w": "MANYA", "cat": "Football", "lang": "Spanish", "hint": "Peñarol's nickname", "fact": "Peñarol won the very first Copa Libertadores in 1960, and again in 1961, 1966, 1982 and 1987.", "src": "CONMEBOL"}, {"w": "BOLSO", "cat": "Football", "lang": "Spanish", "hint": "Nacional's nickname", "fact": "Nacional won the Copa Libertadores three times, in 1971, 1980 and 1988, and the Intercontinental Cup each of those years.", "src": "CONMEBOL"}]};
+
+(function(){
+const $=id=>document.getElementById(id);
+const TZ=CINCO.tz||0, KEY='cinco-'+CINCO.code, TEST=/[?&]test=1/.test(location.search);
+const W=CINCO.words.map(w=>({...w,w:w.w.toUpperCase()}));
+// banner de papel picado (del tema de Stack)
+(function(){ const el=$('picado'); const W_=el.clientWidth||1000,H=el.clientHeight||74; el.innerHTML=THEME.deco.banner(W_,H); })();
+// ---- día ----
+function partes(){ try{ const f=new Intl.DateTimeFormat('en-CA',{timeZone:typeof TZ==='string'?TZ:'UTC',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}); const o={}; f.formatToParts(new Date()).forEach(p=>o[p.type]=p.value); return {date:o.year+'-'+o.month+'-'+o.day,h:+o.hour%24,m:+o.minute}; }catch(e){ const off=typeof TZ==='number'?TZ:0; const d=new Date(Date.now()+off*3600*1000); return {date:d.toISOString().slice(0,10),h:d.getUTCHours(),m:d.getUTCMinutes()}; } }
+function fechaDeHoy(){ return partes().date; }
+function restoDelDia(){ const a=partes(); const min=(23-a.h)*60+(60-a.m); const h=Math.floor(min/60),m=min%60; return (h?h+' h ':'')+m+' min'; }
+function numeroDeDia(){ return Math.floor(Date.parse(fechaDeHoy()+'T00:00:00Z')/86400000); }
+function azarFijo(semilla){ let s=semilla>>>0; return function(){ s=(s+0x6D2B79F5)>>>0; let t=s; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }; }
+let ORDEN=null; function ordenDeItems(){ if(ORDEN) return ORDEN; const a=W.slice(); const r=azarFijo(CINCO.seed||20260930); for(let i=a.length-1;i>0;i--){ const j=Math.floor(r()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return (ORDEN=a); }
+function delDia(){ const o=ordenDeItems(); const d=numeroDeDia(); return o[((d%o.length)+o.length)%o.length]; }
+// ---- estado ----
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ return {}; } }
+function save(d){ if(TEST||practice) return; try{ localStorage.setItem(KEY,JSON.stringify(d)); }catch(e){} }
+let S=load(); if(!S.stats) S.stats={played:0,won:0,streak:0,best:0,last:''};
+let practice=false, target=null, guesses=[], cur='', done=false, hinted=false;
+const ROWS=['QWERTYUIOP','ASDFGHJKL','ZXCVBNM'];
+function start(word,isPractice){ practice=!!isPractice; target=word; guesses=[]; cur=''; done=false; hinted=false; $('hint').className='hint'; $('hint').textContent=''; $('msg').textContent='';
+  if(!practice&&S.today&&S.today.date===fechaDeHoy()){ guesses=S.today.guesses.slice(); done=S.today.done; }
+  $('today').innerHTML=practice?'Practice · <b>random word</b>':'Word of the day · <b>'+fechaDeHoy()+'</b>'+(TEST?' · <b>TEST</b>':'');
+  draw(); drawKb(); stats();
+  if(done) setTimeout(()=>finish(guesses[guesses.length-1]===target.w,false),300); }
+function evalGuess(g){ const t=target.w.split(''), r=Array(5).fill('no'), used=Array(5).fill(false);
+  for(let i=0;i<5;i++) if(g[i]===t[i]){ r[i]='ok'; used[i]=true; }
+  for(let i=0;i<5;i++){ if(r[i]==='ok') continue; for(let k=0;k<5;k++){ if(!used[k]&&t[k]===g[i]){ r[i]='near'; used[k]=true; break; } } }
+  return r; }
+function draw(anim){ const b=$('board'); b.innerHTML=''; for(let r=0;r<6;r++){ const row=document.createElement('div'); row.className='row'; const g=guesses[r]||(r===guesses.length?cur:''); const ev=guesses[r]?evalGuess(guesses[r]):null;
+    for(let i=0;i<5;i++){ const t=document.createElement('div'); t.className='tile'+(ev?' '+ev[i]:(g[i]?' fill':'')); if(ev&&anim&&r===guesses.length-1){ t.classList.add('flip'); t.style.animationDelay=(i*0.12)+'s'; } t.textContent=g[i]||''; row.appendChild(t); }
+    b.appendChild(row); } }
+function kbState(){ const st={}; guesses.forEach(g=>{ const ev=evalGuess(g); for(let i=0;i<5;i++){ const L=g[i], v=ev[i]; if(v==='ok'||(v==='near'&&st[L]!=='ok')||(!st[L])) st[L]=v; } }); return st; }
+function drawKb(){ const kb=$('kb'); kb.innerHTML=''; const st=kbState(); ROWS.forEach((r,ri)=>{ const d=document.createElement('div'); if(ri===2){ d.appendChild(key('ENTER','wide')); } r.split('').forEach(L=>{ d.appendChild(key(L,st[L]||'')); }); if(ri===2){ d.appendChild(key('⌫','wide')); } kb.appendChild(d); }); }
+function key(L,cls){ const b=document.createElement('button'); b.textContent=L; b.className=cls; b.dataset.k=L; return b; }
+$('kb').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b) press(b.dataset.k); });
+document.addEventListener('keydown',e=>{ if(e.metaKey||e.ctrlKey||e.altKey) return; if(!$('endOv').hidden) return; const k=e.key; if(k==='Enter') press('ENTER'); else if(k==='Backspace') press('⌫'); else if(/^[a-zA-Z]$/.test(k)) press(k.toUpperCase()); });
+function press(k){ if(done) return; if(k==='ENTER'){ submit(); return; } if(k==='⌫'){ cur=cur.slice(0,-1); draw(); return; } if(cur.length<5){ cur+=k; draw(); } }
+function submit(){ if(cur.length<5){ shake('Five letters'); return; } guesses.push(cur); const won=cur===target.w; cur=''; draw(true); drawKb();
+  if(!practice){ S.today={date:fechaDeHoy(),guesses:guesses.slice(),done:won||guesses.length===6}; save(S); }
+  if(won||guesses.length===6){ done=true; if(!practice){ const st=S.stats; if(st.last!==fechaDeHoy()){ st.played++; if(won){ st.streak=(st.lastWon===prevDay()?st.streak:0)+1; st.won++; st.lastWon=fechaDeHoy(); } else st.streak=0; st.best=Math.max(st.best,st.streak); st.last=fechaDeHoy(); save(S); } }
+    setTimeout(()=>finish(won,true),5*120+500); } else { $('msg').textContent=['','Good start.','Warmer.','Keep going.','Two left.','Last one!'][guesses.length]||''; } }
+function prevDay(){ const d=new Date(Date.parse(fechaDeHoy()+'T00:00:00Z')-86400000); return d.toISOString().slice(0,10); }
+function shake(m){ const row=$('board').children[guesses.length]; if(row){ row.classList.add('shake'); setTimeout(()=>row.classList.remove('shake'),400); } $('msg').textContent=m; }
+function stats(){ const st=S.stats; $('sPlayed').textContent=st.played; $('sWon').textContent=st.won; $('sStreak').textContent=st.streak; $('next').textContent='in '+restoDelDia(); }
+setInterval(()=>{ $('next').textContent='in '+restoDelDia(); },60000);
+function finish(won,fresh){ const t=target; $('endTag').textContent=won?'Did you know?':'The word was';
+  $('endH').textContent=won?['Perfect!','Brilliant!','Great!','Nice one!','Got it!','Phew!'][guesses.length-1]:t.w; $('endWord').textContent=t.w+' · '+t.cat+(t.lang?' · '+t.lang:'');
+  $('endFact').textContent=t.fact; $('endSrc').textContent=t.src?'Source: '+t.src:'';
+  $('endGrid').textContent=guesses.map(g=>evalGuess(g).map(v=>v==='ok'?'🟩':v==='near'?'🟨':'⬛').join('')).join('\n');
+  $('btnAgain').hidden=false; $('endOv').hidden=false; stats(); }
+$('btnClose').onclick=()=>{ $('endOv').hidden=true; };
+$('btnAgain').onclick=()=>{ $('endOv').hidden=true; random(); };
+$('btnShare').onclick=()=>{ const txt='Cinco · '+CINCO.name+' · '+(practice?'practice':fechaDeHoy())+' · '+(guesses[guesses.length-1]===target.w?guesses.length:'X')+'/6\n'+$('endGrid').textContent+'\nfirstplace.games'; const ok=()=>{ $('btnShare').textContent='Copied!'; setTimeout(()=>$('btnShare').textContent='Copy result',1500); }; if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(ok,()=>{ $('endGrid').textContent=txt; }); else $('endGrid').textContent=txt; };
+$('btnHint').onclick=()=>{ if(done) return; hinted=true; const h=$('hint'); h.className='hint on'; h.innerHTML='<b>'+target.cat+'</b>'+(target.hint?' — '+target.hint:'')+(target.lang?'<br><span style="opacity:.7">A word in '+target.lang+'</span>':''); };
+function random(){ let w; do{ w=W[Math.floor(Math.random()*W.length)]; }while(W.length>1&&w===target); start(w,true); }
+$('btnRandom').onclick=()=>{ if(practice||done) random(); else if(confirmLeave()) random(); };
+function confirmLeave(){ if(guesses.length===0) return true; $('msg').textContent='Finish today\'s word first, or press Practice again to leave it.'; $('btnRandom').onclick=()=>random(); return false; }
+start(delDia(),false);
+})();
+</script>
+
+</body>
+</html>

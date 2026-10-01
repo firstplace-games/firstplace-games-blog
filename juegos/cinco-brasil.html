@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Cinco Brasil: guess the five-letter word from Brasil's sporting life. A new word every day, six tries, and a fact with its source when you solve it.">
+<title>Cinco · Brasil — a five-letter sports word a day · FirstPlace.games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{
+  --noche:#1A0F2E; --noche-2:#26173F; --pozo:#110A1E;
+  --papel:#F3E9D2; --tinta:#141A1F; --pizarra:#5A6672;
+  --rosa:#E6007E; --cempa:#F7A21B; --punto:#F4551D; --turq:#12A89D; --verde:#1E9E57; --amarillo:#FFC53D;
+  --display:"Archivo","Arial Black",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--noche);color:var(--papel);font-family:var(--display);overflow-x:hidden;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23F3E9D2' stroke-opacity='.06' stroke-width='1.5'%3E%3Cpath d='M32 8 L40 24 L56 32 L40 40 L32 56 L24 40 L8 32 L24 24Z'/%3E%3Ccircle cx='32' cy='32' r='5'/%3E%3C/g%3E%3C/svg%3E")}
+button{font-family:var(--display);cursor:pointer}
+button:focus-visible{outline:3px solid var(--cempa);outline-offset:2px}
+#app{min-height:100%;display:flex;flex-direction:column;padding-inline:16px;padding-bottom:18px}
+#picado{flex:none;height:74px;margin-inline:-16px;overflow:hidden}
+#picado svg{display:block;width:100%;height:100%}
+.flag{transform-origin:50% 0;animation:sway 4.5s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-2.2deg)}to{transform:rotate(2.2deg)}}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:6px 10px;max-width:1040px;width:100%;margin:0 auto}
+.brand{font-weight:800;font-stretch:112%;letter-spacing:-.012em;font-size:15px;color:var(--papel);opacity:.85;text-decoration:none}
+.brand i{font-style:normal;color:var(--punto)}
+.gname{font-weight:900;font-stretch:125%;font-size:20px;letter-spacing:.02em;text-transform:uppercase}
+.gname span{color:var(--cempa)}
+.tbtns{display:flex;gap:8px}
+.tbtn{background:transparent;color:var(--papel);border:2px solid var(--papel);padding:4px 10px;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.tbtn:hover{background:var(--papel);color:var(--tinta)}
+.stage{display:grid;grid-template-columns:minmax(0,230px) auto minmax(0,230px);gap:22px;justify-content:center;align-items:start;max-width:1040px;width:100%;margin:0 auto;padding-top:8px}
+.card{background:var(--papel);color:var(--tinta);border:3px solid var(--tinta);box-shadow:6px 6px 0 rgba(0,0,0,.45);position:relative;padding:20px 14px 14px}
+.stamp{position:absolute;top:-13px;left:-8px;transform:rotate(-2deg);background:var(--rosa);color:#fff;border:2.5px solid var(--tinta);font-weight:800;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px}
+.stamp.o{background:var(--cempa);color:var(--tinta)}
+.stamp.t{background:var(--turq);color:#fff}
+.card p{margin:0;font-family:var(--mono);font-size:12px;line-height:1.6}
+.card p+p{margin-top:8px}
+.card b.k{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--pizarra);display:block;margin-bottom:2px}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px}
+.stats div{text-align:center}
+.stats big{display:block;font-weight:900;font-size:24px;font-stretch:112%}
+.stats small{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--pizarra)}
+/* tablero */
+.mid{display:flex;flex-direction:column;align-items:center;gap:14px}
+.today{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--cempa);text-align:center}
+.today b{color:var(--papel);font-weight:600}
+#board{display:grid;grid-template-rows:repeat(6,1fr);gap:6px;padding:10px;background:#F3EEE3;border:3px solid var(--tinta);box-shadow:7px 7px 0 rgba(0,0,0,.45);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Crect width='20' height='20' fill='%23F3EEE3'/%3E%3Cpath d='M10 2 L18 10 L10 18 L2 10Z' fill='none' stroke='%231D3E9E' stroke-opacity='.25'/%3E%3C/svg%3E")}
+.row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.tile{width:58px;height:58px;display:grid;place-items:center;background:var(--pozo);color:var(--papel);border:3px solid var(--tinta);font-weight:900;font-size:28px;font-stretch:112%;text-transform:uppercase;transition:transform .12s}
+.tile.fill{transform:scale(1.06);border-color:var(--papel)}
+.tile.ok{background:var(--verde);color:#fff}
+.tile.near{background:var(--amarillo);color:var(--tinta)}
+.tile.no{background:#3a3f47;color:#cfd3d8}
+.tile.flip{animation:flip .5s ease}
+@keyframes flip{0%{transform:rotateX(0)}50%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
+.row.shake{animation:shake .35s}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.msg{min-height:22px;font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;text-align:center;color:var(--cempa)}
+/* teclado */
+#kb{display:flex;flex-direction:column;gap:6px;align-items:center;user-select:none;-webkit-user-select:none}
+#kb div{display:flex;gap:5px}
+#kb button{min-width:34px;height:48px;padding:0 6px;background:var(--papel);color:var(--tinta);border:2.5px solid var(--tinta);box-shadow:3px 3px 0 rgba(0,0,0,.45);font-weight:800;font-size:15px;text-transform:uppercase}
+#kb button.wide{min-width:58px;font-size:11px;letter-spacing:.06em}
+#kb button.ok{background:var(--verde);color:#fff}
+#kb button.near{background:var(--amarillo)}
+#kb button.no{background:#3a3f47;color:#cfd3d8;box-shadow:none}
+#kb button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 rgba(0,0,0,.45)}
+/* pistas y final */
+.hint{display:none;background:var(--noche-2);border:2px dashed var(--cempa);padding:8px 12px;font-family:var(--mono);font-size:12px;line-height:1.6;max-width:360px;text-align:center}
+.hint.on{display:block}
+.ov{position:fixed;inset:0;background:rgba(10,6,18,.78);display:flex;align-items:center;justify-content:center;padding:16px;z-index:9}
+.ov[hidden]{display:none}
+.panel{background:var(--papel);color:var(--tinta);border:3px solid var(--tinta);box-shadow:9px 9px 0 rgba(0,0,0,.55);width:min(520px,100%);padding:30px 26px 24px;position:relative}
+.panel h2{margin:0 0 6px;font-weight:900;font-stretch:125%;font-size:30px;letter-spacing:.02em;text-transform:uppercase}
+.panel .word{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--pizarra);margin-bottom:12px}
+.panel p{font-size:15px;line-height:1.55;margin:0 0 8px}
+.panel .src{font-family:var(--mono);font-size:11px;color:var(--pizarra)}
+.panel .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.big-btn{background:var(--punto);color:#fff;border:3px solid var(--tinta);box-shadow:5px 5px 0 rgba(0,0,0,.45);font-weight:900;font-size:15px;letter-spacing:.08em;text-transform:uppercase;padding:10px 18px}
+.big-btn.alt{background:var(--papel);color:var(--tinta)}
+.dyk{font-family:var(--mono);font-weight:600;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--rosa)}
+.grid{font-family:var(--mono);font-size:18px;line-height:1.15;letter-spacing:.05em;margin:10px 0}
+/* banderas */
+.cov-nav{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;margin-top:22px}
+.cov-flags{display:flex;flex-wrap:wrap;justify-content:center;gap:2px;max-width:760px}
+.cov-flags a{display:flex;flex-direction:column;align-items:center;width:44px;padding:3px 0 2px;border:2px solid transparent;border-radius:5px;text-decoration:none;color:var(--papel);line-height:1}
+.cov-flags a b{font-size:20px;font-weight:400;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.cov-flags a span{font-family:var(--mono);font-size:7.5px;letter-spacing:.03em;opacity:.75;margin-top:2px;white-space:nowrap;overflow:hidden;max-width:44px;text-overflow:ellipsis}
+.cov-flags a:hover,.cov-flags a:focus-visible{border-color:var(--cempa);background:rgba(247,162,27,.14);outline:none}
+.cov-flags a[aria-current]{border-color:var(--cempa);background:rgba(247,162,27,.22)}
+.cov-links{font-family:var(--mono);font-size:12px}
+.cov-links a{color:var(--papel);text-decoration:none;border-bottom:1px solid rgba(243,233,210,.35)}
+.cov-links a:hover{color:var(--cempa);border-color:var(--cempa)}
+.cov-links i{font-style:normal;opacity:.6;margin:0 4px}
+@media (max-width:900px){.stage{grid-template-columns:1fr;gap:16px}.side{display:none}.tile{width:52px;height:52px;font-size:24px}}
+@media (max-width:600px){.top{flex-wrap:wrap;justify-content:center;gap:6px 14px}.brand{font-size:13px}.gname{font-size:17px;width:100%;text-align:center;order:-1}}
+@media (max-width:420px){.tile{width:46px;height:46px;font-size:22px}#kb button{min-width:29px;height:44px;padding:0 4px;font-size:13px}#kb button.wide{min-width:48px}#picado{height:44px}}
+</style>
+<style>
+:root{--noche:#062A1E;--noche-2:#0B3A2A;--pozo:#04180F;--rosa:#009C3B;--cempa:#FFDF00;--turq:#002776;--papel:#F7F4EC}
+body{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='30' viewBox='0 0 60 30'%3E%3Cpath d='M0 15 Q15 0 30 15 T60 15' fill='none' stroke='%23F4F1EA' stroke-opacity='.06' stroke-width='4'/%3E%3C/svg%3E")}
+.frame{background-color:#F4F1EA;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12' viewBox='0 0 24 12'%3E%3Crect width='24' height='12' fill='%23F4F1EA'/%3E%3Cpath d='M0 6 Q6 0 12 6 T24 6 V12 H0Z' fill='%23141A1F'/%3E%3C/svg%3E");background-size:24px 12px}
+.cartel .band{background:#002776}
+.stamp.o{color:var(--tinta)}
+#cover{background-size:60px 30px}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="picado" aria-hidden="true"></div>
+  <div class="top">
+    <a class="brand" href="../juegos.html">← FirstPlace<i>.</i>games</a>
+    <div class="gname">Cinco <span>· Brasil</span></div>
+    <div class="tbtns"><button class="tbtn" id="btnHint">Hint</button><button class="tbtn" id="btnRandom">Practice</button></div>
+  </div>
+  <div class="stage">
+    <div class="side card"><span class="stamp">How to play</span>
+      <p>A five-letter word from Brasil's sporting life: a sport, a club, a stadium, a legend, a shout from the stands. Six tries.</p>
+      <p><b class="k">Colors</b>Green: right letter, right spot. Yellow: right letter, wrong spot. Grey: not in the word.</p>
+      <p><b class="k">Words</b>Some are in Portuguese, as people say them there. Hint gives you the category. Practice gives you a random word from the list, no limits.</p>
+    </div>
+    <div class="mid">
+      <div class="today" id="today"></div>
+      <div id="board"></div>
+      <div class="msg" id="msg"></div>
+      <div class="hint" id="hint"></div>
+      <div id="kb"></div>
+    </div>
+    <div class="side card"><span class="stamp o">Your record</span>
+      <div class="stats"><div><big id="sPlayed">0</big><small>played</small></div><div><big id="sWon">0</big><small>solved</small></div><div><big id="sStreak">0</big><small>streak</small></div></div>
+      <p style="margin-top:12px"><b class="k">Next word</b><span id="next"></span></p>
+    </div>
+  </div>
+  <nav class="cov-nav" aria-label="Countries"><div class="cov-flags"><a href="cinco-mexico.html" title="Cinco México"><b>🇲🇽</b><span>México</span></a><a href="cinco-usa.html" title="Cinco USA"><b>🇺🇸</b><span>USA</span></a><a href="cinco-france.html" title="Cinco France"><b>🇫🇷</b><span>France</span></a><a href="cinco-india.html" title="Cinco India"><b>🇮🇳</b><span>India</span></a><a href="cinco-china.html" title="Cinco China"><b>🇨🇳</b><span>China</span></a><a href="cinco-brasil.html" aria-current="page" title="Cinco Brasil"><b>🇧🇷</b><span>Brasil</span></a><a href="cinco-indonesia.html" title="Cinco Indonesia"><b>🇮🇩</b><span>Indonesia</span></a><a href="cinco-nigeria.html" title="Cinco Nigeria"><b>🇳🇬</b><span>Nigeria</span></a><a href="cinco-pakistan.html" title="Cinco Pakistan"><b>🇵🇰</b><span>Pakistan</span></a><a href="cinco-bangladesh.html" title="Cinco Bangladesh"><b>🇧🇩</b><span>Bangladesh</span></a><a href="cinco-russia.html" title="Cinco Russia"><b>🇷🇺</b><span>Russia</span></a><a href="cinco-ethiopia.html" title="Cinco Ethiopia"><b>🇪🇹</b><span>Ethiopia</span></a><a href="cinco-japan.html" title="Cinco Japan"><b>🇯🇵</b><span>Japan</span></a><a href="cinco-korea.html" title="Cinco Korea"><b>🇰🇷</b><span>Korea</span></a><a href="cinco-italy.html" title="Cinco Italy"><b>🇮🇹</b><span>Italy</span></a><a href="cinco-spain.html" title="Cinco Spain"><b>🇪🇸</b><span>Spain</span></a><a href="cinco-uk.html" title="Cinco UK"><b>🇬🇧</b><span>UK</span></a><a href="cinco-germany.html" title="Cinco Germany"><b>🇩🇪</b><span>Germany</span></a><a href="cinco-netherlands.html" title="Cinco Netherlands"><b>🇳🇱</b><span>Netherlands</span></a><a href="cinco-portugal.html" title="Cinco Portugal"><b>🇵🇹</b><span>Portugal</span></a><a href="cinco-argentina.html" title="Cinco Argentina"><b>🇦🇷</b><span>Argentina</span></a><a href="cinco-uruguay.html" title="Cinco Uruguay"><b>🇺🇾</b><span>Uruguay</span></a><a href="cinco-chile.html" title="Cinco Chile"><b>🇨🇱</b><span>Chile</span></a><a href="cinco-colombia.html" title="Cinco Colombia"><b>🇨🇴</b><span>Colombia</span></a><a href="cinco-cuba.html" title="Cinco Cuba"><b>🇨🇺</b><span>Cuba</span></a></div><div class="cov-links"><a href="cinco.html">All countries</a> <i>·</i> <a href="../juegos.html">← All games</a> <i>·</i> <a href="../index.html">Map</a></div></nav>
+</div>
+<div class="ov" id="endOv" hidden><div class="panel">
+  <div class="dyk" id="endTag">Did you know?</div>
+  <h2 id="endH"></h2>
+  <div class="word" id="endWord"></div>
+  <p id="endFact"></p>
+  <p class="src" id="endSrc"></p>
+  <div class="grid" id="endGrid"></div>
+  <div class="btns"><button class="big-btn" id="btnShare">Copy result</button><button class="big-btn alt" id="btnClose">Close</button><button class="big-btn alt" id="btnAgain">Practice another</button></div>
+</div></div>
+<script>
+const INK='#141A1F';
+function strokeInk(c, w){ c.lineWidth = w; c.strokeStyle = INK; c.stroke(); }
+const ORDER=['I','O','T','S','Z','L','J'];
+/* ================= THEME: BRASIL ================= */
+const THEME = {
+  id:'stack-br',
+  levelName:'Rodada',
+  shade:'6,42,30',
+  board:'#04180F',
+  letters:['#009C3B','#FFDF00','#002776','#F28C28','#E84A8A'],
+  pieces:{
+    I:{ sport:'Surf',        thing:'surfboard',        bg:'#1E88C8' },
+    O:{ sport:'Football',    thing:'ball',             bg:'#009C3B' },
+    T:{ sport:'Volleyball',  thing:'ball',             bg:'#FFDF00' },
+    S:{ sport:'Capoeira',    thing:'berimbau',         bg:'#F28C28' },
+    Z:{ sport:'Formula 1',   thing:'helmet',           bg:'#002776' },
+    L:{ sport:'Skateboarding', thing:'skateboard',     bg:'#E84A8A' },
+    J:{ sport:'Futevôlei',   thing:'net & ball',       bg:'#E8C98A' }
+  },
+  shouts:['','Boa!','Show de bola!','Golaço!','É CAMPEÃO!'],
+  confetti:['#009C3B','#FFDF00','#002776','#F4F1EA','#E84A8A','#F28C28'],
+  facts:[
+    { piece:'O', title:'Five stars on the shirt',
+      text:'Brazil has won the World Cup five times, in 1958, 1962, 1970, 1994 and 2002. No other country has won more.',
+      src:'FIFA', url:'https://www.fifa.com/en/tournaments/mens/worldcup/articles/teams-most-wins-titles-trophies' },
+    { piece:'O', title:'The biggest crowd in World Cup history',
+      text:'On 16 July 1950, 173,850 tickets were sold for the last match at the Maracanã. Uruguay won 2–1 and Brazilians still call it the Maracanazo.',
+      src:'Guinness World Records', url:'https://www.guinnessworldrecords.com/world-records/101615-largest-attendance-at-a-football-soccer-fifa-world-cup-match' },
+    { piece:'I', title:'Gold after a broken board',
+      text:'Italo Ferreira won the first Olympic surfing gold in history at Tokyo 2020, after snapping his board in the opening seconds of the final.',
+      src:'CBC Sports', url:'https://www.cbc.ca/sports/olympics/summer/surfing/brazilian-surfer-italo-ferreira-wins-gold-in-tokyo-1.6118642' },
+    { piece:'T', title:'Gold for both teams',
+      text:'Brazil has won Olympic volleyball gold with its men (1992, 2004, 2016) and with its women (2008, 2012).',
+      src:'Wikipedia · Brazil men’s national volleyball team', url:'https://en.wikipedia.org/wiki/Brazil_men%27s_national_volleyball_team' },
+    { piece:'S', title:'A fight that is also a dance',
+      text:'In 2014 UNESCO added the capoeira circle, where two players fight and dance to the sound of the berimbau, to its list of the Intangible Cultural Heritage of Humanity.',
+      src:'UNESCO', url:'https://ich.unesco.org/en/RL/capoeira-circle-00892' },
+    { piece:'Z', title:'Three times champion',
+      text:'Ayrton Senna won the Formula 1 world championship three times, in 1988, 1990 and 1991.',
+      src:'Britannica', url:'https://www.britannica.com/biography/Ayrton-Senna' },
+    { piece:'L', title:'A medal at 13',
+      text:'Rayssa Leal won skateboarding silver at Tokyo 2020 aged 13, becoming the youngest Olympic medallist in Brazil’s history.',
+      src:'Olympics.com', url:'https://www.olympics.com/en/athletes/rayssa-leal' },
+    { piece:'J', title:'Born on Copacabana',
+      text:'Futevôlei was created on Copacabana beach in 1965 by Octávio de Moraes. The story goes that football was banned on the sand, but the volleyball nets were free.',
+      src:'Wikipedia · Footvolley', url:'https://en.wikipedia.org/wiki/Footvolley' },
+    { piece:'O', title:'Less football fever',
+      text:'In a July 2026 Datafolha poll, 64% of Brazilians said they have a lot or some interest in football, down from 72% in 2023.',
+      src:'Exame · Datafolha', url:'https://exame.com/esporte/datafolha-interesse-dos-brasileiros-por-futebol-cai-apos-a-copa-de-2026/' }
+  ]
+};
+
+function brBall(c){
+  c.save();
+  c.beginPath(); c.arc(.5,.5,.35,0,Math.PI*2); c.fillStyle='#FFFFFF'; c.fill(); c.clip();
+  const pent=(cx,cy,r,rot)=>{ c.beginPath(); for(let i=0;i<5;i++){const a=rot+i*Math.PI*2/5; c.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));} c.closePath(); };
+  c.fillStyle=INK; pent(.5,.5,.12,-Math.PI/2); c.fill();
+  c.lineWidth=.025; c.strokeStyle=INK;
+  for(let i=0;i<5;i++){ const a=-Math.PI/2+i*Math.PI*2/5;
+    c.beginPath(); c.moveTo(.5+.12*Math.cos(a),.5+.12*Math.sin(a)); c.lineTo(.5+.26*Math.cos(a),.5+.26*Math.sin(a)); c.stroke();
+    const b=a+Math.PI/5; pent(.5+.37*Math.cos(b),.5+.37*Math.sin(b),.11,b); c.fill(); }
+  c.restore();
+  c.beginPath(); c.arc(.5,.5,.35,0,Math.PI*2); strokeInk(c,.045);
+}
+function brVolley(c){
+  c.save();
+  c.beginPath(); c.arc(.5,.5,.35,0,Math.PI*2); c.fillStyle='#FFFFFF'; c.fill(); c.clip();
+  c.fillStyle='#002776';
+  c.beginPath(); c.arc(-.05,.35,.52,0,Math.PI*2); c.arc(-.05,.35,.4,0,Math.PI*2,true); c.fill('evenodd');
+  c.fillStyle='#009C3B';
+  c.beginPath(); c.arc(.6,1.12,.55,0,Math.PI*2); c.arc(.6,1.12,.43,0,Math.PI*2,true); c.fill('evenodd');
+  c.strokeStyle=INK; c.lineWidth=.022;
+  [[-.05,.35,.52],[-.05,.35,.4],[.6,1.12,.55],[.6,1.12,.43],[1.05,.2,.5]].forEach(([x,y,r])=>{ c.beginPath(); c.arc(x,y,r,0,Math.PI*2); c.stroke(); });
+  c.restore();
+  c.beginPath(); c.arc(.5,.5,.35,0,Math.PI*2); strokeInk(c,.045);
+}
+function brBerimbau(c){
+  c.lineCap='round';
+  c.beginPath(); c.moveTo(.28,.08); c.quadraticCurveTo(.12,.5,.28,.92); c.lineWidth=.09; c.strokeStyle=INK; c.stroke(); c.lineWidth=.055; c.strokeStyle='#8A5A2B'; c.stroke();
+  c.beginPath(); c.moveTo(.28,.08); c.lineTo(.28,.92); c.lineWidth=.014; c.strokeStyle='#F4F1EA'; c.stroke();
+  c.beginPath(); c.moveTo(.22,.68); c.lineTo(.4,.68); c.lineWidth=.02; c.strokeStyle=INK; c.stroke();
+  c.beginPath(); c.arc(.48,.7,.15,0,Math.PI*2); c.fillStyle='#C98A3E'; c.fill(); strokeInk(c,.035);
+  c.beginPath(); c.arc(.52,.7,.07,0,Math.PI*2); c.fillStyle='#5A3A1A'; c.fill();
+  c.beginPath(); c.moveTo(.62,.22); c.lineTo(.84,.5); c.lineWidth=.04; c.strokeStyle=INK; c.stroke(); c.lineWidth=.022; c.strokeStyle='#E3B778'; c.stroke();
+  c.beginPath(); c.ellipse(.74,.26,.07,.1,.4,0,Math.PI*2); c.fillStyle='#D9B071'; c.fill(); strokeInk(c,.025);
+  c.lineCap='butt';
+}
+function brHelmet(c){
+  c.beginPath(); c.moveTo(.16,.62); c.quadraticCurveTo(.12,.18,.52,.16); c.quadraticCurveTo(.88,.16,.88,.5); c.lineTo(.88,.74); c.lineTo(.28,.78); c.quadraticCurveTo(.18,.76,.16,.62); c.closePath();
+  c.fillStyle='#FFDF00'; c.fill(); strokeInk(c,.045);
+  c.save(); c.clip();
+  c.fillStyle='#009C3B'; c.beginPath(); c.moveTo(.1,.52); c.quadraticCurveTo(.5,.4,.95,.46); c.lineTo(.95,.54); c.quadraticCurveTo(.5,.48,.1,.6); c.closePath(); c.fill();
+  c.fillStyle='#002776'; c.beginPath(); c.moveTo(.1,.6); c.quadraticCurveTo(.5,.48,.95,.54); c.lineTo(.95,.6); c.quadraticCurveTo(.5,.55,.1,.67); c.closePath(); c.fill();
+  c.restore();
+  c.beginPath(); c.moveTo(.5,.3); c.lineTo(.86,.3); c.quadraticCurveTo(.9,.4,.84,.46); c.lineTo(.5,.46); c.quadraticCurveTo(.44,.38,.5,.3); c.closePath();
+  c.fillStyle='#1B2530'; c.fill(); strokeInk(c,.035);
+  c.beginPath(); c.moveTo(.56,.34); c.lineTo(.74,.34); c.lineWidth=.02; c.strokeStyle='rgba(255,255,255,.4)'; c.stroke();
+}
+function brSkate(c){
+  c.save(); c.translate(.5,.5); c.rotate(-.5);
+  c.beginPath(); c.roundRect(-.42,-.1,.84,.2,.1); c.fillStyle='#1F1F1F'; c.fill(); strokeInk(c,.04);
+  c.fillStyle='#FFDF00'; c.fillRect(-.2,-.1,.12,.2); c.fillStyle='#009C3B'; c.fillRect(-.08,-.1,.12,.2);
+  [[-.26,.16],[.26,.16]].forEach(([x,y])=>{ c.fillStyle='#A9B3BC'; c.fillRect(x-.08,y-.05,.16,.04);
+    [x-.07,x+.07].forEach(wx=>{ c.beginPath(); c.arc(wx,y+.02,.045,0,Math.PI*2); c.fillStyle='#F4F1EA'; c.fill(); strokeInk(c,.02); }); });
+  c.restore();
+}
+function brFutevolei(c){
+  c.fillStyle='#F4DDA8'; c.fillRect(.02,.72,.96,.26);
+  c.beginPath(); c.moveTo(.14,.3); c.lineTo(.14,.8); c.moveTo(.86,.3); c.lineTo(.86,.8); c.lineWidth=.04; c.strokeStyle=INK; c.stroke();
+  c.beginPath(); c.rect(.14,.32,.72,.18); c.fillStyle='rgba(20,26,31,.08)'; c.fill();
+  c.strokeStyle=INK; c.lineWidth=.012;
+  for(let x=.18;x<.86;x+=.06){ c.beginPath(); c.moveTo(x,.32); c.lineTo(x,.5); c.stroke(); }
+  for(let y=.36;y<.5;y+=.05){ c.beginPath(); c.moveTo(.14,y); c.lineTo(.86,y); c.stroke(); }
+  c.beginPath(); c.moveTo(.14,.32); c.lineTo(.86,.32); c.lineWidth=.03; c.strokeStyle='#F4F1EA'; c.stroke();
+  c.beginPath(); c.arc(.62,.17,.1,0,Math.PI*2); c.fillStyle='#FFDF00'; c.fill(); strokeInk(c,.03);
+  c.beginPath(); c.arc(.62,.17,.1,-1,.6); c.lineWidth=.02; c.strokeStyle='#009C3B'; c.stroke();
+}
+function brBoard(c){ // 4x1 strip surfboard, nose on the right
+  c.beginPath(); c.moveTo(.14,.5); c.quadraticCurveTo(.16,.2,.8,.18); c.lineTo(2.9,.18); c.quadraticCurveTo(3.86,.24,3.94,.5); c.quadraticCurveTo(3.86,.76,2.9,.82); c.lineTo(.8,.82); c.quadraticCurveTo(.16,.8,.14,.5); c.closePath();
+  c.fillStyle='#F7F4EC'; c.fill(); strokeInk(c,.05);
+  c.save(); c.clip();
+  c.fillStyle='#FFDF00'; c.fillRect(1.1,.18,.28,.64);
+  c.fillStyle='#009C3B'; c.fillRect(1.38,.18,.12,.64);
+  c.restore();
+  c.beginPath(); c.moveTo(.4,.5); c.lineTo(3.7,.5); c.lineWidth=.02; c.strokeStyle='rgba(20,26,31,.35)'; c.stroke();
+  c.fillStyle='rgba(0,39,118,.18)'; [[2.2,.36],[2.6,.62],[3.0,.4],[1.9,.66]].forEach(([x,y])=>{ c.beginPath(); c.ellipse(x,y,.08,.04,0,0,Math.PI*2); c.fill(); });
+  c.beginPath(); c.moveTo(.32,.36); c.quadraticCurveTo(.26,.5,.32,.64); c.lineWidth=.03; c.strokeStyle='#002776'; c.stroke();
+}
+THEME.pieces.O.draw=brBall; THEME.pieces.T.draw=brVolley; THEME.pieces.S.draw=brBerimbau;
+THEME.pieces.Z.draw=brHelmet; THEME.pieces.L.draw=brSkate; THEME.pieces.J.draw=brFutevolei;
+THEME.long=brBoard;
+
+/* ---------- decoration ---------- */
+function brBanner(W,H){
+  const cols=['#009C3B','#FFDF00','#002776','#E84A8A','#F28C28','#1E88C8','#F4F1EA'];
+  const fw=Math.max(22,Math.min(34,H*.45)), gap=5;
+  let svg=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">`;
+  [[4,0],[H*.42,.5]].forEach(([y0,off],row)=>{
+    const n=Math.ceil(W/(fw+gap))+1, fh=Math.min(fw*1.2,H*.45);
+    svg+=`<path d="M0 ${y0} Q ${W/2} ${y0+8} ${W} ${y0}" stroke="#F4F1EA" stroke-opacity=".5" stroke-width="1" fill="none"/>`;
+    for(let i=0;i<n;i++){
+      const x=i*(fw+gap)-fw*off, y=y0+Math.sin(((x+fw/2)/W)*Math.PI)*4, col=cols[(i+row*3)%cols.length];
+      svg+=`<g class="flag" style="animation-delay:${-((i+row)*0.29)%4}s;transform-origin:${x+fw/2}px ${y}px"><path d="M${x} ${y} H${x+fw} V${y+fh} L${x+fw/2} ${y+fh*.72} L${x} ${y+fh} Z" fill="${col}" stroke="#141A1F" stroke-opacity=".3" stroke-width="1"/></g>`;
+    }
+  });
+  return svg+'</svg>';
+}
+function umbrella(c,w,h){
+  c.save(); c.scale(w/120,h/130); c.lineJoin='round';
+  c.beginPath(); c.moveTo(60,58); c.lineTo(60,126); c.lineWidth=4; c.strokeStyle='#8A5A2B'; c.stroke();
+  const cols=['#009C3B','#FFDF00','#002776','#FFDF00','#009C3B'];
+  for(let i=0;i<5;i++){ const a0=Math.PI+i*Math.PI/5, a1=a0+Math.PI/5;
+    c.beginPath(); c.moveTo(60,60); c.arc(60,60,52,a0,a1); c.closePath(); c.fillStyle=cols[i]; c.fill(); c.lineWidth=2.5; c.strokeStyle=INK; c.stroke(); }
+  c.beginPath(); c.arc(60,60,4,0,Math.PI*2); c.fillStyle=INK; c.fill();
+  c.restore();
+}
+function pandeiro(c,w,h){
+  c.save(); c.scale(w/120,h/130); c.lineJoin='round';
+  c.beginPath(); c.arc(60,68,46,0,Math.PI*2); c.fillStyle='#E9D2A8'; c.fill(); c.lineWidth=10; c.strokeStyle='#8A5A2B'; c.stroke(); c.lineWidth=3; c.strokeStyle=INK; c.stroke();
+  c.beginPath(); c.arc(60,68,51,0,Math.PI*2); c.stroke();
+  for(let i=0;i<5;i++){ const a=-Math.PI/2+i*Math.PI*2/5; const x=60+46*Math.cos(a), y=68+46*Math.sin(a);
+    c.beginPath(); c.ellipse(x,y,7,4,a,0,Math.PI*2); c.fillStyle='#C9CFD6'; c.fill(); c.lineWidth=2; c.strokeStyle=INK; c.stroke(); }
+  c.restore();
+}
+function coconut(c,w,h){
+  c.save(); c.scale(w/70,h/70); c.lineJoin='round';
+  c.beginPath(); c.arc(35,42,22,0,Math.PI*2); c.fillStyle='#4E8A2E'; c.fill(); c.lineWidth=2.5; c.strokeStyle=INK; c.stroke();
+  c.beginPath(); c.ellipse(35,24,10,4,0,0,Math.PI*2); c.fillStyle='#F4F1EA'; c.fill(); c.stroke();
+  c.beginPath(); c.moveTo(38,24); c.lineTo(48,4); c.lineWidth=4; c.strokeStyle='#E84A8A'; c.stroke();
+  c.beginPath(); c.ellipse(27,36,5,8,-.5,0,Math.PI*2); c.fillStyle='rgba(255,255,255,.2)'; c.fill();
+  c.restore();
+}
+function paoDeQueijo(c,w,h){
+  c.save(); c.scale(w/70,h/70);
+  [[20,44,12],[40,40,13],[30,26,11],[52,50,10]].forEach(([x,y,r])=>{ c.beginPath(); c.arc(x,y,r,0,Math.PI*2); c.fillStyle='#EBC27A'; c.fill(); c.lineWidth=2.2; c.strokeStyle=INK; c.stroke();
+    c.beginPath(); c.arc(x-r*.3,y-r*.3,r*.3,0,Math.PI*2); c.fillStyle='rgba(255,255,255,.3)'; c.fill(); });
+  c.restore();
+}
+THEME.deco={
+  banner:brBanner,
+  coverSide(c,w,h,i){ i?pandeiro(c,w,h):umbrella(c,w,h); },
+  corner(c){ coconut(c,70,70); },
+  pause(c,w,h){ c.save(); c.translate(10,6); coconut(c,70,70); c.restore(); c.save(); c.translate(70,12); paoDeQueijo(c,64,64); c.restore(); }
+};
+
+const CINCO={"code": "br", "name": "Brasil", "tz": "America/Sao_Paulo", "seed": 20260930, "lang": "Portuguese", "words": [{"w": "PENTA", "cat": "Football", "lang": "Portuguese", "hint": "___campeão: five titles", "fact": "Brazil has won the World Cup five times, in 1958, 1962, 1970, 1994 and 2002. No other country has won more.", "src": "FIFA"}, {"w": "FINAL", "cat": "Football", "hint": "1950, 173,850 people, the wrong result", "fact": "On 16 July 1950, 173,850 tickets were sold for the last match at the Maracanã. Uruguay won 2–1 and Brazilians still call it the Maracanazo.", "src": "Guinness World Records"}, {"w": "BOARD", "cat": "Surfing", "hint": "Italo Ferreira snapped his in the first seconds", "fact": "Italo Ferreira won the first Olympic surfing gold in history at Tokyo 2020, after snapping his board in the opening seconds of the final.", "src": "CBC Sports"}, {"w": "VOLEI", "cat": "Volleyball", "lang": "Portuguese", "hint": "Gold for the men and for the women", "fact": "Brazil has won Olympic volleyball gold with its men (1992, 2004, 2016) and with its women (2008, 2012).", "src": "Wikipedia · Brazil men’s national volleyball team"}, {"w": "GINGA", "cat": "Capoeira", "lang": "Portuguese", "hint": "The swaying basic move of capoeira", "fact": "In 2014 UNESCO added the capoeira circle, where two players fight and dance to the sound of the berimbau, to its list of the Intangible Cultural Heritage of Humanity.", "src": "UNESCO"}, {"w": "SENNA", "cat": "Formula 1", "hint": "Three-time champion from São Paulo", "fact": "Ayrton Senna won the Formula 1 world championship three times, in 1988, 1990 and 1991.", "src": "Britannica"}, {"w": "SKATE", "cat": "Skateboarding", "hint": "Rayssa Leal, silver at 13", "fact": "Rayssa Leal won skateboarding silver at Tokyo 2020 aged 13, becoming the youngest Olympic medallist in Brazil’s history.", "src": "Olympics.com"}, {"w": "PRAIA", "cat": "Footvolley", "lang": "Portuguese", "hint": "Copacabana is one", "fact": "Futevôlei was created on Copacabana beach in 1965 by Octávio de Moraes. The story goes that football was banned on the sand, but the volleyball nets were free.", "src": "Wikipedia · Footvolley"}, {"w": "SAMBA", "cat": "Football", "hint": "The style, and the only team never to miss a World Cup", "fact": "Brazil is the only country to have played in every World Cup since the first one in 1930.", "src": "FIFA"}, {"w": "MARTA", "cat": "Football", "hint": "Six-time world player of the year", "fact": "Marta scored 17 goals at Women's World Cups between 2003 and 2019, more than any player, man or woman, in World Cup history.", "src": "FIFA"}, {"w": "CANOA", "cat": "Canoeing", "lang": "Portuguese", "hint": "Isaquias Queiroz's boat", "fact": "Isaquias Queiroz won four Olympic medals in canoe sprint, including gold in the C-1 1000 m at Tokyo 2020.", "src": "Olympics.com"}]};
+
+(function(){
+const $=id=>document.getElementById(id);
+const TZ=CINCO.tz||0, KEY='cinco-'+CINCO.code, TEST=/[?&]test=1/.test(location.search);
+const W=CINCO.words.map(w=>({...w,w:w.w.toUpperCase()}));
+// banner de papel picado (del tema de Stack)
+(function(){ const el=$('picado'); const W_=el.clientWidth||1000,H=el.clientHeight||74; el.innerHTML=THEME.deco.banner(W_,H); })();
+// ---- día ----
+function partes(){ try{ const f=new Intl.DateTimeFormat('en-CA',{timeZone:typeof TZ==='string'?TZ:'UTC',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}); const o={}; f.formatToParts(new Date()).forEach(p=>o[p.type]=p.value); return {date:o.year+'-'+o.month+'-'+o.day,h:+o.hour%24,m:+o.minute}; }catch(e){ const off=typeof TZ==='number'?TZ:0; const d=new Date(Date.now()+off*3600*1000); return {date:d.toISOString().slice(0,10),h:d.getUTCHours(),m:d.getUTCMinutes()}; } }
+function fechaDeHoy(){ return partes().date; }
+function restoDelDia(){ const a=partes(); const min=(23-a.h)*60+(60-a.m); const h=Math.floor(min/60),m=min%60; return (h?h+' h ':'')+m+' min'; }
+function numeroDeDia(){ return Math.floor(Date.parse(fechaDeHoy()+'T00:00:00Z')/86400000); }
+function azarFijo(semilla){ let s=semilla>>>0; return function(){ s=(s+0x6D2B79F5)>>>0; let t=s; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }; }
+let ORDEN=null; function ordenDeItems(){ if(ORDEN) return ORDEN; const a=W.slice(); const r=azarFijo(CINCO.seed||20260930); for(let i=a.length-1;i>0;i--){ const j=Math.floor(r()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return (ORDEN=a); }
+function delDia(){ const o=ordenDeItems(); const d=numeroDeDia(); return o[((d%o.length)+o.length)%o.length]; }
+// ---- estado ----
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ return {}; } }
+function save(d){ if(TEST||practice) return; try{ localStorage.setItem(KEY,JSON.stringify(d)); }catch(e){} }
+let S=load(); if(!S.stats) S.stats={played:0,won:0,streak:0,best:0,last:''};
+let practice=false, target=null, guesses=[], cur='', done=false, hinted=false;
+const ROWS=['QWERTYUIOP','ASDFGHJKL','ZXCVBNM'];
+function start(word,isPractice){ practice=!!isPractice; target=word; guesses=[]; cur=''; done=false; hinted=false; $('hint').className='hint'; $('hint').textContent=''; $('msg').textContent='';
+  if(!practice&&S.today&&S.today.date===fechaDeHoy()){ guesses=S.today.guesses.slice(); done=S.today.done; }
+  $('today').innerHTML=practice?'Practice · <b>random word</b>':'Word of the day · <b>'+fechaDeHoy()+'</b>'+(TEST?' · <b>TEST</b>':'');
+  draw(); drawKb(); stats();
+  if(done) setTimeout(()=>finish(guesses[guesses.length-1]===target.w,false),300); }
+function evalGuess(g){ const t=target.w.split(''), r=Array(5).fill('no'), used=Array(5).fill(false);
+  for(let i=0;i<5;i++) if(g[i]===t[i]){ r[i]='ok'; used[i]=true; }
+  for(let i=0;i<5;i++){ if(r[i]==='ok') continue; for(let k=0;k<5;k++){ if(!used[k]&&t[k]===g[i]){ r[i]='near'; used[k]=true; break; } } }
+  return r; }
+function draw(anim){ const b=$('board'); b.innerHTML=''; for(let r=0;r<6;r++){ const row=document.createElement('div'); row.className='row'; const g=guesses[r]||(r===guesses.length?cur:''); const ev=guesses[r]?evalGuess(guesses[r]):null;
+    for(let i=0;i<5;i++){ const t=document.createElement('div'); t.className='tile'+(ev?' '+ev[i]:(g[i]?' fill':'')); if(ev&&anim&&r===guesses.length-1){ t.classList.add('flip'); t.style.animationDelay=(i*0.12)+'s'; } t.textContent=g[i]||''; row.appendChild(t); }
+    b.appendChild(row); } }
+function kbState(){ const st={}; guesses.forEach(g=>{ const ev=evalGuess(g); for(let i=0;i<5;i++){ const L=g[i], v=ev[i]; if(v==='ok'||(v==='near'&&st[L]!=='ok')||(!st[L])) st[L]=v; } }); return st; }
+function drawKb(){ const kb=$('kb'); kb.innerHTML=''; const st=kbState(); ROWS.forEach((r,ri)=>{ const d=document.createElement('div'); if(ri===2){ d.appendChild(key('ENTER','wide')); } r.split('').forEach(L=>{ d.appendChild(key(L,st[L]||'')); }); if(ri===2){ d.appendChild(key('⌫','wide')); } kb.appendChild(d); }); }
+function key(L,cls){ const b=document.createElement('button'); b.textContent=L; b.className=cls; b.dataset.k=L; return b; }
+$('kb').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b) press(b.dataset.k); });
+document.addEventListener('keydown',e=>{ if(e.metaKey||e.ctrlKey||e.altKey) return; if(!$('endOv').hidden) return; const k=e.key; if(k==='Enter') press('ENTER'); else if(k==='Backspace') press('⌫'); else if(/^[a-zA-Z]$/.test(k)) press(k.toUpperCase()); });
+function press(k){ if(done) return; if(k==='ENTER'){ submit(); return; } if(k==='⌫'){ cur=cur.slice(0,-1); draw(); return; } if(cur.length<5){ cur+=k; draw(); } }
+function submit(){ if(cur.length<5){ shake('Five letters'); return; } guesses.push(cur); const won=cur===target.w; cur=''; draw(true); drawKb();
+  if(!practice){ S.today={date:fechaDeHoy(),guesses:guesses.slice(),done:won||guesses.length===6}; save(S); }
+  if(won||guesses.length===6){ done=true; if(!practice){ const st=S.stats; if(st.last!==fechaDeHoy()){ st.played++; if(won){ st.streak=(st.lastWon===prevDay()?st.streak:0)+1; st.won++; st.lastWon=fechaDeHoy(); } else st.streak=0; st.best=Math.max(st.best,st.streak); st.last=fechaDeHoy(); save(S); } }
+    setTimeout(()=>finish(won,true),5*120+500); } else { $('msg').textContent=['','Good start.','Warmer.','Keep going.','Two left.','Last one!'][guesses.length]||''; } }
+function prevDay(){ const d=new Date(Date.parse(fechaDeHoy()+'T00:00:00Z')-86400000); return d.toISOString().slice(0,10); }
+function shake(m){ const row=$('board').children[guesses.length]; if(row){ row.classList.add('shake'); setTimeout(()=>row.classList.remove('shake'),400); } $('msg').textContent=m; }
+function stats(){ const st=S.stats; $('sPlayed').textContent=st.played; $('sWon').textContent=st.won; $('sStreak').textContent=st.streak; $('next').textContent='in '+restoDelDia(); }
+setInterval(()=>{ $('next').textContent='in '+restoDelDia(); },60000);
+function finish(won,fresh){ const t=target; $('endTag').textContent=won?'Did you know?':'The word was';
+  $('endH').textContent=won?['Perfect!','Brilliant!','Great!','Nice one!','Got it!','Phew!'][guesses.length-1]:t.w; $('endWord').textContent=t.w+' · '+t.cat+(t.lang?' · '+t.lang:'');
+  $('endFact').textContent=t.fact; $('endSrc').textContent=t.src?'Source: '+t.src:'';
+  $('endGrid').textContent=guesses.map(g=>evalGuess(g).map(v=>v==='ok'?'🟩':v==='near'?'🟨':'⬛').join('')).join('\n');
+  $('btnAgain').hidden=false; $('endOv').hidden=false; stats(); }
+$('btnClose').onclick=()=>{ $('endOv').hidden=true; };
+$('btnAgain').onclick=()=>{ $('endOv').hidden=true; random(); };
+$('btnShare').onclick=()=>{ const txt='Cinco · '+CINCO.name+' · '+(practice?'practice':fechaDeHoy())+' · '+(guesses[guesses.length-1]===target.w?guesses.length:'X')+'/6\n'+$('endGrid').textContent+'\nfirstplace.games'; const ok=()=>{ $('btnShare').textContent='Copied!'; setTimeout(()=>$('btnShare').textContent='Copy result',1500); }; if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(ok,()=>{ $('endGrid').textContent=txt; }); else $('endGrid').textContent=txt; };
+$('btnHint').onclick=()=>{ if(done) return; hinted=true; const h=$('hint'); h.className='hint on'; h.innerHTML='<b>'+target.cat+'</b>'+(target.hint?' — '+target.hint:'')+(target.lang?'<br><span style="opacity:.7">A word in '+target.lang+'</span>':''); };
+function random(){ let w; do{ w=W[Math.floor(Math.random()*W.length)]; }while(W.length>1&&w===target); start(w,true); }
+$('btnRandom').onclick=()=>{ if(practice||done) random(); else if(confirmLeave()) random(); };
+function confirmLeave(){ if(guesses.length===0) return true; $('msg').textContent='Finish today\'s word first, or press Practice again to leave it.'; $('btnRandom').onclick=()=>random(); return false; }
+start(delDia(),false);
+})();
+</script>
+
+</body>
+</html>

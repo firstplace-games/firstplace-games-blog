@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Cinco India: guess the five-letter word from India's sporting life. A new word every day, six tries, and a fact with its source when you solve it.">
+<title>Cinco · India — a five-letter sports word a day · FirstPlace.games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{
+  --noche:#1A0F2E; --noche-2:#26173F; --pozo:#110A1E;
+  --papel:#F3E9D2; --tinta:#141A1F; --pizarra:#5A6672;
+  --rosa:#E6007E; --cempa:#F7A21B; --punto:#F4551D; --turq:#12A89D; --verde:#1E9E57; --amarillo:#FFC53D;
+  --display:"Archivo","Arial Black",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--noche);color:var(--papel);font-family:var(--display);overflow-x:hidden;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23F3E9D2' stroke-opacity='.06' stroke-width='1.5'%3E%3Cpath d='M32 8 L40 24 L56 32 L40 40 L32 56 L24 40 L8 32 L24 24Z'/%3E%3Ccircle cx='32' cy='32' r='5'/%3E%3C/g%3E%3C/svg%3E")}
+button{font-family:var(--display);cursor:pointer}
+button:focus-visible{outline:3px solid var(--cempa);outline-offset:2px}
+#app{min-height:100%;display:flex;flex-direction:column;padding-inline:16px;padding-bottom:18px}
+#picado{flex:none;height:74px;margin-inline:-16px;overflow:hidden}
+#picado svg{display:block;width:100%;height:100%}
+.flag{transform-origin:50% 0;animation:sway 4.5s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-2.2deg)}to{transform:rotate(2.2deg)}}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:6px 10px;max-width:1040px;width:100%;margin:0 auto}
+.brand{font-weight:800;font-stretch:112%;letter-spacing:-.012em;font-size:15px;color:var(--papel);opacity:.85;text-decoration:none}
+.brand i{font-style:normal;color:var(--punto)}
+.gname{font-weight:900;font-stretch:125%;font-size:20px;letter-spacing:.02em;text-transform:uppercase}
+.gname span{color:var(--cempa)}
+.tbtns{display:flex;gap:8px}
+.tbtn{background:transparent;color:var(--papel);border:2px solid var(--papel);padding:4px 10px;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.tbtn:hover{background:var(--papel);color:var(--tinta)}
+.stage{display:grid;grid-template-columns:minmax(0,230px) auto minmax(0,230px);gap:22px;justify-content:center;align-items:start;max-width:1040px;width:100%;margin:0 auto;padding-top:8px}
+.card{background:var(--papel);color:var(--tinta);border:3px solid var(--tinta);box-shadow:6px 6px 0 rgba(0,0,0,.45);position:relative;padding:20px 14px 14px}
+.stamp{position:absolute;top:-13px;left:-8px;transform:rotate(-2deg);background:var(--rosa);color:#fff;border:2.5px solid var(--tinta);font-weight:800;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px}
+.stamp.o{background:var(--cempa);color:var(--tinta)}
+.stamp.t{background:var(--turq);color:#fff}
+.card p{margin:0;font-family:var(--mono);font-size:12px;line-height:1.6}
+.card p+p{margin-top:8px}
+.card b.k{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--pizarra);display:block;margin-bottom:2px}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px}
+.stats div{text-align:center}
+.stats big{display:block;font-weight:900;font-size:24px;font-stretch:112%}
+.stats small{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--pizarra)}
+/* tablero */
+.mid{display:flex;flex-direction:column;align-items:center;gap:14px}
+.today{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--cempa);text-align:center}
+.today b{color:var(--papel);font-weight:600}
+#board{display:grid;grid-template-rows:repeat(6,1fr);gap:6px;padding:10px;background:#F3EEE3;border:3px solid var(--tinta);box-shadow:7px 7px 0 rgba(0,0,0,.45);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Crect width='20' height='20' fill='%23F3EEE3'/%3E%3Cpath d='M10 2 L18 10 L10 18 L2 10Z' fill='none' stroke='%231D3E9E' stroke-opacity='.25'/%3E%3C/svg%3E")}
+.row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.tile{width:58px;height:58px;display:grid;place-items:center;background:var(--pozo);color:var(--papel);border:3px solid var(--tinta);font-weight:900;font-size:28px;font-stretch:112%;text-transform:uppercase;transition:transform .12s}
+.tile.fill{transform:scale(1.06);border-color:var(--papel)}
+.tile.ok{background:var(--verde);color:#fff}
+.tile.near{background:var(--amarillo);color:var(--tinta)}
+.tile.no{background:#3a3f47;color:#cfd3d8}
+.tile.flip{animation:flip .5s ease}
+@keyframes flip{0%{transform:rotateX(0)}50%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
+.row.shake{animation:shake .35s}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.msg{min-height:22px;font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;text-align:center;color:var(--cempa)}
+/* teclado */
+#kb{display:flex;flex-direction:column;gap:6px;align-items:center;user-select:none;-webkit-user-select:none}
+#kb div{display:flex;gap:5px}
+#kb button{min-width:34px;height:48px;padding:0 6px;background:var(--papel);color:var(--tinta);border:2.5px solid var(--tinta);box-shadow:3px 3px 0 rgba(0,0,0,.45);font-weight:800;font-size:15px;text-transform:uppercase}
+#kb button.wide{min-width:58px;font-size:11px;letter-spacing:.06em}
+#kb button.ok{background:var(--verde);color:#fff}
+#kb button.near{background:var(--amarillo)}
+#kb button.no{background:#3a3f47;color:#cfd3d8;box-shadow:none}
+#kb button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 rgba(0,0,0,.45)}
+/* pistas y final */
+.hint{display:none;background:var(--noche-2);border:2px dashed var(--cempa);padding:8px 12px;font-family:var(--mono);font-size:12px;line-height:1.6;max-width:360px;text-align:center}
+.hint.on{display:block}
+.ov{position:fixed;inset:0;background:rgba(10,6,18,.78);display:flex;align-items:center;justify-content:center;padding:16px;z-index:9}
+.ov[hidden]{display:none}
+.panel{background:var(--papel);color:var(--tinta);border:3px solid var(--tinta);box-shadow:9px 9px 0 rgba(0,0,0,.55);width:min(520px,100%);padding:30px 26px 24px;position:relative}
+.panel h2{margin:0 0 6px;font-weight:900;font-stretch:125%;font-size:30px;letter-spacing:.02em;text-transform:uppercase}
+.panel .word{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--pizarra);margin-bottom:12px}
+.panel p{font-size:15px;line-height:1.55;margin:0 0 8px}
+.panel .src{font-family:var(--mono);font-size:11px;color:var(--pizarra)}
+.panel .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.big-btn{background:var(--punto);color:#fff;border:3px solid var(--tinta);box-shadow:5px 5px 0 rgba(0,0,0,.45);font-weight:900;font-size:15px;letter-spacing:.08em;text-transform:uppercase;padding:10px 18px}
+.big-btn.alt{background:var(--papel);color:var(--tinta)}
+.dyk{font-family:var(--mono);font-weight:600;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--rosa)}
+.grid{font-family:var(--mono);font-size:18px;line-height:1.15;letter-spacing:.05em;margin:10px 0}
+/* banderas */
+.cov-nav{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;margin-top:22px}
+.cov-flags{display:flex;flex-wrap:wrap;justify-content:center;gap:2px;max-width:760px}
+.cov-flags a{display:flex;flex-direction:column;align-items:center;width:44px;padding:3px 0 2px;border:2px solid transparent;border-radius:5px;text-decoration:none;color:var(--papel);line-height:1}
+.cov-flags a b{font-size:20px;font-weight:400;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.cov-flags a span{font-family:var(--mono);font-size:7.5px;letter-spacing:.03em;opacity:.75;margin-top:2px;white-space:nowrap;overflow:hidden;max-width:44px;text-overflow:ellipsis}
+.cov-flags a:hover,.cov-flags a:focus-visible{border-color:var(--cempa);background:rgba(247,162,27,.14);outline:none}
+.cov-flags a[aria-current]{border-color:var(--cempa);background:rgba(247,162,27,.22)}
+.cov-links{font-family:var(--mono);font-size:12px}
+.cov-links a{color:var(--papel);text-decoration:none;border-bottom:1px solid rgba(243,233,210,.35)}
+.cov-links a:hover{color:var(--cempa);border-color:var(--cempa)}
+.cov-links i{font-style:normal;opacity:.6;margin:0 4px}
+@media (max-width:900px){.stage{grid-template-columns:1fr;gap:16px}.side{display:none}.tile{width:52px;height:52px;font-size:24px}}
+@media (max-width:600px){.top{flex-wrap:wrap;justify-content:center;gap:6px 14px}.brand{font-size:13px}.gname{font-size:17px;width:100%;text-align:center;order:-1}}
+@media (max-width:420px){.tile{width:46px;height:46px;font-size:22px}#kb button{min-width:29px;height:44px;padding:0 4px;font-size:13px}#kb button.wide{min-width:48px}#picado{height:44px}}
+</style>
+<style>
+:root{--noche:#2A0F1A;--noche-2:#3A1726;--pozo:#1A0A10;--rosa:#E5176E;--cempa:#FF9933;--turq:#138808;--papel:#F7EFDF}
+body{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'%3E%3Cg fill='%23F4EAD5' fill-opacity='.07'%3E%3Ccircle cx='9' cy='9' r='1.6'/%3E%3Ccircle cx='13' cy='9' r='1.6'/%3E%3Ccircle cx='11' cy='6' r='1.6'/%3E%3Ccircle cx='11' cy='12' r='1.6'/%3E%3Ccircle cx='27' cy='27' r='1.6'/%3E%3Ccircle cx='31' cy='27' r='1.6'/%3E%3Ccircle cx='29' cy='24' r='1.6'/%3E%3Ccircle cx='29' cy='30' r='1.6'/%3E%3C/g%3E%3C/svg%3E")}
+.frame{background-color:#F4EAD5;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Crect width='20' height='20' fill='%23F4EAD5'/%3E%3Cg fill='%23B3202B'%3E%3Ccircle cx='10' cy='6.5' r='2.2'/%3E%3Ccircle cx='10' cy='13.5' r='2.2'/%3E%3Ccircle cx='6.5' cy='10' r='2.2'/%3E%3Ccircle cx='13.5' cy='10' r='2.2'/%3E%3C/g%3E%3Ccircle cx='10' cy='10' r='1.6' fill='%231F2A6B'/%3E%3Cg fill='%23138808'%3E%3Ccircle cx='0' cy='0' r='1.5'/%3E%3Ccircle cx='20' cy='0' r='1.5'/%3E%3Ccircle cx='0' cy='20' r='1.5'/%3E%3Ccircle cx='20' cy='20' r='1.5'/%3E%3C/g%3E%3C/svg%3E")}
+.cartel .band{background:#138808}
+.stamp.o{color:var(--tinta)}
+#cover{background-size:36px 36px}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="picado" aria-hidden="true"></div>
+  <div class="top">
+    <a class="brand" href="../juegos.html">← FirstPlace<i>.</i>games</a>
+    <div class="gname">Cinco <span>· India</span></div>
+    <div class="tbtns"><button class="tbtn" id="btnHint">Hint</button><button class="tbtn" id="btnRandom">Practice</button></div>
+  </div>
+  <div class="stage">
+    <div class="side card"><span class="stamp">How to play</span>
+      <p>A five-letter word from India's sporting life: a sport, a club, a stadium, a legend, a shout from the stands. Six tries.</p>
+      <p><b class="k">Colors</b>Green: right letter, right spot. Yellow: right letter, wrong spot. Grey: not in the word.</p>
+      <p><b class="k">Words</b>Some are in Hindi or English, as people say them there. Hint gives you the category. Practice gives you a random word from the list, no limits.</p>
+    </div>
+    <div class="mid">
+      <div class="today" id="today"></div>
+      <div id="board"></div>
+      <div class="msg" id="msg"></div>
+      <div class="hint" id="hint"></div>
+      <div id="kb"></div>
+    </div>
+    <div class="side card"><span class="stamp o">Your record</span>
+      <div class="stats"><div><big id="sPlayed">0</big><small>played</small></div><div><big id="sWon">0</big><small>solved</small></div><div><big id="sStreak">0</big><small>streak</small></div></div>
+      <p style="margin-top:12px"><b class="k">Next word</b><span id="next"></span></p>
+    </div>
+  </div>
+  <nav class="cov-nav" aria-label="Countries"><div class="cov-flags"><a href="cinco-mexico.html" title="Cinco México"><b>🇲🇽</b><span>México</span></a><a href="cinco-usa.html" title="Cinco USA"><b>🇺🇸</b><span>USA</span></a><a href="cinco-france.html" title="Cinco France"><b>🇫🇷</b><span>France</span></a><a href="cinco-india.html" aria-current="page" title="Cinco India"><b>🇮🇳</b><span>India</span></a><a href="cinco-china.html" title="Cinco China"><b>🇨🇳</b><span>China</span></a><a href="cinco-brasil.html" title="Cinco Brasil"><b>🇧🇷</b><span>Brasil</span></a><a href="cinco-indonesia.html" title="Cinco Indonesia"><b>🇮🇩</b><span>Indonesia</span></a><a href="cinco-nigeria.html" title="Cinco Nigeria"><b>🇳🇬</b><span>Nigeria</span></a><a href="cinco-pakistan.html" title="Cinco Pakistan"><b>🇵🇰</b><span>Pakistan</span></a><a href="cinco-bangladesh.html" title="Cinco Bangladesh"><b>🇧🇩</b><span>Bangladesh</span></a><a href="cinco-russia.html" title="Cinco Russia"><b>🇷🇺</b><span>Russia</span></a><a href="cinco-ethiopia.html" title="Cinco Ethiopia"><b>🇪🇹</b><span>Ethiopia</span></a><a href="cinco-japan.html" title="Cinco Japan"><b>🇯🇵</b><span>Japan</span></a><a href="cinco-korea.html" title="Cinco Korea"><b>🇰🇷</b><span>Korea</span></a><a href="cinco-italy.html" title="Cinco Italy"><b>🇮🇹</b><span>Italy</span></a><a href="cinco-spain.html" title="Cinco Spain"><b>🇪🇸</b><span>Spain</span></a><a href="cinco-uk.html" title="Cinco UK"><b>🇬🇧</b><span>UK</span></a><a href="cinco-germany.html" title="Cinco Germany"><b>🇩🇪</b><span>Germany</span></a><a href="cinco-netherlands.html" title="Cinco Netherlands"><b>🇳🇱</b><span>Netherlands</span></a><a href="cinco-portugal.html" title="Cinco Portugal"><b>🇵🇹</b><span>Portugal</span></a><a href="cinco-argentina.html" title="Cinco Argentina"><b>🇦🇷</b><span>Argentina</span></a><a href="cinco-uruguay.html" title="Cinco Uruguay"><b>🇺🇾</b><span>Uruguay</span></a><a href="cinco-chile.html" title="Cinco Chile"><b>🇨🇱</b><span>Chile</span></a><a href="cinco-colombia.html" title="Cinco Colombia"><b>🇨🇴</b><span>Colombia</span></a><a href="cinco-cuba.html" title="Cinco Cuba"><b>🇨🇺</b><span>Cuba</span></a></div><div class="cov-links"><a href="cinco.html">All countries</a> <i>·</i> <a href="../juegos.html">← All games</a> <i>·</i> <a href="../index.html">Map</a></div></nav>
+</div>
+<div class="ov" id="endOv" hidden><div class="panel">
+  <div class="dyk" id="endTag">Did you know?</div>
+  <h2 id="endH"></h2>
+  <div class="word" id="endWord"></div>
+  <p id="endFact"></p>
+  <p class="src" id="endSrc"></p>
+  <div class="grid" id="endGrid"></div>
+  <div class="btns"><button class="big-btn" id="btnShare">Copy result</button><button class="big-btn alt" id="btnClose">Close</button><button class="big-btn alt" id="btnAgain">Practice another</button></div>
+</div></div>
+<script>
+const INK='#141A1F';
+function strokeInk(c, w){ c.lineWidth = w; c.strokeStyle = INK; c.stroke(); }
+const ORDER=['I','O','T','S','Z','L','J'];
+/* ================= THEME: INDIA ================= */
+const THEME = {
+  id:'stack-in',
+  levelName:'Over',
+  shade:'42,15,26',
+  board:'#1A0A10',
+  letters:['#FF9933','#138808','#1F2A6B','#E5176E','#0F6E8C'],
+  pieces:{
+    I:{ sport:'Cricket',    thing:'bat',              bg:'#138808' },
+    O:{ sport:'Badminton',  thing:'shuttlecock',      bg:'#E5176E' },
+    T:{ sport:'Hockey',     thing:'stick & ball',     bg:'#FF9933' },
+    S:{ sport:'Chess',      thing:'knight',           bg:'#F4EAD5' },
+    Z:{ sport:'Kabaddi',    thing:'court',            bg:'#0F6E8C' },
+    L:{ sport:'Javelin',    thing:'javelin',          bg:'#1F2A6B' },
+    J:{ sport:'Shooting',   thing:'target',           bg:'#F2B705' }
+  },
+  shouts:['','Shabash!','Chak de!','Four!','SIXER!'],
+  confetti:['#FF9933','#F4EAD5','#138808','#E5176E','#F2B705','#0F6E8C'],
+  facts:[
+    { piece:'I', title:'The day India became champions',
+      text:'On 25 June 1983 at Lord’s, India beat two-time champions West Indies by 43 runs to win their first Cricket World Cup.',
+      src:'ICC', url:'https://www.icc-cricket.com/tournaments/cricketworldcup/news/on-this-day-india-win-the-1983-world-cup' },
+    { piece:'T', title:'Eight Olympic golds in hockey',
+      text:'India’s men’s hockey team won eight Olympic gold medals between 1928 and 1980, more than any other country in the sport.',
+      src:'Olympics.com', url:'https://www.olympics.com/en/news/how-indian-hockey-team-olympic-games-gold-medals' },
+    { piece:'S', title:'Chess started here',
+      text:'Chess descends from chaturanga, a board game played in India around the 6th century. Its pieces became the knight, bishop, rook and pawn.',
+      src:'Wikipedia · Chaturanga', url:'https://en.wikipedia.org/wiki/Chaturanga' },
+    { piece:'Z', title:'Almost always gold',
+      text:'Kabaddi joined the Asian Games in 1990. India’s men have won gold at every edition except 2018, including the 2026 final against Iran.',
+      src:'India TV', url:'https://www.indiatvnews.com/sports/other/india-grabs-gold-medal-in-men-s-kabaddi-after-stellar-victory-over-iran-at-asian-games-2026-2026-09-26-1055357' },
+    { piece:'O', title:'Badminton was once called Poona',
+      text:'British officers in Poona, today Pune, drew up the rules of modern badminton in the 1870s. For years the game carried the city’s name.',
+      src:'Britannica', url:'https://www.britannica.com/sports/poona' },
+    { piece:'L', title:'The throw that made history',
+      text:'At the Tokyo 2020 Olympics, Neeraj Chopra won the javelin and gave India its first ever Olympic gold medal in athletics.',
+      src:'World Athletics', url:'https://worldathletics.org/personal-best/performance/tokyo-olympic-games-men-javelin-report' },
+    { piece:'J', title:'The first individual gold',
+      text:'In Beijing 2008, Abhinav Bindra won the 10 m air rifle. It was India’s first individual Olympic gold medal.',
+      src:'Olympics.com', url:'https://www.olympics.com/en/news/who-abhinav-bindra-indian-shooter-gold-medal-beijing-2008-olympics' },
+    { piece:'I', title:'612 million people watch cricket',
+      text:'A 2024 Ormax Media survey found that 612 million people in India had watched cricket on TV or streaming in the previous year.',
+      src:'Ormax Media', url:'https://www.ormaxmedia.com/insights/stories/678-million-sports-audiences-in-india-game-on.html' }
+  ]
+};
+
+function inShuttle(c){
+  c.save(); c.translate(.5,.5); c.rotate(-.7);
+  // feathers
+  c.beginPath(); c.moveTo(-.1,.02); c.lineTo(-.26,-.36); c.quadraticCurveTo(0,-.46,.26,-.36); c.lineTo(.1,.02); c.closePath();
+  c.fillStyle='#FFFFFF'; c.fill(); strokeInk(c,.035);
+  c.strokeStyle='rgba(20,26,31,.45)'; c.lineWidth=.014;
+  [-.14,-.05,.05,.14].forEach(x=>{ c.beginPath(); c.moveTo(x*.45,0); c.lineTo(x*1.7,-.39); c.stroke(); });
+  c.beginPath(); c.moveTo(-.2,-.22); c.quadraticCurveTo(0,-.27,.2,-.22); c.lineWidth=.02; c.strokeStyle='#E5176E'; c.stroke();
+  // cork
+  c.beginPath(); c.moveTo(-.11,0); c.lineTo(.11,0); c.quadraticCurveTo(.12,.2,0,.2); c.quadraticCurveTo(-.12,.2,-.11,0); c.closePath();
+  c.fillStyle='#F4EAD5'; c.fill(); strokeInk(c,.035);
+  c.fillStyle='#138808'; c.fillRect(-.11,0,.22,.04);
+  c.restore();
+}
+function inHockey(c){
+  c.lineCap='round';
+  c.beginPath(); c.moveTo(.3,.1); c.lineTo(.46,.7); c.quadraticCurveTo(.5,.86,.64,.82); c.lineTo(.7,.78);
+  c.lineWidth=.13; c.strokeStyle=INK; c.stroke(); c.lineWidth=.08; c.strokeStyle='#2A2A2A'; c.stroke();
+  c.beginPath(); c.moveTo(.3,.1); c.lineTo(.36,.32); c.lineWidth=.08; c.strokeStyle='#F4EAD5'; c.stroke();
+  c.beginPath(); c.moveTo(.43,.58); c.lineTo(.46,.7); c.lineWidth=.08; c.strokeStyle='#138808'; c.stroke();
+  c.lineCap='butt';
+  c.beginPath(); c.arc(.78,.56,.09,0,Math.PI*2); c.fillStyle='#FFFFFF'; c.fill(); strokeInk(c,.03);
+  c.fillStyle='rgba(0,0,0,.18)'; [[.75,.53],[.8,.57],[.77,.6]].forEach(([x,y])=>{ c.beginPath(); c.arc(x,y,.012,0,Math.PI*2); c.fill(); });
+}
+function inKnight(c){
+  c.lineJoin='round';
+  c.beginPath(); c.roundRect(.24,.76,.52,.12,.03); c.fillStyle='#3A2A20'; c.fill(); strokeInk(c,.035);
+  c.beginPath();
+  c.moveTo(.3,.76); c.lineTo(.34,.6); c.quadraticCurveTo(.26,.5,.3,.4); c.lineTo(.22,.4); c.quadraticCurveTo(.2,.32,.3,.24);
+  c.quadraticCurveTo(.36,.14,.5,.12); c.lineTo(.54,.06); c.lineTo(.6,.13); c.quadraticCurveTo(.76,.2,.74,.44); c.quadraticCurveTo(.72,.6,.7,.76); c.closePath();
+  c.fillStyle='#3A2A20'; c.fill(); strokeInk(c,.04);
+  c.beginPath(); c.arc(.44,.26,.03,0,Math.PI*2); c.fillStyle='#F4EAD5'; c.fill();
+  c.beginPath(); c.moveTo(.6,.18); c.quadraticCurveTo(.7,.3,.66,.5); c.lineWidth=.02; c.strokeStyle='rgba(244,234,213,.45)'; c.stroke();
+}
+function inKabaddi(c){
+  c.beginPath(); c.rect(.12,.18,.76,.64); c.fillStyle='#E07B2E'; c.fill(); strokeInk(c,.04);
+  c.strokeStyle='#FFFFFF'; c.lineWidth=.03;
+  c.beginPath(); c.moveTo(.5,.18); c.lineTo(.5,.82); c.stroke();
+  c.lineWidth=.018;
+  [.36,.64].forEach(x=>{ c.beginPath(); c.moveTo(x,.18); c.lineTo(x,.82); c.stroke(); });
+  [.26,.74].forEach(x=>{ c.setLineDash([.03,.025]); c.beginPath(); c.moveTo(x,.18); c.lineTo(x,.82); c.stroke(); c.setLineDash([]); });
+  c.beginPath(); c.moveTo(.12,.26); c.lineTo(.88,.26); c.moveTo(.12,.74); c.lineTo(.88,.74); c.stroke();
+}
+function inJavelin(c){
+  c.lineCap='round';
+  c.beginPath(); c.moveTo(.1,.9); c.lineTo(.86,.14); c.lineWidth=.07; c.strokeStyle=INK; c.stroke(); c.lineWidth=.035; c.strokeStyle='#D9DEE3'; c.stroke();
+  c.beginPath(); c.moveTo(.42,.58); c.lineTo(.52,.48); c.lineWidth=.08; c.strokeStyle=INK; c.stroke(); c.lineWidth=.05; c.strokeStyle='#FF9933'; c.stroke();
+  c.beginPath(); c.moveTo(.86,.14); c.lineTo(.93,.07); c.lineWidth=.03; c.strokeStyle='#F4EAD5'; c.stroke();
+  c.lineCap='butt';
+  c.strokeStyle='rgba(244,234,213,.35)'; c.lineWidth=.015;
+  [[.12,.55,.3,.55],[.16,.64,.3,.64],[.52,.2,.66,.2]].forEach(([a,b,d,e])=>{ c.beginPath(); c.moveTo(a,b); c.lineTo(d,e); c.stroke(); });
+}
+function inTarget(c){
+  const R=[.36,.3,.24,.18,.12,.06];
+  R.forEach((r,i)=>{ c.beginPath(); c.arc(.5,.5,r,0,Math.PI*2); c.fillStyle=i<2?'#FFFFFF':(i<5?'#141A1F':'#FFFFFF'); c.fill(); c.lineWidth=.012; c.strokeStyle=i<2?'#141A1F':'#FFFFFF'; c.stroke(); });
+  c.beginPath(); c.arc(.5,.5,.36,0,Math.PI*2); strokeInk(c,.04);
+  c.beginPath(); c.arc(.53,.47,.025,0,Math.PI*2); c.fillStyle='#E5176E'; c.fill();
+}
+function inBat(c){ // 4x1 strip: handle left, blade right
+  c.beginPath(); c.roundRect(.1,.42,1.08,.16,.07); c.fillStyle='#1F2A6B'; c.fill(); strokeInk(c,.04);
+  c.strokeStyle='rgba(255,255,255,.28)'; c.lineWidth=.02;
+  for(let x=.16;x<1.12;x+=.08){ c.beginPath(); c.moveTo(x,.43); c.lineTo(x,.57); c.stroke(); }
+  c.beginPath(); c.moveTo(1.1,.44); c.lineTo(1.3,.3); c.lineTo(3.72,.28); c.quadraticCurveTo(3.9,.28,3.9,.5); c.quadraticCurveTo(3.9,.72,3.72,.72); c.lineTo(1.3,.7); c.lineTo(1.1,.56); c.closePath();
+  const g=c.createLinearGradient(0,.28,0,.72); g.addColorStop(0,'#F6E3B4'); g.addColorStop(.6,'#E4C27E'); g.addColorStop(1,'#C79A55');
+  c.fillStyle=g; c.fill(); strokeInk(c,.045);
+  c.strokeStyle='rgba(140,90,30,.35)'; c.lineWidth=.012;
+  for(let y=.36;y<.68;y+=.08){ c.beginPath(); c.moveTo(1.5,y); c.lineTo(3.6,y); c.stroke(); }
+  c.beginPath(); c.moveTo(2.2,.5); c.lineTo(3.4,.5); c.lineWidth=.05; c.strokeStyle='rgba(255,255,255,.35)'; c.stroke();
+  c.fillStyle='#FF9933'; c.fillRect(3.3,.31,.12,.38); c.fillStyle='#138808'; c.fillRect(3.42,.31,.06,.38);
+}
+THEME.pieces.O.draw=inShuttle; THEME.pieces.T.draw=inHockey; THEME.pieces.S.draw=inKnight;
+THEME.pieces.Z.draw=inKabaddi; THEME.pieces.L.draw=inJavelin; THEME.pieces.J.draw=inTarget;
+THEME.long=inBat;
+
+/* ---------- decoration ---------- */
+function inBanner(W,H){
+  const cols=['#FF9933','#E5176E','#138808','#F2B705','#0F6E8C','#F4EAD5','#7A3FB8'];
+  const kw=Math.max(34,Math.min(58,H*.72)), gap=18, n=Math.ceil(W/(kw+gap))+1;
+  let svg=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">`;
+  svg+=`<path d="M0 6 Q ${W/2} 16 ${W} 6" stroke="#F4EAD5" stroke-opacity=".6" stroke-width="1.2" fill="none"/>`;
+  for(let i=0;i<n;i++){
+    const cx=i*(kw+gap)+kw/2-kw/3, top=8+Math.sin((cx/W)*Math.PI)*8, h=Math.min(H-14,kw*1.1), cy=top+h/2;
+    const col=cols[i%cols.length], col2=cols[(i+3)%cols.length];
+    svg+=`<g class="flag" style="animation-delay:${-(i*0.37)%4}s;transform-origin:${cx}px ${top}px">`;
+    svg+=`<path d="M${cx} ${top} L${cx+kw/2} ${cy} L${cx} ${top+h} L${cx-kw/2} ${cy} Z" fill="${col}" stroke="#141A1F" stroke-opacity=".5" stroke-width="1"/>`;
+    svg+=`<path d="M${cx} ${top} L${cx+kw/2} ${cy} L${cx} ${cy} Z" fill="${col2}" fill-opacity=".85"/>`;
+    svg+=`<path d="M${cx} ${top} L${cx} ${top+h} M${cx-kw/2} ${cy} Q ${cx} ${cy-h*.18} ${cx+kw/2} ${cy}" stroke="#141A1F" stroke-opacity=".45" stroke-width="1" fill="none"/>`;
+    svg+=`<path d="M${cx} ${top+h} l-5 6 l6 3 l-5 6" stroke="${col2}" stroke-width="2" fill="none"/>`;
+    svg+=`</g>`;
+  }
+  return svg+'</svg>';
+}
+function kite(c,w,h){
+  c.save(); c.scale(w/120,h/130); c.lineJoin='round';
+  c.beginPath(); c.moveTo(60,6); c.lineTo(104,52); c.lineTo(60,104); c.lineTo(16,52); c.closePath(); c.fillStyle='#FF9933'; c.fill(); c.lineWidth=3.5; c.strokeStyle=INK; c.stroke();
+  c.beginPath(); c.moveTo(60,6); c.lineTo(104,52); c.lineTo(60,52); c.closePath(); c.fillStyle='#E5176E'; c.fill();
+  c.beginPath(); c.moveTo(60,52); c.lineTo(60,104); c.lineTo(16,52); c.closePath(); c.fillStyle='#138808'; c.fill();
+  c.beginPath(); c.moveTo(60,6); c.lineTo(60,104); c.moveTo(16,52); c.quadraticCurveTo(60,36,104,52); c.lineWidth=2.5; c.strokeStyle=INK; c.stroke();
+  c.beginPath(); c.moveTo(60,104); c.lineTo(52,112); c.lineTo(64,116); c.lineTo(54,124); c.lineWidth=3; c.strokeStyle='#F2B705'; c.stroke();
+  c.beginPath(); c.moveTo(60,52); c.quadraticCurveTo(90,90,118,128); c.lineWidth=1.2; c.strokeStyle='rgba(244,234,213,.7)'; c.stroke();
+  c.restore();
+}
+function stumps(c,w,h){
+  c.save(); c.scale(w/120,h/130); c.lineJoin='round';
+  [38,58,78].forEach(x=>{ c.beginPath(); c.roundRect(x-5,34,10,90,4); c.fillStyle='#F4EAD5'; c.fill(); c.lineWidth=3; c.strokeStyle=INK; c.stroke(); c.fillStyle='#FF9933'; c.fillRect(x-4,96,8,8); });
+  [[37,28,26],[57,28,26]].forEach(([x,y,wd])=>{ c.beginPath(); c.roundRect(x,y,wd,7,3); c.fillStyle='#E4C27E'; c.fill(); c.lineWidth=2.5; c.strokeStyle=INK; c.stroke(); });
+  c.beginPath(); c.arc(98,112,11,0,Math.PI*2); c.fillStyle='#B3202B'; c.fill(); c.lineWidth=3; c.strokeStyle=INK; c.stroke();
+  c.beginPath(); c.moveTo(90,106); c.quadraticCurveTo(98,112,106,118); c.lineWidth=1.8; c.strokeStyle='#F4EAD5'; c.stroke();
+  c.restore();
+}
+function chai(c,w,h){ // glass of cutting chai, drawn in a 70x70 box
+  c.save(); c.scale(w/70,h/70); c.lineJoin='round';
+  c.beginPath(); c.moveTo(18,16); c.lineTo(52,16); c.lineTo(47,62); c.lineTo(23,62); c.closePath(); c.fillStyle='rgba(230,240,245,.55)'; c.fill();
+  c.beginPath(); c.moveTo(20,26); c.lineTo(50,26); c.lineTo(47,62); c.lineTo(23,62); c.closePath(); c.fillStyle='#C7803A'; c.fill();
+  c.beginPath(); c.moveTo(18,16); c.lineTo(52,16); c.lineTo(47,62); c.lineTo(23,62); c.closePath(); c.lineWidth=2.5; c.strokeStyle=INK; c.stroke();
+  c.strokeStyle='rgba(255,255,255,.45)'; c.lineWidth=1.5;
+  for(let x=24;x<50;x+=5){ c.beginPath(); c.moveTo(x,18); c.lineTo(x+ (x<35?1:-1),60); c.stroke(); }
+  c.strokeStyle='rgba(244,234,213,.6)'; c.lineWidth=1.6;
+  [30,40].forEach(x=>{ c.beginPath(); c.moveTo(x,12); c.quadraticCurveTo(x-4,7,x,2); c.stroke(); });
+  c.restore();
+}
+function samosa(c,w,h){
+  c.save(); c.scale(w/60,h/50); c.lineJoin='round';
+  c.beginPath(); c.moveTo(30,4); c.quadraticCurveTo(38,8,56,44); c.quadraticCurveTo(30,50,4,44); c.quadraticCurveTo(22,8,30,4); c.closePath();
+  c.fillStyle='#E0A246'; c.fill(); c.lineWidth=2.5; c.strokeStyle=INK; c.stroke();
+  c.beginPath(); c.moveTo(30,6); c.lineTo(30,46); c.lineWidth=1.5; c.strokeStyle='rgba(120,70,20,.5)'; c.stroke();
+  c.fillStyle='rgba(120,70,20,.35)'; [[20,30],[38,28],[26,38],[40,38],[33,20]].forEach(([x,y])=>{ c.beginPath(); c.arc(x,y,1.4,0,Math.PI*2); c.fill(); });
+  c.restore();
+}
+THEME.deco={
+  banner:inBanner,
+  coverSide(c,w,h,i){ i?stumps(c,w,h):kite(c,w,h); },
+  corner(c){ chai(c,70,70); },
+  pause(c,w,h){ c.save(); c.translate(14,4); chai(c,70,70); c.restore(); c.save(); c.translate(76,30); samosa(c,58,48); c.restore(); }
+};
+
+const CINCO={"code": "in", "name": "India", "tz": "Asia/Kolkata", "seed": 20260930, "lang": "Hindi and English", "words": [{"w": "LORDS", "cat": "Cricket", "hint": "The London ground where India won in 1983", "fact": "On 25 June 1983 at Lord’s, India beat two-time champions West Indies by 43 runs to win their first Cricket World Cup.", "src": "ICC"}, {"w": "EIGHT", "cat": "Hockey", "hint": "Olympic golds won by India's men", "fact": "India’s men’s hockey team won eight Olympic gold medals between 1928 and 1980, more than any other country in the sport.", "src": "Olympics.com"}, {"w": "CHESS", "cat": "Chess", "hint": "Born here as chaturanga", "fact": "Chess descends from chaturanga, a board game played in India around the 6th century. Its pieces became the knight, bishop, rook and pawn.", "src": "Wikipedia · Chaturanga"}, {"w": "RAIDS", "cat": "Kabaddi", "hint": "Kabaddi attacks, made holding your breath", "fact": "Kabaddi joined the Asian Games in 1990. India’s men have won gold at every edition except 2018, including the 2026 final against Iran.", "src": "India TV"}, {"w": "POONA", "cat": "Badminton", "hint": "The old name of Pune, and of the game itself", "fact": "British officers in Poona, today Pune, drew up the rules of modern badminton in the 1870s. For years the game carried the city’s name.", "src": "Britannica"}, {"w": "THROW", "cat": "Athletics", "hint": "Neeraj Chopra's golden javelin ___", "fact": "At the Tokyo 2020 Olympics, Neeraj Chopra won the javelin and gave India its first ever Olympic gold medal in athletics.", "src": "World Athletics"}, {"w": "RIFLE", "cat": "Shooting", "hint": "Abhinav Bindra's 10 m air ___", "fact": "In Beijing 2008, Abhinav Bindra won the 10 m air rifle. It was India’s first individual Olympic gold medal.", "src": "Olympics.com"}, {"w": "SIXES", "cat": "Cricket", "hint": "Yuvraj Singh hit six of them in one over", "fact": "At the 2007 T20 World Cup in Durban, Yuvraj Singh hit six sixes in a single over from England's Stuart Broad, the first time it happened in a T20 international.", "src": "Wikipedia · Yuvraj Singh"}, {"w": "BAILS", "cat": "Cricket", "hint": "The two little pieces of wood on top of the stumps", "fact": "Sachin Tendulkar scored 100 international centuries between 1989 and 2013. No other batter has reached even 75.", "src": "Wikipedia · Sachin Tendulkar"}, {"w": "GILLI", "cat": "Traditional game", "lang": "Hindi", "hint": "The small stick you flick into the air in ___-danda", "fact": "Gilli-danda is a traditional game played across South Asia with two sticks: you flick the small gilli into the air with the long danda and hit it as far as you can.", "src": "Wikipedia · Gilli-danda"}, {"w": "BLUES", "cat": "Cricket", "hint": "The Men in ___", "fact": "In 2011 India won its second Cricket World Cup at home, beating Sri Lanka in the final at Mumbai's Wankhede Stadium. It was the first time a host nation won the tournament.", "src": "ICC"}]};
+
+(function(){
+const $=id=>document.getElementById(id);
+const TZ=CINCO.tz||0, KEY='cinco-'+CINCO.code, TEST=/[?&]test=1/.test(location.search);
+const W=CINCO.words.map(w=>({...w,w:w.w.toUpperCase()}));
+// banner de papel picado (del tema de Stack)
+(function(){ const el=$('picado'); const W_=el.clientWidth||1000,H=el.clientHeight||74; el.innerHTML=THEME.deco.banner(W_,H); })();
+// ---- día ----
+function partes(){ try{ const f=new Intl.DateTimeFormat('en-CA',{timeZone:typeof TZ==='string'?TZ:'UTC',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}); const o={}; f.formatToParts(new Date()).forEach(p=>o[p.type]=p.value); return {date:o.year+'-'+o.month+'-'+o.day,h:+o.hour%24,m:+o.minute}; }catch(e){ const off=typeof TZ==='number'?TZ:0; const d=new Date(Date.now()+off*3600*1000); return {date:d.toISOString().slice(0,10),h:d.getUTCHours(),m:d.getUTCMinutes()}; } }
+function fechaDeHoy(){ return partes().date; }
+function restoDelDia(){ const a=partes(); const min=(23-a.h)*60+(60-a.m); const h=Math.floor(min/60),m=min%60; return (h?h+' h ':'')+m+' min'; }
+function numeroDeDia(){ return Math.floor(Date.parse(fechaDeHoy()+'T00:00:00Z')/86400000); }
+function azarFijo(semilla){ let s=semilla>>>0; return function(){ s=(s+0x6D2B79F5)>>>0; let t=s; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }; }
+let ORDEN=null; function ordenDeItems(){ if(ORDEN) return ORDEN; const a=W.slice(); const r=azarFijo(CINCO.seed||20260930); for(let i=a.length-1;i>0;i--){ const j=Math.floor(r()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return (ORDEN=a); }
+function delDia(){ const o=ordenDeItems(); const d=numeroDeDia(); return o[((d%o.length)+o.length)%o.length]; }
+// ---- estado ----
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ return {}; } }
+function save(d){ if(TEST||practice) return; try{ localStorage.setItem(KEY,JSON.stringify(d)); }catch(e){} }
+let S=load(); if(!S.stats) S.stats={played:0,won:0,streak:0,best:0,last:''};
+let practice=false, target=null, guesses=[], cur='', done=false, hinted=false;
+const ROWS=['QWERTYUIOP','ASDFGHJKL','ZXCVBNM'];
+function start(word,isPractice){ practice=!!isPractice; target=word; guesses=[]; cur=''; done=false; hinted=false; $('hint').className='hint'; $('hint').textContent=''; $('msg').textContent='';
+  if(!practice&&S.today&&S.today.date===fechaDeHoy()){ guesses=S.today.guesses.slice(); done=S.today.done; }
+  $('today').innerHTML=practice?'Practice · <b>random word</b>':'Word of the day · <b>'+fechaDeHoy()+'</b>'+(TEST?' · <b>TEST</b>':'');
+  draw(); drawKb(); stats();
+  if(done) setTimeout(()=>finish(guesses[guesses.length-1]===target.w,false),300); }
+function evalGuess(g){ const t=target.w.split(''), r=Array(5).fill('no'), used=Array(5).fill(false);
+  for(let i=0;i<5;i++) if(g[i]===t[i]){ r[i]='ok'; used[i]=true; }
+  for(let i=0;i<5;i++){ if(r[i]==='ok') continue; for(let k=0;k<5;k++){ if(!used[k]&&t[k]===g[i]){ r[i]='near'; used[k]=true; break; } } }
+  return r; }
+function draw(anim){ const b=$('board'); b.innerHTML=''; for(let r=0;r<6;r++){ const row=document.createElement('div'); row.className='row'; const g=guesses[r]||(r===guesses.length?cur:''); const ev=guesses[r]?evalGuess(guesses[r]):null;
+    for(let i=0;i<5;i++){ const t=document.createElement('div'); t.className='tile'+(ev?' '+ev[i]:(g[i]?' fill':'')); if(ev&&anim&&r===guesses.length-1){ t.classList.add('flip'); t.style.animationDelay=(i*0.12)+'s'; } t.textContent=g[i]||''; row.appendChild(t); }
+    b.appendChild(row); } }
+function kbState(){ const st={}; guesses.forEach(g=>{ const ev=evalGuess(g); for(let i=0;i<5;i++){ const L=g[i], v=ev[i]; if(v==='ok'||(v==='near'&&st[L]!=='ok')||(!st[L])) st[L]=v; } }); return st; }
+function drawKb(){ const kb=$('kb'); kb.innerHTML=''; const st=kbState(); ROWS.forEach((r,ri)=>{ const d=document.createElement('div'); if(ri===2){ d.appendChild(key('ENTER','wide')); } r.split('').forEach(L=>{ d.appendChild(key(L,st[L]||'')); }); if(ri===2){ d.appendChild(key('⌫','wide')); } kb.appendChild(d); }); }
+function key(L,cls){ const b=document.createElement('button'); b.textContent=L; b.className=cls; b.dataset.k=L; return b; }
+$('kb').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b) press(b.dataset.k); });
+document.addEventListener('keydown',e=>{ if(e.metaKey||e.ctrlKey||e.altKey) return; if(!$('endOv').hidden) return; const k=e.key; if(k==='Enter') press('ENTER'); else if(k==='Backspace') press('⌫'); else if(/^[a-zA-Z]$/.test(k)) press(k.toUpperCase()); });
+function press(k){ if(done) return; if(k==='ENTER'){ submit(); return; } if(k==='⌫'){ cur=cur.slice(0,-1); draw(); return; } if(cur.length<5){ cur+=k; draw(); } }
+function submit(){ if(cur.length<5){ shake('Five letters'); return; } guesses.push(cur); const won=cur===target.w; cur=''; draw(true); drawKb();
+  if(!practice){ S.today={date:fechaDeHoy(),guesses:guesses.slice(),done:won||guesses.length===6}; save(S); }
+  if(won||guesses.length===6){ done=true; if(!practice){ const st=S.stats; if(st.last!==fechaDeHoy()){ st.played++; if(won){ st.streak=(st.lastWon===prevDay()?st.streak:0)+1; st.won++; st.lastWon=fechaDeHoy(); } else st.streak=0; st.best=Math.max(st.best,st.streak); st.last=fechaDeHoy(); save(S); } }
+    setTimeout(()=>finish(won,true),5*120+500); } else { $('msg').textContent=['','Good start.','Warmer.','Keep going.','Two left.','Last one!'][guesses.length]||''; } }
+function prevDay(){ const d=new Date(Date.parse(fechaDeHoy()+'T00:00:00Z')-86400000); return d.toISOString().slice(0,10); }
+function shake(m){ const row=$('board').children[guesses.length]; if(row){ row.classList.add('shake'); setTimeout(()=>row.classList.remove('shake'),400); } $('msg').textContent=m; }
+function stats(){ const st=S.stats; $('sPlayed').textContent=st.played; $('sWon').textContent=st.won; $('sStreak').textContent=st.streak; $('next').textContent='in '+restoDelDia(); }
+setInterval(()=>{ $('next').textContent='in '+restoDelDia(); },60000);
+function finish(won,fresh){ const t=target; $('endTag').textContent=won?'Did you know?':'The word was';
+  $('endH').textContent=won?['Perfect!','Brilliant!','Great!','Nice one!','Got it!','Phew!'][guesses.length-1]:t.w; $('endWord').textContent=t.w+' · '+t.cat+(t.lang?' · '+t.lang:'');
+  $('endFact').textContent=t.fact; $('endSrc').textContent=t.src?'Source: '+t.src:'';
+  $('endGrid').textContent=guesses.map(g=>evalGuess(g).map(v=>v==='ok'?'🟩':v==='near'?'🟨':'⬛').join('')).join('\n');
+  $('btnAgain').hidden=false; $('endOv').hidden=false; stats(); }
+$('btnClose').onclick=()=>{ $('endOv').hidden=true; };
+$('btnAgain').onclick=()=>{ $('endOv').hidden=true; random(); };
+$('btnShare').onclick=()=>{ const txt='Cinco · '+CINCO.name+' · '+(practice?'practice':fechaDeHoy())+' · '+(guesses[guesses.length-1]===target.w?guesses.length:'X')+'/6\n'+$('endGrid').textContent+'\nfirstplace.games'; const ok=()=>{ $('btnShare').textContent='Copied!'; setTimeout(()=>$('btnShare').textContent='Copy result',1500); }; if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(ok,()=>{ $('endGrid').textContent=txt; }); else $('endGrid').textContent=txt; };
+$('btnHint').onclick=()=>{ if(done) return; hinted=true; const h=$('hint'); h.className='hint on'; h.innerHTML='<b>'+target.cat+'</b>'+(target.hint?' — '+target.hint:'')+(target.lang?'<br><span style="opacity:.7">A word in '+target.lang+'</span>':''); };
+function random(){ let w; do{ w=W[Math.floor(Math.random()*W.length)]; }while(W.length>1&&w===target); start(w,true); }
+$('btnRandom').onclick=()=>{ if(practice||done) random(); else if(confirmLeave()) random(); };
+function confirmLeave(){ if(guesses.length===0) return true; $('msg').textContent='Finish today\'s word first, or press Practice again to leave it.'; $('btnRandom').onclick=()=>random(); return false; }
+start(delDia(),false);
+})();
+</script>
+
+</body>
+</html>

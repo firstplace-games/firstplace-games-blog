@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Cinco Russia: guess the five-letter word from Russia's sporting life. A new word every day, six tries, and a fact with its source when you solve it.">
+<title>Cinco · Russia — a five-letter sports word a day · FirstPlace.games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{
+  --noche:#1A0F2E; --noche-2:#26173F; --pozo:#110A1E;
+  --papel:#F3E9D2; --tinta:#141A1F; --pizarra:#5A6672;
+  --rosa:#E6007E; --cempa:#F7A21B; --punto:#F4551D; --turq:#12A89D; --verde:#1E9E57; --amarillo:#FFC53D;
+  --display:"Archivo","Arial Black",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--noche);color:var(--papel);font-family:var(--display);overflow-x:hidden;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23F3E9D2' stroke-opacity='.06' stroke-width='1.5'%3E%3Cpath d='M32 8 L40 24 L56 32 L40 40 L32 56 L24 40 L8 32 L24 24Z'/%3E%3Ccircle cx='32' cy='32' r='5'/%3E%3C/g%3E%3C/svg%3E")}
+button{font-family:var(--display);cursor:pointer}
+button:focus-visible{outline:3px solid var(--cempa);outline-offset:2px}
+#app{min-height:100%;display:flex;flex-direction:column;padding-inline:16px;padding-bottom:18px}
+#picado{flex:none;height:74px;margin-inline:-16px;overflow:hidden}
+#picado svg{display:block;width:100%;height:100%}
+.flag{transform-origin:50% 0;animation:sway 4.5s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-2.2deg)}to{transform:rotate(2.2deg)}}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:6px 10px;max-width:1040px;width:100%;margin:0 auto}
+.brand{font-weight:800;font-stretch:112%;letter-spacing:-.012em;font-size:15px;color:var(--papel);opacity:.85;text-decoration:none}
+.brand i{font-style:normal;color:var(--punto)}
+.gname{font-weight:900;font-stretch:125%;font-size:20px;letter-spacing:.02em;text-transform:uppercase}
+.gname span{color:var(--cempa)}
+.tbtns{display:flex;gap:8px}
+.tbtn{background:transparent;color:var(--papel);border:2px solid var(--papel);padding:4px 10px;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.tbtn:hover{background:var(--papel);color:var(--tinta)}
+.stage{display:grid;grid-template-columns:minmax(0,230px) auto minmax(0,230px);gap:22px;justify-content:center;align-items:start;max-width:1040px;width:100%;margin:0 auto;padding-top:8px}
+.card{background:var(--papel);color:var(--tinta);border:3px solid var(--tinta);box-shadow:6px 6px 0 rgba(0,0,0,.45);position:relative;padding:20px 14px 14px}
+.stamp{position:absolute;top:-13px;left:-8px;transform:rotate(-2deg);background:var(--rosa);color:#fff;border:2.5px solid var(--tinta);font-weight:800;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px}
+.stamp.o{background:var(--cempa);color:var(--tinta)}
+.stamp.t{background:var(--turq);color:#fff}
+.card p{margin:0;font-family:var(--mono);font-size:12px;line-height:1.6}
+.card p+p{margin-top:8px}
+.card b.k{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--pizarra);display:block;margin-bottom:2px}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px}
+.stats div{text-align:center}
+.stats big{display:block;font-weight:900;font-size:24px;font-stretch:112%}
+.stats small{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--pizarra)}
+/* tablero */
+.mid{display:flex;flex-direction:column;align-items:center;gap:14px}
+.today{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--cempa);text-align:center}
+.today b{color:var(--papel);font-weight:600}
+#board{display:grid;grid-template-rows:repeat(6,1fr);gap:6px;padding:10px;background:#F3EEE3;border:3px solid var(--tinta);box-shadow:7px 7px 0 rgba(0,0,0,.45);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Crect width='20' height='20' fill='%23F3EEE3'/%3E%3Cpath d='M10 2 L18 10 L10 18 L2 10Z' fill='none' stroke='%231D3E9E' stroke-opacity='.25'/%3E%3C/svg%3E")}
+.row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.tile{width:58px;height:58px;display:grid;place-items:center;background:var(--pozo);color:var(--papel);border:3px solid var(--tinta);font-weight:900;font-size:28px;font-stretch:112%;text-transform:uppercase;transition:transform .12s}
+.tile.fill{transform:scale(1.06);border-color:var(--papel)}
+.tile.ok{background:var(--verde);color:#fff}
+.tile.near{background:var(--amarillo);color:var(--tinta)}
+.tile.no{background:#3a3f47;color:#cfd3d8}
+.tile.flip{animation:flip .5s ease}
+@keyframes flip{0%{transform:rotateX(0)}50%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
+.row.shake{animation:shake .35s}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.msg{min-height:22px;font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;text-align:center;color:var(--cempa)}
+/* teclado */
+#kb{display:flex;flex-direction:column;gap:6px;align-items:center;user-select:none;-webkit-user-select:none}
+#kb div{display:flex;gap:5px}
+#kb button{min-width:34px;height:48px;padding:0 6px;background:var(--papel);color:var(--tinta);border:2.5px solid var(--tinta);box-shadow:3px 3px 0 rgba(0,0,0,.45);font-weight:800;font-size:15px;text-transform:uppercase}
+#kb button.wide{min-width:58px;font-size:11px;letter-spacing:.06em}
+#kb button.ok{background:var(--verde);color:#fff}
+#kb button.near{background:var(--amarillo)}
+#kb button.no{background:#3a3f47;color:#cfd3d8;box-shadow:none}
+#kb button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 rgba(0,0,0,.45)}
+/* pistas y final */
+.hint{display:none;background:var(--noche-2);border:2px dashed var(--cempa);padding:8px 12px;font-family:var(--mono);font-size:12px;line-height:1.6;max-width:360px;text-align:center}
+.hint.on{display:block}
+.ov{position:fixed;inset:0;background:rgba(10,6,18,.78);display:flex;align-items:center;justify-content:center;padding:16px;z-index:9}
+.ov[hidden]{display:none}
+.panel{background:var(--papel);color:var(--tinta);border:3px solid var(--tinta);box-shadow:9px 9px 0 rgba(0,0,0,.55);width:min(520px,100%);padding:30px 26px 24px;position:relative}
+.panel h2{margin:0 0 6px;font-weight:900;font-stretch:125%;font-size:30px;letter-spacing:.02em;text-transform:uppercase}
+.panel .word{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--pizarra);margin-bottom:12px}
+.panel p{font-size:15px;line-height:1.55;margin:0 0 8px}
+.panel .src{font-family:var(--mono);font-size:11px;color:var(--pizarra)}
+.panel .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.big-btn{background:var(--punto);color:#fff;border:3px solid var(--tinta);box-shadow:5px 5px 0 rgba(0,0,0,.45);font-weight:900;font-size:15px;letter-spacing:.08em;text-transform:uppercase;padding:10px 18px}
+.big-btn.alt{background:var(--papel);color:var(--tinta)}
+.dyk{font-family:var(--mono);font-weight:600;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--rosa)}
+.grid{font-family:var(--mono);font-size:18px;line-height:1.15;letter-spacing:.05em;margin:10px 0}
+/* banderas */
+.cov-nav{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;margin-top:22px}
+.cov-flags{display:flex;flex-wrap:wrap;justify-content:center;gap:2px;max-width:760px}
+.cov-flags a{display:flex;flex-direction:column;align-items:center;width:44px;padding:3px 0 2px;border:2px solid transparent;border-radius:5px;text-decoration:none;color:var(--papel);line-height:1}
+.cov-flags a b{font-size:20px;font-weight:400;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.cov-flags a span{font-family:var(--mono);font-size:7.5px;letter-spacing:.03em;opacity:.75;margin-top:2px;white-space:nowrap;overflow:hidden;max-width:44px;text-overflow:ellipsis}
+.cov-flags a:hover,.cov-flags a:focus-visible{border-color:var(--cempa);background:rgba(247,162,27,.14);outline:none}
+.cov-flags a[aria-current]{border-color:var(--cempa);background:rgba(247,162,27,.22)}
+.cov-links{font-family:var(--mono);font-size:12px}
+.cov-links a{color:var(--papel);text-decoration:none;border-bottom:1px solid rgba(243,233,210,.35)}
+.cov-links a:hover{color:var(--cempa);border-color:var(--cempa)}
+.cov-links i{font-style:normal;opacity:.6;margin:0 4px}
+@media (max-width:900px){.stage{grid-template-columns:1fr;gap:16px}.side{display:none}.tile{width:52px;height:52px;font-size:24px}}
+@media (max-width:600px){.top{flex-wrap:wrap;justify-content:center;gap:6px 14px}.brand{font-size:13px}.gname{font-size:17px;width:100%;text-align:center;order:-1}}
+@media (max-width:420px){.tile{width:46px;height:46px;font-size:22px}#kb button{min-width:29px;height:44px;padding:0 4px;font-size:13px}#kb button.wide{min-width:48px}#picado{height:44px}}
+</style>
+<style>
+:root{--noche:#101826;--noche-2:#182236;--pozo:#0A0F1A;--rosa:#C62828;--cempa:#E0A020;--turq:#1F4E9E;--papel:#F7F4EC}
+body{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cg fill='none' stroke='%23F4F1EA' stroke-opacity='.06' stroke-width='1.3'%3E%3Cpath d='M22 8 v28 M8 22 h28 M12 12 l20 20 M32 12 l-20 20'/%3E%3C/g%3E%3C/svg%3E")}
+.frame{background-color:#F7F8FB;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Crect width='20' height='20' fill='%23F7F8FB'/%3E%3Cg fill='%231F4E9E'%3E%3Cellipse cx='10' cy='5.5' rx='2' ry='3.6'/%3E%3Cellipse cx='10' cy='14.5' rx='2' ry='3.6'/%3E%3Cellipse cx='5.5' cy='10' rx='3.6' ry='2'/%3E%3Cellipse cx='14.5' cy='10' rx='3.6' ry='2'/%3E%3C/g%3E%3Ccircle cx='10' cy='10' r='1.8' fill='%23F7F8FB'/%3E%3Cg fill='%231F4E9E'%3E%3Ccircle cx='1.5' cy='1.5' r='1.2'/%3E%3Ccircle cx='18.5' cy='18.5' r='1.2'/%3E%3Ccircle cx='18.5' cy='1.5' r='1.2'/%3E%3Ccircle cx='1.5' cy='18.5' r='1.2'/%3E%3C/g%3E%3C/svg%3E")}
+.cartel .band{background:#1F4E9E}
+.stamp.o{color:var(--tinta)}
+#cover{background-size:44px 44px}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="picado" aria-hidden="true"></div>
+  <div class="top">
+    <a class="brand" href="../juegos.html">← FirstPlace<i>.</i>games</a>
+    <div class="gname">Cinco <span>· Russia</span></div>
+    <div class="tbtns"><button class="tbtn" id="btnHint">Hint</button><button class="tbtn" id="btnRandom">Practice</button></div>
+  </div>
+  <div class="stage">
+    <div class="side card"><span class="stamp">How to play</span>
+      <p>A five-letter word from Russia's sporting life: a sport, a club, a stadium, a legend, a shout from the stands. Six tries.</p>
+      <p><b class="k">Colors</b>Green: right letter, right spot. Yellow: right letter, wrong spot. Grey: not in the word.</p>
+      <p><b class="k">Words</b>Some are in Russian (transliterated), as people say them there. Hint gives you the category. Practice gives you a random word from the list, no limits.</p>
+    </div>
+    <div class="mid">
+      <div class="today" id="today"></div>
+      <div id="board"></div>
+      <div class="msg" id="msg"></div>
+      <div class="hint" id="hint"></div>
+      <div id="kb"></div>
+    </div>
+    <div class="side card"><span class="stamp o">Your record</span>
+      <div class="stats"><div><big id="sPlayed">0</big><small>played</small></div><div><big id="sWon">0</big><small>solved</small></div><div><big id="sStreak">0</big><small>streak</small></div></div>
+      <p style="margin-top:12px"><b class="k">Next word</b><span id="next"></span></p>
+    </div>
+  </div>
+  <nav class="cov-nav" aria-label="Countries"><div class="cov-flags"><a href="cinco-mexico.html" title="Cinco México"><b>🇲🇽</b><span>México</span></a><a href="cinco-usa.html" title="Cinco USA"><b>🇺🇸</b><span>USA</span></a><a href="cinco-france.html" title="Cinco France"><b>🇫🇷</b><span>France</span></a><a href="cinco-india.html" title="Cinco India"><b>🇮🇳</b><span>India</span></a><a href="cinco-china.html" title="Cinco China"><b>🇨🇳</b><span>China</span></a><a href="cinco-brasil.html" title="Cinco Brasil"><b>🇧🇷</b><span>Brasil</span></a><a href="cinco-indonesia.html" title="Cinco Indonesia"><b>🇮🇩</b><span>Indonesia</span></a><a href="cinco-nigeria.html" title="Cinco Nigeria"><b>🇳🇬</b><span>Nigeria</span></a><a href="cinco-pakistan.html" title="Cinco Pakistan"><b>🇵🇰</b><span>Pakistan</span></a><a href="cinco-bangladesh.html" title="Cinco Bangladesh"><b>🇧🇩</b><span>Bangladesh</span></a><a href="cinco-russia.html" aria-current="page" title="Cinco Russia"><b>🇷🇺</b><span>Russia</span></a><a href="cinco-ethiopia.html" title="Cinco Ethiopia"><b>🇪🇹</b><span>Ethiopia</span></a><a href="cinco-japan.html" title="Cinco Japan"><b>🇯🇵</b><span>Japan</span></a><a href="cinco-korea.html" title="Cinco Korea"><b>🇰🇷</b><span>Korea</span></a><a href="cinco-italy.html" title="Cinco Italy"><b>🇮🇹</b><span>Italy</span></a><a href="cinco-spain.html" title="Cinco Spain"><b>🇪🇸</b><span>Spain</span></a><a href="cinco-uk.html" title="Cinco UK"><b>🇬🇧</b><span>UK</span></a><a href="cinco-germany.html" title="Cinco Germany"><b>🇩🇪</b><span>Germany</span></a><a href="cinco-netherlands.html" title="Cinco Netherlands"><b>🇳🇱</b><span>Netherlands</span></a><a href="cinco-portugal.html" title="Cinco Portugal"><b>🇵🇹</b><span>Portugal</span></a><a href="cinco-argentina.html" title="Cinco Argentina"><b>🇦🇷</b><span>Argentina</span></a><a href="cinco-uruguay.html" title="Cinco Uruguay"><b>🇺🇾</b><span>Uruguay</span></a><a href="cinco-chile.html" title="Cinco Chile"><b>🇨🇱</b><span>Chile</span></a><a href="cinco-colombia.html" title="Cinco Colombia"><b>🇨🇴</b><span>Colombia</span></a><a href="cinco-cuba.html" title="Cinco Cuba"><b>🇨🇺</b><span>Cuba</span></a></div><div class="cov-links"><a href="cinco.html">All countries</a> <i>·</i> <a href="../juegos.html">← All games</a> <i>·</i> <a href="../index.html">Map</a></div></nav>
+</div>
+<div class="ov" id="endOv" hidden><div class="panel">
+  <div class="dyk" id="endTag">Did you know?</div>
+  <h2 id="endH"></h2>
+  <div class="word" id="endWord"></div>
+  <p id="endFact"></p>
+  <p class="src" id="endSrc"></p>
+  <div class="grid" id="endGrid"></div>
+  <div class="btns"><button class="big-btn" id="btnShare">Copy result</button><button class="big-btn alt" id="btnClose">Close</button><button class="big-btn alt" id="btnAgain">Practice another</button></div>
+</div></div>
+<script>
+const INK='#141A1F';
+function strokeInk(c, w){ c.lineWidth = w; c.strokeStyle = INK; c.stroke(); }
+const ORDER=['I','O','T','S','Z','L','J'];
+/* ================= THEME: RUSSIA ================= */
+const THEME = {
+  id:'stack-ru',
+  levelName:'Period',
+  shade:'16,24,38',
+  board:'#0A0F1A',
+  letters:['#C62828','#1F4E9E','#E0A020','#2E7D32','#6A3FA0'],
+  pieces:{
+    I:{ sport:'Cross-country skiing', thing:'skis',        bg:'#9FCBE8' },
+    O:{ sport:'Ice hockey',           thing:'puck',        bg:'#E9F2F7' },
+    T:{ sport:'Chess',                thing:'rook',        bg:'#C62828' },
+    S:{ sport:'Football',             thing:'ball',        bg:'#2E7D32' },
+    Z:{ sport:'Figure skating',       thing:'skate',       bg:'#6A3FA0' },
+    L:{ sport:'Rhythmic gymnastics',  thing:'ribbon',      bg:'#1B2A5E' },
+    J:{ sport:'Gorodki',              thing:'bat & pins',  bg:'#E0A020' }
+  },
+  shouts:['','Davai!','Molodets!','Shaibu!','URA!'],
+  confetti:['#C62828','#E0A020','#1F4E9E','#F4F1EA','#2E7D32'],
+  facts:[
+    { piece:'S', title:'The only goalkeeper',
+      text:'In 1963 Lev Yashin won the Ballon d’Or. More than sixty years later, he is still the only goalkeeper ever to win it.',
+      src:'Ballon d’Or', url:'https://ballondor.com/news/posts/the-only-goalkeeper-in-the-pantheon' },
+    { piece:'O', title:'Seven Olympic golds',
+      text:'The Soviet Union won the Olympic ice hockey tournament seven times between 1956 and 1988.',
+      src:'Wikipedia · Soviet Union men’s national ice hockey team', url:'https://en.wikipedia.org/wiki/Soviet_Union_men%27s_national_ice_hockey_team' },
+    { piece:'T', title:'Twenty-four years of Soviet champions',
+      text:'Mikhail Botvinnik became world chess champion in 1948. For the next 24 years every world champion came from the Soviet Union, until Bobby Fischer won in 1972.',
+      src:'Wikipedia · World Chess Championship 1948', url:'https://en.wikipedia.org/wiki/World_Chess_Championship_1948' },
+    { piece:'Z', title:'Ten world titles in a row',
+      text:'Pairs skater Irina Rodnina won three Olympic golds in a row (1972, 1976, 1980) and ten straight world championships, with two different partners.',
+      src:'Britannica', url:'https://www.britannica.com/biography/Irina-Rodnina' },
+    { piece:'L', title:'Five Games, five golds',
+      text:'Russian gymnasts won the Olympic individual all-around in rhythmic gymnastics at every Games from Sydney 2000 to Rio 2016.',
+      src:'Olympics.com', url:'https://www.olympics.com/en/news/margarita-mamun-russia-rhythmic-gymnastics-dominance' },
+    { piece:'I', title:'Medals at five Olympics',
+      text:'Cross-country skier Raisa Smetanina won medals at five Winter Olympics in a row, from Innsbruck 1976 to Albertville 1992.',
+      src:'Britannica', url:'https://www.britannica.com/biography/Raisa-Smetanina' },
+    { piece:'J', title:'Fifteen figures to knock down',
+      text:'In gorodki you throw a heavy bat at wooden pins arranged in one of 15 set figures. Leo Tolstoy and Ivan Pavlov were keen players.',
+      src:'Wikipedia · Gorodki', url:'https://en.wikipedia.org/wiki/Gorodki' },
+    { piece:'O', title:'The national sport is hockey',
+      text:'In a December 2024 VTsIOM poll, 27% of Russians named ice hockey as the national sport. Football and figure skating got 9% each.',
+      src:'VTsIOM', url:'https://wciom.ru/analytical-reviews/analiticheskii-obzor/khokkei-kak-nacionalnyi-vid-sporta-rossii' }
+  ]
+};
+
+function ruPuck(c){
+  c.beginPath(); c.ellipse(.5,.62,.34,.12,0,0,Math.PI); c.lineTo(.16,.44); c.ellipse(.5,.44,.34,.12,0,Math.PI,0,true); c.closePath();
+  c.fillStyle='#1F1F1F'; c.fill(); strokeInk(c,.04);
+  c.beginPath(); c.ellipse(.5,.44,.34,.12,0,0,Math.PI*2); c.fillStyle='#3A3A3A'; c.fill(); strokeInk(c,.04);
+  c.beginPath(); c.ellipse(.46,.42,.14,.04,0,0,Math.PI*2); c.fillStyle='rgba(255,255,255,.25)'; c.fill();
+  c.strokeStyle='rgba(255,255,255,.18)'; c.lineWidth=.015; for(let x=.22;x<.8;x+=.06){ c.beginPath(); c.moveTo(x,.5); c.lineTo(x,.6); c.stroke(); }
+}
+function ruRook(c){
+  c.lineJoin='round';
+  c.beginPath(); c.roundRect(.24,.78,.52,.1,.03); c.fillStyle='#F4F1EA'; c.fill(); strokeInk(c,.035);
+  c.beginPath(); c.moveTo(.32,.78); c.lineTo(.36,.38); c.lineTo(.64,.38); c.lineTo(.68,.78); c.closePath(); c.fillStyle='#F4F1EA'; c.fill(); strokeInk(c,.035);
+  c.beginPath(); c.moveTo(.28,.38); c.lineTo(.28,.16); c.lineTo(.38,.16); c.lineTo(.38,.24); c.lineTo(.45,.24); c.lineTo(.45,.16); c.lineTo(.55,.16); c.lineTo(.55,.24); c.lineTo(.62,.24); c.lineTo(.62,.16); c.lineTo(.72,.16); c.lineTo(.72,.38); c.closePath();
+  c.fillStyle='#F4F1EA'; c.fill(); strokeInk(c,.035);
+}
+function ruBall(c){
+  c.save();
+  c.beginPath(); c.arc(.5,.5,.35,0,Math.PI*2); c.fillStyle='#FFFFFF'; c.fill(); c.clip();
+  const pent=(cx,cy,r,rot)=>{ c.beginPath(); for(let i=0;i<5;i++){const a=rot+i*Math.PI*2/5; c.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));} c.closePath(); };
+  c.fillStyle=INK; pent(.5,.5,.12,-Math.PI/2); c.fill();
+  c.lineWidth=.025; c.strokeStyle=INK;
+  for(let i=0;i<5;i++){ const a=-Math.PI/2+i*Math.PI*2/5;
+    c.beginPath(); c.moveTo(.5+.12*Math.cos(a),.5+.12*Math.sin(a)); c.lineTo(.5+.26*Math.cos(a),.5+.26*Math.sin(a)); c.stroke();
+    const b=a+Math.PI/5; pent(.5+.37*Math.cos(b),.5+.37*Math.sin(b),.11,b); c.fill(); }
+  c.restore();
+  c.beginPath(); c.arc(.5,.5,.35,0,Math.PI*2); strokeInk(c,.045);
+}
+function ruSkate(c){
+  c.lineJoin='round';
+  c.beginPath(); c.moveTo(.3,.14); c.lineTo(.52,.14); c.lineTo(.54,.46); c.quadraticCurveTo(.8,.5,.84,.62); c.lineTo(.84,.68); c.lineTo(.24,.68); c.lineTo(.26,.3); c.closePath();
+  c.fillStyle='#F7F4EC'; c.fill(); strokeInk(c,.04);
+  c.strokeStyle=INK; c.lineWidth=.014; [.24,.32,.4].forEach(y=>{ c.beginPath(); c.moveTo(.42,y); c.lineTo(.54,y+.04); c.stroke(); });
+  c.beginPath(); c.moveTo(.28,.68); c.lineTo(.3,.76); c.moveTo(.78,.68); c.lineTo(.76,.76); c.lineWidth=.03; c.strokeStyle='#A9B3BC'; c.stroke();
+  c.beginPath(); c.moveTo(.16,.8); c.quadraticCurveTo(.16,.76,.24,.76); c.lineTo(.86,.76); c.quadraticCurveTo(.92,.78,.9,.84); c.lineTo(.2,.84); c.quadraticCurveTo(.12,.84,.16,.8); c.closePath();
+  c.fillStyle='#D9DEE3'; c.fill(); strokeInk(c,.03);
+}
+function ruRibbon(c){
+  c.lineCap='round';
+  c.beginPath(); c.moveTo(.14,.86); c.lineTo(.34,.56); c.lineWidth=.06; c.strokeStyle=INK; c.stroke(); c.lineWidth=.035; c.strokeStyle='#F4F1EA'; c.stroke();
+  c.beginPath(); c.moveTo(.34,.56); c.bezierCurveTo(.6,.2,.9,.5,.66,.66); c.bezierCurveTo(.44,.82,.4,.3,.72,.16); c.bezierCurveTo(.86,.1,.92,.2,.9,.28);
+  c.lineWidth=.08; c.strokeStyle=INK; c.stroke(); c.lineWidth=.05; c.strokeStyle='#E84A8A'; c.stroke();
+  c.lineCap='butt';
+}
+function ruGorodki(c){
+  c.save(); c.translate(.36,.42); c.rotate(-.9);
+  c.beginPath(); c.roundRect(-.05,-.34,.1,.66,.04); c.fillStyle='#8A5A2B'; c.fill(); strokeInk(c,.035);
+  c.fillStyle='#C62828'; c.fillRect(-.05,.2,.1,.08);
+  c.restore();
+  [[.52,.7],[.64,.7],[.76,.7],[.58,.58],[.7,.58]].forEach(([x,y])=>{ c.beginPath(); c.roundRect(x-.05,y-.05,.1,.1,.02); c.fillStyle='#F1E6D0'; c.fill(); strokeInk(c,.025);
+    c.beginPath(); c.ellipse(x,y-.05,.05,.015,0,0,Math.PI*2); c.fillStyle='#D9B071'; c.fill(); });
+  c.beginPath(); c.moveTo(.4,.78); c.lineTo(.9,.78); c.lineWidth=.02; c.strokeStyle='rgba(20,26,31,.5)'; c.stroke();
+}
+function ruSkis(c){ // 4x1 strip: pair of skis
+  [.2,.56].forEach(y=>{
+    c.beginPath(); c.moveTo(.1,y); c.lineTo(3.5,y); c.quadraticCurveTo(3.86,y,3.94,y-.16); c.quadraticCurveTo(3.9,y+.2,3.5,y+.2); c.lineTo(.1,y+.2); c.closePath();
+    c.fillStyle='#C62828'; c.fill(); strokeInk(c,.04);
+    c.fillStyle='#E0A020'; c.fillRect(.3,y+.07,1.1,.06); c.fillRect(2.3,y+.07,1.1,.06);
+    c.beginPath(); c.roundRect(1.6,y-.03,.5,.26,.05); c.fillStyle='#1F1F1F'; c.fill(); strokeInk(c,.025); });
+}
+THEME.pieces.O.draw=ruPuck; THEME.pieces.T.draw=ruRook; THEME.pieces.S.draw=ruBall;
+THEME.pieces.Z.draw=ruSkate; THEME.pieces.L.draw=ruRibbon; THEME.pieces.J.draw=ruGorodki;
+THEME.long=ruSkis;
+
+/* ---------- decoration: khokhloma & gzhel ---------- */
+function ruBanner(W,H){
+  const fw=Math.max(30,Math.min(50,H*.66)), gap=4, n=Math.ceil(W/(fw+gap))+1, fh=H-10;
+  let svg=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">`;
+  svg+=`<path d="M0 4 Q ${W/2} 12 ${W} 4" stroke="#E0A020" stroke-opacity=".8" stroke-width="1.6" fill="none"/>`;
+  for(let i=0;i<n;i++){
+    const x=i*(fw+gap)-fw/3, y=4+Math.sin(((x+fw/2)/W)*Math.PI)*7, cx=x+fw/2, bg=i%2?'#141414':'#B71C1C';
+    svg+=`<g class="flag" style="animation-delay:${-(i*0.33)%4}s;transform-origin:${cx}px ${y}px">`;
+    svg+=`<path d="M${x} ${y} H${x+fw} L${cx} ${y+fh} Z" fill="${bg}" stroke="#E0A020" stroke-width="1.2"/>`;
+    svg+=`<path d="M${cx} ${y+fh*.62} C ${cx-fw*.3} ${y+fh*.4}, ${cx-fw*.1} ${y+fh*.1}, ${cx} ${y+fh*.18} C ${cx+fw*.1} ${y+fh*.1}, ${cx+fw*.3} ${y+fh*.4}, ${cx} ${y+fh*.62}" fill="none" stroke="#E0A020" stroke-width="1.6"/>`;
+    svg+=`<circle cx="${cx}" cy="${y+fh*.34}" r="${fw*.08}" fill="${i%2?'#C62828':'#141414'}" stroke="#E0A020" stroke-width="1"/>`;
+    svg+=`</g>`;
+  }
+  return svg+'</svg>';
+}
+function matryoshka(c,w,h){
+  c.save(); c.scale(w/120,h/130); c.lineJoin='round';
+  c.beginPath(); c.moveTo(60,8); c.bezierCurveTo(86,8,90,40,80,54); c.bezierCurveTo(100,70,100,122,60,124); c.bezierCurveTo(20,122,20,70,40,54); c.bezierCurveTo(30,40,34,8,60,8); c.closePath();
+  c.fillStyle='#C62828'; c.fill(); c.lineWidth=3.5; c.strokeStyle=INK; c.stroke();
+  c.beginPath(); c.arc(60,36,17,0,Math.PI*2); c.fillStyle='#F7E3C8'; c.fill(); c.lineWidth=2.5; c.stroke();
+  c.beginPath(); c.moveTo(43,32); c.quadraticCurveTo(60,18,77,32); c.lineWidth=5; c.strokeStyle='#E0A020'; c.stroke();
+  c.fillStyle=INK; [[54,38],[66,38]].forEach(([x,y])=>{ c.beginPath(); c.arc(x,y,2,0,Math.PI*2); c.fill(); });
+  c.fillStyle='rgba(230,80,90,.6)'; [[50,43],[70,43]].forEach(([x,y])=>{ c.beginPath(); c.arc(x,y,3.4,0,Math.PI*2); c.fill(); });
+  c.beginPath(); c.ellipse(60,90,22,24,0,0,Math.PI*2); c.fillStyle='#F4F1EA'; c.fill(); c.lineWidth=2.5; c.strokeStyle=INK; c.stroke();
+  for(let i=0;i<6;i++){ const a=i*Math.PI/3; c.beginPath(); c.arc(60+9*Math.cos(a),90+9*Math.sin(a),5,0,Math.PI*2); c.fillStyle='#C62828'; c.fill(); }
+  c.beginPath(); c.arc(60,90,4,0,Math.PI*2); c.fillStyle='#E0A020'; c.fill();
+  c.restore();
+}
+function samovar(c,w,h){
+  c.save(); c.scale(w/120,h/130); c.lineJoin='round';
+  c.beginPath(); c.moveTo(40,112); c.lineTo(80,112); c.lineTo(88,124); c.lineTo(32,124); c.closePath(); c.fillStyle='#B98347'; c.fill(); c.lineWidth=3; c.strokeStyle=INK; c.stroke();
+  c.beginPath(); c.moveTo(44,112); c.bezierCurveTo(18,100,22,48,44,40); c.lineTo(76,40); c.bezierCurveTo(98,48,102,100,76,112); c.closePath(); c.fillStyle='#E0A020'; c.fill(); c.stroke();
+  c.beginPath(); c.roundRect(50,26,20,14,3); c.fillStyle='#B98347'; c.fill(); c.stroke();
+  c.beginPath(); c.moveTo(56,26); c.lineTo(58,12); c.lineTo(62,12); c.lineTo(64,26); c.fillStyle='#8A5A2B'; c.fill(); c.stroke();
+  c.beginPath(); c.moveTo(60,88); c.lineTo(60,98); c.lineTo(70,98); c.lineWidth=4; c.stroke();
+  [[26,66],[94,66]].forEach(([x,y])=>{ c.beginPath(); c.arc(x,y,8,Math.PI*.5,Math.PI*1.5,x>60); c.lineWidth=4; c.strokeStyle=INK; c.stroke(); });
+  c.beginPath(); c.ellipse(46,66,6,16,0,0,Math.PI*2); c.fillStyle='rgba(255,255,255,.3)'; c.fill();
+  c.restore();
+}
+function sushki(c,w,h){ // stack of little bagels, 70x70
+  c.save(); c.scale(w/70,h/70);
+  [[24,50],[46,50],[35,36],[35,22]].forEach(([x,y])=>{ c.beginPath(); c.arc(x,y,11,0,Math.PI*2); c.arc(x,y,4,0,Math.PI*2,true); c.fillStyle='#D99A4E'; c.fill('evenodd'); c.lineWidth=2.2; c.strokeStyle=INK; c.stroke();
+    c.fillStyle='#F4F1EA'; [[-5,-6],[4,-7],[7,2]].forEach(([dx,dy])=>{ c.beginPath(); c.arc(x+dx,y+dy,1,0,Math.PI*2); c.fill(); }); });
+  c.restore();
+}
+function blini(c,w,h){
+  c.save(); c.scale(w/70,h/70); c.lineJoin='round';
+  c.beginPath(); c.ellipse(35,56,30,8,0,0,Math.PI*2); c.fillStyle='#F4F1EA'; c.fill(); c.lineWidth=2.2; c.strokeStyle=INK; c.stroke();
+  for(let i=0;i<5;i++){ c.beginPath(); c.ellipse(35,50-i*5,24,6,0,0,Math.PI*2); c.fillStyle=i%2?'#E9B35F':'#F0C57A'; c.fill(); c.lineWidth=1.6; c.stroke(); }
+  c.beginPath(); c.ellipse(35,28,8,3,0,0,Math.PI*2); c.fillStyle='#C62828'; c.fill();
+  c.restore();
+}
+THEME.deco={
+  banner:ruBanner,
+  coverSide(c,w,h,i){ i?samovar(c,w,h):matryoshka(c,w,h); },
+  corner(c){ sushki(c,70,70); },
+  pause(c,w,h){ c.save(); c.translate(8,8); blini(c,70,70); c.restore(); c.save(); c.translate(76,8); sushki(c,62,62); c.restore(); }
+};
+
+const CINCO={"code": "ru", "name": "Russia", "tz": "Europe/Moscow", "seed": 20260930, "lang": "Russian (transliterated)", "words": [{"w": "SAVES", "cat": "Football", "hint": "Lev Yashin made them in black", "fact": "In 1963 Lev Yashin won the Ballon d’Or. More than sixty years later, he is still the only goalkeeper ever to win it.", "src": "Ballon d’Or"}, {"w": "SEVEN", "cat": "Ice hockey", "hint": "Soviet Olympic golds between 1956 and 1988", "fact": "The Soviet Union won the Olympic ice hockey tournament seven times between 1956 and 1988.", "src": "Wikipedia · Soviet Union men’s national ice hockey team"}, {"w": "CHESS", "cat": "Chess", "hint": "Twenty-four years of Soviet world champions", "fact": "Mikhail Botvinnik became world chess champion in 1948. For the next 24 years every world champion came from the Soviet Union, until Bobby Fischer won in 1972.", "src": "Wikipedia · World Chess Championship 1948"}, {"w": "PAIRS", "cat": "Figure skating", "hint": "Irina Rodnina's event", "fact": "Pairs skater Irina Rodnina won three Olympic golds in a row (1972, 1976, 1980) and ten straight world championships, with two different partners.", "src": "Britannica"}, {"w": "CLUBS", "cat": "Rhythmic gymnastics", "hint": "One of the four apparatus, with ball, hoop and ribbon", "fact": "Russian gymnasts won the Olympic individual all-around in rhythmic gymnastics at every Games from Sydney 2000 to Rio 2016.", "src": "Olympics.com"}, {"w": "SKIER", "cat": "Cross-country skiing", "hint": "Raisa Smetanina, medals at five Games", "fact": "Cross-country skier Raisa Smetanina won medals at five Winter Olympics in a row, from Innsbruck 1976 to Albertville 1992.", "src": "Britannica"}, {"w": "TOWNS", "cat": "Gorodki", "hint": "What the name gorodki means: little ___", "fact": "In gorodki you throw a heavy bat at wooden pins arranged in one of 15 set figures. Leo Tolstoy and Ivan Pavlov were keen players.", "src": "Wikipedia · Gorodki"}, {"w": "SAMBO", "cat": "Martial arts", "lang": "Russian", "hint": "Soviet self-defence without weapons", "fact": "Sambo, short for \"self-defence without weapons\", was developed in the Soviet Union in the 1920s and 1930s for the Red Army, mixing judo with wrestling styles from across the country.", "src": "Wikipedia · Sambo"}, {"w": "BANDY", "cat": "Bandy", "hint": "Hockey on a football-sized ice field, with a ball", "fact": "Bandy is played with a ball on an ice field the size of a football pitch. The Soviet Union and Russia have won more world championships than any other country.", "src": "Wikipedia · Bandy"}, {"w": "SOCHI", "cat": "Olympics", "hint": "Host of the 2014 Winter Games", "fact": "Sochi, on the Black Sea coast, hosted the 2014 Winter Olympics, the first Winter Games ever held in Russia.", "src": "Olympics.com"}]};
+
+(function(){
+const $=id=>document.getElementById(id);
+const TZ=CINCO.tz||0, KEY='cinco-'+CINCO.code, TEST=/[?&]test=1/.test(location.search);
+const W=CINCO.words.map(w=>({...w,w:w.w.toUpperCase()}));
+// banner de papel picado (del tema de Stack)
+(function(){ const el=$('picado'); const W_=el.clientWidth||1000,H=el.clientHeight||74; el.innerHTML=THEME.deco.banner(W_,H); })();
+// ---- día ----
+function partes(){ try{ const f=new Intl.DateTimeFormat('en-CA',{timeZone:typeof TZ==='string'?TZ:'UTC',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}); const o={}; f.formatToParts(new Date()).forEach(p=>o[p.type]=p.value); return {date:o.year+'-'+o.month+'-'+o.day,h:+o.hour%24,m:+o.minute}; }catch(e){ const off=typeof TZ==='number'?TZ:0; const d=new Date(Date.now()+off*3600*1000); return {date:d.toISOString().slice(0,10),h:d.getUTCHours(),m:d.getUTCMinutes()}; } }
+function fechaDeHoy(){ return partes().date; }
+function restoDelDia(){ const a=partes(); const min=(23-a.h)*60+(60-a.m); const h=Math.floor(min/60),m=min%60; return (h?h+' h ':'')+m+' min'; }
+function numeroDeDia(){ return Math.floor(Date.parse(fechaDeHoy()+'T00:00:00Z')/86400000); }
+function azarFijo(semilla){ let s=semilla>>>0; return function(){ s=(s+0x6D2B79F5)>>>0; let t=s; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }; }
+let ORDEN=null; function ordenDeItems(){ if(ORDEN) return ORDEN; const a=W.slice(); const r=azarFijo(CINCO.seed||20260930); for(let i=a.length-1;i>0;i--){ const j=Math.floor(r()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return (ORDEN=a); }
+function delDia(){ const o=ordenDeItems(); const d=numeroDeDia(); return o[((d%o.length)+o.length)%o.length]; }
+// ---- estado ----
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ return {}; } }
+function save(d){ if(TEST||practice) return; try{ localStorage.setItem(KEY,JSON.stringify(d)); }catch(e){} }
+let S=load(); if(!S.stats) S.stats={played:0,won:0,streak:0,best:0,last:''};
+let practice=false, target=null, guesses=[], cur='', done=false, hinted=false;
+const ROWS=['QWERTYUIOP','ASDFGHJKL','ZXCVBNM'];
+function start(word,isPractice){ practice=!!isPractice; target=word; guesses=[]; cur=''; done=false; hinted=false; $('hint').className='hint'; $('hint').textContent=''; $('msg').textContent='';
+  if(!practice&&S.today&&S.today.date===fechaDeHoy()){ guesses=S.today.guesses.slice(); done=S.today.done; }
+  $('today').innerHTML=practice?'Practice · <b>random word</b>':'Word of the day · <b>'+fechaDeHoy()+'</b>'+(TEST?' · <b>TEST</b>':'');
+  draw(); drawKb(); stats();
+  if(done) setTimeout(()=>finish(guesses[guesses.length-1]===target.w,false),300); }
+function evalGuess(g){ const t=target.w.split(''), r=Array(5).fill('no'), used=Array(5).fill(false);
+  for(let i=0;i<5;i++) if(g[i]===t[i]){ r[i]='ok'; used[i]=true; }
+  for(let i=0;i<5;i++){ if(r[i]==='ok') continue; for(let k=0;k<5;k++){ if(!used[k]&&t[k]===g[i]){ r[i]='near'; used[k]=true; break; } } }
+  return r; }
+function draw(anim){ const b=$('board'); b.innerHTML=''; for(let r=0;r<6;r++){ const row=document.createElement('div'); row.className='row'; const g=guesses[r]||(r===guesses.length?cur:''); const ev=guesses[r]?evalGuess(guesses[r]):null;
+    for(let i=0;i<5;i++){ const t=document.createElement('div'); t.className='tile'+(ev?' '+ev[i]:(g[i]?' fill':'')); if(ev&&anim&&r===guesses.length-1){ t.classList.add('flip'); t.style.animationDelay=(i*0.12)+'s'; } t.textContent=g[i]||''; row.appendChild(t); }
+    b.appendChild(row); } }
+function kbState(){ const st={}; guesses.forEach(g=>{ const ev=evalGuess(g); for(let i=0;i<5;i++){ const L=g[i], v=ev[i]; if(v==='ok'||(v==='near'&&st[L]!=='ok')||(!st[L])) st[L]=v; } }); return st; }
+function drawKb(){ const kb=$('kb'); kb.innerHTML=''; const st=kbState(); ROWS.forEach((r,ri)=>{ const d=document.createElement('div'); if(ri===2){ d.appendChild(key('ENTER','wide')); } r.split('').forEach(L=>{ d.appendChild(key(L,st[L]||'')); }); if(ri===2){ d.appendChild(key('⌫','wide')); } kb.appendChild(d); }); }
+function key(L,cls){ const b=document.createElement('button'); b.textContent=L; b.className=cls; b.dataset.k=L; return b; }
+$('kb').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b) press(b.dataset.k); });
+document.addEventListener('keydown',e=>{ if(e.metaKey||e.ctrlKey||e.altKey) return; if(!$('endOv').hidden) return; const k=e.key; if(k==='Enter') press('ENTER'); else if(k==='Backspace') press('⌫'); else if(/^[a-zA-Z]$/.test(k)) press(k.toUpperCase()); });
+function press(k){ if(done) return; if(k==='ENTER'){ submit(); return; } if(k==='⌫'){ cur=cur.slice(0,-1); draw(); return; } if(cur.length<5){ cur+=k; draw(); } }
+function submit(){ if(cur.length<5){ shake('Five letters'); return; } guesses.push(cur); const won=cur===target.w; cur=''; draw(true); drawKb();
+  if(!practice){ S.today={date:fechaDeHoy(),guesses:guesses.slice(),done:won||guesses.length===6}; save(S); }
+  if(won||guesses.length===6){ done=true; if(!practice){ const st=S.stats; if(st.last!==fechaDeHoy()){ st.played++; if(won){ st.streak=(st.lastWon===prevDay()?st.streak:0)+1; st.won++; st.lastWon=fechaDeHoy(); } else st.streak=0; st.best=Math.max(st.best,st.streak); st.last=fechaDeHoy(); save(S); } }
+    setTimeout(()=>finish(won,true),5*120+500); } else { $('msg').textContent=['','Good start.','Warmer.','Keep going.','Two left.','Last one!'][guesses.length]||''; } }
+function prevDay(){ const d=new Date(Date.parse(fechaDeHoy()+'T00:00:00Z')-86400000); return d.toISOString().slice(0,10); }
+function shake(m){ const row=$('board').children[guesses.length]; if(row){ row.classList.add('shake'); setTimeout(()=>row.classList.remove('shake'),400); } $('msg').textContent=m; }
+function stats(){ const st=S.stats; $('sPlayed').textContent=st.played; $('sWon').textContent=st.won; $('sStreak').textContent=st.streak; $('next').textContent='in '+restoDelDia(); }
+setInterval(()=>{ $('next').textContent='in '+restoDelDia(); },60000);
+function finish(won,fresh){ const t=target; $('endTag').textContent=won?'Did you know?':'The word was';
+  $('endH').textContent=won?['Perfect!','Brilliant!','Great!','Nice one!','Got it!','Phew!'][guesses.length-1]:t.w; $('endWord').textContent=t.w+' · '+t.cat+(t.lang?' · '+t.lang:'');
+  $('endFact').textContent=t.fact; $('endSrc').textContent=t.src?'Source: '+t.src:'';
+  $('endGrid').textContent=guesses.map(g=>evalGuess(g).map(v=>v==='ok'?'🟩':v==='near'?'🟨':'⬛').join('')).join('\n');
+  $('btnAgain').hidden=false; $('endOv').hidden=false; stats(); }
+$('btnClose').onclick=()=>{ $('endOv').hidden=true; };
+$('btnAgain').onclick=()=>{ $('endOv').hidden=true; random(); };
+$('btnShare').onclick=()=>{ const txt='Cinco · '+CINCO.name+' · '+(practice?'practice':fechaDeHoy())+' · '+(guesses[guesses.length-1]===target.w?guesses.length:'X')+'/6\n'+$('endGrid').textContent+'\nfirstplace.games'; const ok=()=>{ $('btnShare').textContent='Copied!'; setTimeout(()=>$('btnShare').textContent='Copy result',1500); }; if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(ok,()=>{ $('endGrid').textContent=txt; }); else $('endGrid').textContent=txt; };
+$('btnHint').onclick=()=>{ if(done) return; hinted=true; const h=$('hint'); h.className='hint on'; h.innerHTML='<b>'+target.cat+'</b>'+(target.hint?' — '+target.hint:'')+(target.lang?'<br><span style="opacity:.7">A word in '+target.lang+'</span>':''); };
+function random(){ let w; do{ w=W[Math.floor(Math.random()*W.length)]; }while(W.length>1&&w===target); start(w,true); }
+$('btnRandom').onclick=()=>{ if(practice||done) random(); else if(confirmLeave()) random(); };
+function confirmLeave(){ if(guesses.length===0) return true; $('msg').textContent='Finish today\'s word first, or press Practice again to leave it.'; $('btnRandom').onclick=()=>random(); return false; }
+start(delDia(),false);
+})();
+</script>
+
+</body>
+</html>

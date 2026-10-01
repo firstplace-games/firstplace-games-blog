@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Cinco México: guess the five-letter word from México's sporting life. A new word every day, six tries, and a fact with its source when you solve it.">
+<title>Cinco · México — a five-letter sports word a day · FirstPlace.games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{
+  --noche:#1A0F2E; --noche-2:#26173F; --pozo:#110A1E;
+  --papel:#F3E9D2; --tinta:#141A1F; --pizarra:#5A6672;
+  --rosa:#E6007E; --cempa:#F7A21B; --punto:#F4551D; --turq:#12A89D; --verde:#1E9E57; --amarillo:#FFC53D;
+  --display:"Archivo","Arial Black",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--noche);color:var(--papel);font-family:var(--display);overflow-x:hidden;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23F3E9D2' stroke-opacity='.06' stroke-width='1.5'%3E%3Cpath d='M32 8 L40 24 L56 32 L40 40 L32 56 L24 40 L8 32 L24 24Z'/%3E%3Ccircle cx='32' cy='32' r='5'/%3E%3C/g%3E%3C/svg%3E")}
+button{font-family:var(--display);cursor:pointer}
+button:focus-visible{outline:3px solid var(--cempa);outline-offset:2px}
+#app{min-height:100%;display:flex;flex-direction:column;padding-inline:16px;padding-bottom:18px}
+#picado{flex:none;height:74px;margin-inline:-16px;overflow:hidden}
+#picado svg{display:block;width:100%;height:100%}
+.flag{transform-origin:50% 0;animation:sway 4.5s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-2.2deg)}to{transform:rotate(2.2deg)}}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:6px 10px;max-width:1040px;width:100%;margin:0 auto}
+.brand{font-weight:800;font-stretch:112%;letter-spacing:-.012em;font-size:15px;color:var(--papel);opacity:.85;text-decoration:none}
+.brand i{font-style:normal;color:var(--punto)}
+.gname{font-weight:900;font-stretch:125%;font-size:20px;letter-spacing:.02em;text-transform:uppercase}
+.gname span{color:var(--cempa)}
+.tbtns{display:flex;gap:8px}
+.tbtn{background:transparent;color:var(--papel);border:2px solid var(--papel);padding:4px 10px;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.tbtn:hover{background:var(--papel);color:var(--tinta)}
+.stage{display:grid;grid-template-columns:minmax(0,230px) auto minmax(0,230px);gap:22px;justify-content:center;align-items:start;max-width:1040px;width:100%;margin:0 auto;padding-top:8px}
+.card{background:var(--papel);color:var(--tinta);border:3px solid var(--tinta);box-shadow:6px 6px 0 rgba(0,0,0,.45);position:relative;padding:20px 14px 14px}
+.stamp{position:absolute;top:-13px;left:-8px;transform:rotate(-2deg);background:var(--rosa);color:#fff;border:2.5px solid var(--tinta);font-weight:800;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px}
+.stamp.o{background:var(--cempa);color:var(--tinta)}
+.stamp.t{background:var(--turq);color:#fff}
+.card p{margin:0;font-family:var(--mono);font-size:12px;line-height:1.6}
+.card p+p{margin-top:8px}
+.card b.k{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--pizarra);display:block;margin-bottom:2px}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px}
+.stats div{text-align:center}
+.stats big{display:block;font-weight:900;font-size:24px;font-stretch:112%}
+.stats small{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--pizarra)}
+/* tablero */
+.mid{display:flex;flex-direction:column;align-items:center;gap:14px}
+.today{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--cempa);text-align:center}
+.today b{color:var(--papel);font-weight:600}
+#board{display:grid;grid-template-rows:repeat(6,1fr);gap:6px;padding:10px;background:#F3EEE3;border:3px solid var(--tinta);box-shadow:7px 7px 0 rgba(0,0,0,.45);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Crect width='20' height='20' fill='%23F3EEE3'/%3E%3Cpath d='M10 2 L18 10 L10 18 L2 10Z' fill='none' stroke='%231D3E9E' stroke-opacity='.25'/%3E%3C/svg%3E")}
+.row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.tile{width:58px;height:58px;display:grid;place-items:center;background:var(--pozo);color:var(--papel);border:3px solid var(--tinta);font-weight:900;font-size:28px;font-stretch:112%;text-transform:uppercase;transition:transform .12s}
+.tile.fill{transform:scale(1.06);border-color:var(--papel)}
+.tile.ok{background:var(--verde);color:#fff}
+.tile.near{background:var(--amarillo);color:var(--tinta)}
+.tile.no{background:#3a3f47;color:#cfd3d8}
+.tile.flip{animation:flip .5s ease}
+@keyframes flip{0%{transform:rotateX(0)}50%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
+.row.shake{animation:shake .35s}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.msg{min-height:22px;font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;text-align:center;color:var(--cempa)}
+/* teclado */
+#kb{display:flex;flex-direction:column;gap:6px;align-items:center;user-select:none;-webkit-user-select:none}
+#kb div{display:flex;gap:5px}
+#kb button{min-width:34px;height:48px;padding:0 6px;background:var(--papel);color:var(--tinta);border:2.5px solid var(--tinta);box-shadow:3px 3px 0 rgba(0,0,0,.45);font-weight:800;font-size:15px;text-transform:uppercase}
+#kb button.wide{min-width:58px;font-size:11px;letter-spacing:.06em}
+#kb button.ok{background:var(--verde);color:#fff}
+#kb button.near{background:var(--amarillo)}
+#kb button.no{background:#3a3f47;color:#cfd3d8;box-shadow:none}
+#kb button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 rgba(0,0,0,.45)}
+/* pistas y final */
+.hint{display:none;background:var(--noche-2);border:2px dashed var(--cempa);padding:8px 12px;font-family:var(--mono);font-size:12px;line-height:1.6;max-width:360px;text-align:center}
+.hint.on{display:block}
+.ov{position:fixed;inset:0;background:rgba(10,6,18,.78);display:flex;align-items:center;justify-content:center;padding:16px;z-index:9}
+.ov[hidden]{display:none}
+.panel{background:var(--papel);color:var(--tinta);border:3px solid var(--tinta);box-shadow:9px 9px 0 rgba(0,0,0,.55);width:min(520px,100%);padding:30px 26px 24px;position:relative}
+.panel h2{margin:0 0 6px;font-weight:900;font-stretch:125%;font-size:30px;letter-spacing:.02em;text-transform:uppercase}
+.panel .word{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--pizarra);margin-bottom:12px}
+.panel p{font-size:15px;line-height:1.55;margin:0 0 8px}
+.panel .src{font-family:var(--mono);font-size:11px;color:var(--pizarra)}
+.panel .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.big-btn{background:var(--punto);color:#fff;border:3px solid var(--tinta);box-shadow:5px 5px 0 rgba(0,0,0,.45);font-weight:900;font-size:15px;letter-spacing:.08em;text-transform:uppercase;padding:10px 18px}
+.big-btn.alt{background:var(--papel);color:var(--tinta)}
+.dyk{font-family:var(--mono);font-weight:600;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--rosa)}
+.grid{font-family:var(--mono);font-size:18px;line-height:1.15;letter-spacing:.05em;margin:10px 0}
+/* banderas */
+.cov-nav{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;margin-top:22px}
+.cov-flags{display:flex;flex-wrap:wrap;justify-content:center;gap:2px;max-width:760px}
+.cov-flags a{display:flex;flex-direction:column;align-items:center;width:44px;padding:3px 0 2px;border:2px solid transparent;border-radius:5px;text-decoration:none;color:var(--papel);line-height:1}
+.cov-flags a b{font-size:20px;font-weight:400;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.cov-flags a span{font-family:var(--mono);font-size:7.5px;letter-spacing:.03em;opacity:.75;margin-top:2px;white-space:nowrap;overflow:hidden;max-width:44px;text-overflow:ellipsis}
+.cov-flags a:hover,.cov-flags a:focus-visible{border-color:var(--cempa);background:rgba(247,162,27,.14);outline:none}
+.cov-flags a[aria-current]{border-color:var(--cempa);background:rgba(247,162,27,.22)}
+.cov-links{font-family:var(--mono);font-size:12px}
+.cov-links a{color:var(--papel);text-decoration:none;border-bottom:1px solid rgba(243,233,210,.35)}
+.cov-links a:hover{color:var(--cempa);border-color:var(--cempa)}
+.cov-links i{font-style:normal;opacity:.6;margin:0 4px}
+@media (max-width:900px){.stage{grid-template-columns:1fr;gap:16px}.side{display:none}.tile{width:52px;height:52px;font-size:24px}}
+@media (max-width:600px){.top{flex-wrap:wrap;justify-content:center;gap:6px 14px}.brand{font-size:13px}.gname{font-size:17px;width:100%;text-align:center;order:-1}}
+@media (max-width:420px){.tile{width:46px;height:46px;font-size:22px}#kb button{min-width:29px;height:44px;padding:0 4px;font-size:13px}#kb button.wide{min-width:48px}#picado{height:44px}}
+</style>
+
+</head>
+<body>
+<div id="app">
+  <div id="picado" aria-hidden="true"></div>
+  <div class="top">
+    <a class="brand" href="../juegos.html">← FirstPlace<i>.</i>games</a>
+    <div class="gname">Cinco <span>· México</span></div>
+    <div class="tbtns"><button class="tbtn" id="btnHint">Hint</button><button class="tbtn" id="btnRandom">Practice</button></div>
+  </div>
+  <div class="stage">
+    <div class="side card"><span class="stamp">How to play</span>
+      <p>A five-letter word from México's sporting life: a sport, a club, a stadium, a legend, a shout from the stands. Six tries.</p>
+      <p><b class="k">Colors</b>Green: right letter, right spot. Yellow: right letter, wrong spot. Grey: not in the word.</p>
+      <p><b class="k">Words</b>Some are in Spanish, as people say them there. Hint gives you the category. Practice gives you a random word from the list, no limits.</p>
+    </div>
+    <div class="mid">
+      <div class="today" id="today"></div>
+      <div id="board"></div>
+      <div class="msg" id="msg"></div>
+      <div class="hint" id="hint"></div>
+      <div id="kb"></div>
+    </div>
+    <div class="side card"><span class="stamp o">Your record</span>
+      <div class="stats"><div><big id="sPlayed">0</big><small>played</small></div><div><big id="sWon">0</big><small>solved</small></div><div><big id="sStreak">0</big><small>streak</small></div></div>
+      <p style="margin-top:12px"><b class="k">Next word</b><span id="next"></span></p>
+    </div>
+  </div>
+  <nav class="cov-nav" aria-label="Countries"><div class="cov-flags"><a href="cinco-mexico.html" aria-current="page" title="Cinco México"><b>🇲🇽</b><span>México</span></a><a href="cinco-usa.html" title="Cinco USA"><b>🇺🇸</b><span>USA</span></a><a href="cinco-france.html" title="Cinco France"><b>🇫🇷</b><span>France</span></a><a href="cinco-india.html" title="Cinco India"><b>🇮🇳</b><span>India</span></a><a href="cinco-china.html" title="Cinco China"><b>🇨🇳</b><span>China</span></a><a href="cinco-brasil.html" title="Cinco Brasil"><b>🇧🇷</b><span>Brasil</span></a><a href="cinco-indonesia.html" title="Cinco Indonesia"><b>🇮🇩</b><span>Indonesia</span></a><a href="cinco-nigeria.html" title="Cinco Nigeria"><b>🇳🇬</b><span>Nigeria</span></a><a href="cinco-pakistan.html" title="Cinco Pakistan"><b>🇵🇰</b><span>Pakistan</span></a><a href="cinco-bangladesh.html" title="Cinco Bangladesh"><b>🇧🇩</b><span>Bangladesh</span></a><a href="cinco-russia.html" title="Cinco Russia"><b>🇷🇺</b><span>Russia</span></a><a href="cinco-ethiopia.html" title="Cinco Ethiopia"><b>🇪🇹</b><span>Ethiopia</span></a><a href="cinco-japan.html" title="Cinco Japan"><b>🇯🇵</b><span>Japan</span></a><a href="cinco-korea.html" title="Cinco Korea"><b>🇰🇷</b><span>Korea</span></a><a href="cinco-italy.html" title="Cinco Italy"><b>🇮🇹</b><span>Italy</span></a><a href="cinco-spain.html" title="Cinco Spain"><b>🇪🇸</b><span>Spain</span></a><a href="cinco-uk.html" title="Cinco UK"><b>🇬🇧</b><span>UK</span></a><a href="cinco-germany.html" title="Cinco Germany"><b>🇩🇪</b><span>Germany</span></a><a href="cinco-netherlands.html" title="Cinco Netherlands"><b>🇳🇱</b><span>Netherlands</span></a><a href="cinco-portugal.html" title="Cinco Portugal"><b>🇵🇹</b><span>Portugal</span></a><a href="cinco-argentina.html" title="Cinco Argentina"><b>🇦🇷</b><span>Argentina</span></a><a href="cinco-uruguay.html" title="Cinco Uruguay"><b>🇺🇾</b><span>Uruguay</span></a><a href="cinco-chile.html" title="Cinco Chile"><b>🇨🇱</b><span>Chile</span></a><a href="cinco-colombia.html" title="Cinco Colombia"><b>🇨🇴</b><span>Colombia</span></a><a href="cinco-cuba.html" title="Cinco Cuba"><b>🇨🇺</b><span>Cuba</span></a></div><div class="cov-links"><a href="cinco.html">All countries</a> <i>·</i> <a href="../juegos.html">← All games</a> <i>·</i> <a href="../index.html">Map</a></div></nav>
+</div>
+<div class="ov" id="endOv" hidden><div class="panel">
+  <div class="dyk" id="endTag">Did you know?</div>
+  <h2 id="endH"></h2>
+  <div class="word" id="endWord"></div>
+  <p id="endFact"></p>
+  <p class="src" id="endSrc"></p>
+  <div class="grid" id="endGrid"></div>
+  <div class="btns"><button class="big-btn" id="btnShare">Copy result</button><button class="big-btn alt" id="btnClose">Close</button><button class="big-btn alt" id="btnAgain">Practice another</button></div>
+</div></div>
+<script>
+const INK='#141A1F';
+function strokeInk(c, w){ c.lineWidth = w; c.strokeStyle = INK; c.stroke(); }
+const ORDER=['I','O','T','S','Z','L','J'];
+/* ================= THEME: MÉXICO =================
+   Everything country-specific lives here. USA and France become new THEME objects. */
+const THEME = {
+  id:'stack-mx',
+  levelName:'Round',
+  letters:['#E6007E','#12A89D','#F7A21B','#9B5DE5','#1E9E57'],
+  pieces:{
+    I:{ sport:'Baseball',       thing:'bat',            bg:'#12A89D' },
+    O:{ sport:'Boxing',         thing:'red glove',      bg:'#FFC53D' },
+    T:{ sport:'Football',       thing:'ball',           bg:'#1E9E57' },
+    S:{ sport:'Lucha libre',    thing:'mask',           bg:'#E6007E' },
+    Z:{ sport:'Ulama',          thing:'rubber ball',    bg:'#9B5DE5' },
+    L:{ sport:'Charrería',      thing:'lasso',          bg:'#F4551D' },
+    J:{ sport:'Frontón',        thing:'paddle & ball',  bg:'#2F5BD3' }
+  },
+  shouts:['','¡Órale!','¡Ándale!','¡Ajúa!','¡GOOOL!'],
+  confetti:['#E6007E','#F7A21B','#12A89D','#9B5DE5','#1E9E57','#FFC53D','#2F5BD3','#F3E9D2'],
+  facts:[
+    { piece:'L', title:'Charrería is world heritage',
+      text:'In 2016 UNESCO added charrería, the Mexican equestrian tradition of roping and riding, to its list of the Intangible Cultural Heritage of Humanity.',
+      src:'UNESCO', url:'https://ich.unesco.org/en/RL/charreria-equestrian-tradition-in-mexico-01108' },
+    { piece:'O', title:'132,000 people, one fight',
+      text:'On 20 February 1993 Julio César Chávez fought Greg Haugen at Estadio Azteca in front of more than 132,000 fans, the biggest crowd ever for a boxing match.',
+      src:'Wikipedia · Chávez vs. Haugen', url:'https://en.wikipedia.org/wiki/Julio_C%C3%A9sar_Ch%C3%A1vez_vs._Greg_Haugen' },
+    { piece:'I', title:'Fernandomania',
+      text:'In 1981 Fernando Valenzuela, from Sonora, won Rookie of the Year and the Cy Young Award in the same season. He was the first player ever to do it.',
+      src:'SABR', url:'https://sabr.org/journal/article/fernandomania/' },
+    { piece:'S', title:'The oldest ring still open',
+      text:'Salvador Lutteroth founded the Empresa Mexicana de Lucha Libre in 1933. Today it is CMLL, the oldest professional wrestling promotion still running.',
+      src:'Wikipedia · CMLL', url:'https://en.wikipedia.org/wiki/Consejo_Mundial_de_Lucha_Libre' },
+    { piece:'Z', title:'A game older than the pyramids of Teotihuacan',
+      text:'Ulama is still played in Sinaloa. It comes from the Mesoamerican ballgame: the oldest known court, at Paso de la Amada in Chiapas, is more than 3,500 years old.',
+      src:'Wikipedia · Ulama', url:'https://en.wikipedia.org/wiki/Ulama_(game)' },
+    { piece:'T', title:'Three openers, one stadium',
+      text:'Estadio Azteca hosted the opening match of the World Cup in 1970, 1986 and 2026. No other stadium has hosted three.',
+      src:'FIFA', url:'https://www.fifa.com/en/tournaments/mens/worldcup/articles/estadio-azteca-mexico-city-host-opening-match-world-cup-2026' },
+    { piece:'J', title:'Frontón at the Olympics',
+      text:'When Mexico City hosted the 1968 Olympics, the first Games in Latin America, Basque pelota, the family of games that includes frontón, was played as a demonstration sport.',
+      src:'Wikipedia · Basque pelota at the 1968 Olympics', url:'https://en.wikipedia.org/wiki/Basque_pelota_at_the_1968_Summer_Olympics' }
+  ]
+};
+
+/* ================= ICONS (drawn by code, unit square) ================= */
+
+function drawBall(c){ // football
+  c.save();
+  c.beginPath(); c.arc(.5,.5,.35,0,Math.PI*2); c.fillStyle='#FFFFFF'; c.fill();
+  c.clip();
+  const pent=(cx,cy,r,rot)=>{ c.beginPath(); for(let i=0;i<5;i++){const a=rot+i*Math.PI*2/5; c.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));} c.closePath(); };
+  c.fillStyle=INK;
+  pent(.5,.5,.12,-Math.PI/2); c.fill();
+  c.lineWidth=.025; c.strokeStyle=INK;
+  for(let i=0;i<5;i++){
+    const a=-Math.PI/2+i*Math.PI*2/5;
+    const x1=.5+.12*Math.cos(a), y1=.5+.12*Math.sin(a);
+    const x2=.5+.26*Math.cos(a), y2=.5+.26*Math.sin(a);
+    c.beginPath(); c.moveTo(x1,y1); c.lineTo(x2,y2); c.stroke();
+    const b=a+Math.PI/5; pent(.5+.37*Math.cos(b),.5+.37*Math.sin(b),.11,b); c.fill();
+  }
+  c.restore();
+  c.beginPath(); c.arc(.5,.5,.35,0,Math.PI*2); strokeInk(c,.045);
+  c.beginPath(); c.arc(.42,.38,.08,0,Math.PI*2); c.fillStyle='rgba(255,255,255,.35)'; c.fill();
+}
+
+function drawGlove(c){
+  // cuff
+  c.beginPath(); c.roundRect(.31,.64,.36,.22,.04); c.fillStyle='#FFFFFF'; c.fill(); strokeInk(c,.04);
+  c.fillStyle='#D62828'; c.fillRect(.31,.72,.36,.05);
+  // thumb
+  c.save(); c.translate(.71,.47); c.rotate(-.35);
+  c.beginPath(); c.ellipse(0,0,.1,.17,0,0,Math.PI*2); c.fillStyle='#C21F1F'; c.fill(); strokeInk(c,.04); c.restore();
+  // mitt
+  c.beginPath(); c.roundRect(.2,.12,.5,.56,[.24,.24,.16,.16]); c.fillStyle='#D62828'; c.fill(); strokeInk(c,.045);
+  // knuckle line
+  c.beginPath(); c.moveTo(.26,.42); c.quadraticCurveTo(.45,.5,.64,.42); c.lineWidth=.03; c.strokeStyle='#8E1515'; c.stroke();
+  // shine
+  c.beginPath(); c.ellipse(.36,.26,.07,.04,-.5,0,Math.PI*2); c.fillStyle='rgba(255,255,255,.55)'; c.fill();
+}
+
+function drawMask(c){
+  // head
+  c.beginPath(); c.ellipse(.5,.52,.3,.37,0,0,Math.PI*2); c.fillStyle='#F7F5F0'; c.fill(); strokeInk(c,.045);
+  c.save(); c.beginPath(); c.ellipse(.5,.52,.3,.37,0,0,Math.PI*2); c.clip();
+  // centre crest
+  c.beginPath(); c.moveTo(.5,.13); c.lineTo(.6,.3); c.lineTo(.5,.46); c.lineTo(.4,.3); c.closePath(); c.fillStyle='#FFC53D'; c.fill(); strokeInk(c,.025);
+  c.restore();
+  // eye trims (flames)
+  const eye=(x,dir)=>{
+    c.save(); c.translate(x,.52); c.scale(dir,1);
+    c.beginPath(); c.moveTo(-.1,.02); c.quadraticCurveTo(-.02,-.1,.1,-.08); c.quadraticCurveTo(.2,-.12,.22,-.18); c.quadraticCurveTo(.2,.02,.09,.07); c.quadraticCurveTo(-.04,.1,-.1,.02); c.closePath();
+    c.fillStyle='#1D3E9E'; c.fill(); strokeInk(c,.02);
+    c.beginPath(); c.ellipse(.03,-.005,.07,.045,-.15,0,Math.PI*2); c.fillStyle=INK; c.fill();
+    c.restore();
+  };
+  eye(.38,-1); eye(.62,1);
+  // mouth
+  c.beginPath(); c.ellipse(.5,.75,.1,.06,0,0,Math.PI*2); c.fillStyle='#1D3E9E'; c.fill(); strokeInk(c,.02);
+  c.beginPath(); c.ellipse(.5,.75,.06,.03,0,0,Math.PI*2); c.fillStyle=INK; c.fill();
+}
+
+function drawUlama(c){
+  const g=c.createRadialGradient(.4,.36,.03,.5,.5,.36);
+  g.addColorStop(0,'#5a5a5a'); g.addColorStop(.5,'#262626'); g.addColorStop(1,'#0d0d0d');
+  c.beginPath(); c.arc(.5,.52,.34,0,Math.PI*2); c.fillStyle=g; c.fill(); strokeInk(c,.04);
+  c.beginPath(); c.ellipse(.39,.37,.09,.05,-.6,0,Math.PI*2); c.fillStyle='rgba(255,255,255,.7)'; c.fill();
+  c.beginPath(); c.arc(.5,.52,.26,.3,1.3); c.lineWidth=.02; c.strokeStyle='rgba(255,255,255,.18)'; c.stroke();
+}
+
+function drawLasso(c){
+  const loops=[[.5,.44,.3,.2],[.5,.46,.22,.14],[.5,.48,.14,.08]];
+  loops.forEach(([x,y,rx,ry])=>{
+    c.beginPath(); c.ellipse(x,y,rx,ry,-.15,0,Math.PI*2); c.lineWidth=.11; c.strokeStyle=INK; c.stroke();
+    c.lineWidth=.065; c.strokeStyle='#F7E6C4'; c.stroke();
+  });
+  // tail
+  c.beginPath(); c.moveTo(.72,.56); c.quadraticCurveTo(.78,.8,.6,.88); c.lineWidth=.11; c.strokeStyle=INK; c.stroke();
+  c.lineWidth=.065; c.strokeStyle='#F7E6C4'; c.stroke();
+  // twist ticks
+  c.strokeStyle='#B98B4E'; c.lineWidth=.018;
+  for(let i=0;i<22;i++){
+    const a=i/22*Math.PI*2, x=.5+.3*Math.cos(a), y=.44+.2*Math.sin(a);
+    c.beginPath(); c.moveTo(x-.02,y-.02); c.lineTo(x+.02,y+.02); c.stroke();
+  }
+}
+
+function drawPaddle(c){
+  c.save(); c.translate(.44,.56); c.rotate(-.6);
+  c.beginPath(); c.roundRect(-.045,.12,.09,.3,.02); c.fillStyle='#2B2B2B'; c.fill(); strokeInk(c,.035);
+  c.beginPath(); c.roundRect(-.15,-.34,.3,.5,[.14,.14,.06,.06]); c.fillStyle='#E3B778'; c.fill(); strokeInk(c,.04);
+  c.beginPath(); c.moveTo(-.08,-.25); c.lineTo(-.08,.08); c.moveTo(.02,-.28); c.lineTo(.02,.1); c.lineWidth=.012; c.strokeStyle='rgba(120,70,20,.45)'; c.stroke();
+  c.restore();
+  c.beginPath(); c.arc(.76,.26,.1,0,Math.PI*2); c.fillStyle='#FFFFFF'; c.fill(); strokeInk(c,.035);
+  c.beginPath(); c.arc(.76,.26,.06,-1.2,1.2); c.lineWidth=.015; c.strokeStyle='#D62828'; c.stroke();
+}
+
+// the bat spans 4 cells: drawn into a 4x1 unit strip, knob on the left
+function drawBat(c){
+  const r=x=>{
+    if (x<1.45) return .085;
+    if (x<2.75){ const t=(x-1.45)/1.3, s=t*t*(3-2*t); return .085+s*(.27-.085); }
+    return .27;
+  };
+  const x0=.34, x1=3.72, N=80;
+  c.beginPath();
+  for(let i=0;i<=N;i++){ const x=x0+(x1-x0)*i/N; c.lineTo(x,.5-r(x)); }
+  c.arc(x1,.5,.27,-Math.PI/2,Math.PI/2);
+  for(let i=N;i>=0;i--){ const x=x0+(x1-x0)*i/N; c.lineTo(x,.5+r(x)); }
+  c.closePath();
+  const g=c.createLinearGradient(0,.2,0,.8); g.addColorStop(0,'#F4DBA8'); g.addColorStop(.55,'#DDB06E'); g.addColorStop(1,'#B98347');
+  c.fillStyle=g; c.fill(); strokeInk(c,.05);
+  // grip tape
+  c.save(); c.beginPath(); c.rect(.34,.3,1.0,.4); c.clip();
+  c.fillStyle='#262626'; c.fillRect(.34,.4,1.0,.2);
+  c.strokeStyle='rgba(255,255,255,.35)'; c.lineWidth=.02;
+  for(let x=.34;x<1.4;x+=.09){ c.beginPath(); c.moveTo(x,.6); c.lineTo(x+.08,.4); c.stroke(); }
+  c.restore();
+  // knob
+  c.beginPath(); c.ellipse(.26,.5,.09,.2,0,0,Math.PI*2); c.fillStyle='#C99559'; c.fill(); strokeInk(c,.05);
+  // grain + shine
+  c.strokeStyle='rgba(120,70,20,.35)'; c.lineWidth=.014;
+  [[2.5,3.6,.44],[2.9,3.7,.56],[2.2,3.2,.5]].forEach(([a,b,y])=>{c.beginPath();c.moveTo(a,y);c.lineTo(b,y);c.stroke();});
+  c.beginPath(); c.moveTo(2.6,.33); c.lineTo(3.7,.33); c.lineWidth=.05; c.strokeStyle='rgba(255,255,255,.45)'; c.stroke();
+}
+
+THEME.pieces.O.draw=drawGlove; THEME.pieces.T.draw=drawBall; THEME.pieces.S.draw=drawMask;
+THEME.pieces.Z.draw=drawUlama; THEME.pieces.L.draw=drawLasso; THEME.pieces.J.draw=drawPaddle;
+THEME.long=drawBat;
+
+/* ---------- decorative drawings ---------- */
+function marigold(c,x,y,R){
+  const rings=[[R,'#E8731A',14],[R*.78,'#F7A21B',12],[R*.55,'#FFB938',10],[R*.32,'#F7A21B',8]];
+  rings.forEach(([rr,col,n],k)=>{
+    for(let i=0;i<n;i++){const a=i/n*Math.PI*2+k*.3; c.beginPath(); c.arc(x+rr*.72*Math.cos(a),y+rr*.72*Math.sin(a),rr*.34,0,Math.PI*2); c.fillStyle=col; c.fill(); c.lineWidth=1; c.strokeStyle='rgba(120,40,0,.45)'; c.stroke();}
+  });
+  c.beginPath(); c.arc(x,y,R*.14,0,Math.PI*2); c.fillStyle='#8A3B0A'; c.fill();
+}
+function skull(c,w,h,accent){
+  c.save(); c.scale(w/100,h/110);
+  c.lineJoin='round';
+  // cranium + jaw
+  c.beginPath(); c.moveTo(18,52); c.bezierCurveTo(10,10,90,10,82,52); c.bezierCurveTo(82,66,74,70,72,78); c.lineTo(70,92); c.bezierCurveTo(60,100,40,100,30,92); c.lineTo(28,78); c.bezierCurveTo(26,70,18,66,18,52); c.closePath();
+  c.fillStyle='#F7F3EA'; c.fill(); c.lineWidth=3.5; c.strokeStyle=INK; c.stroke();
+  // eyes with flower
+  [[36,54],[64,54]].forEach(([x,y])=>{
+    c.beginPath(); c.arc(x,y,11,0,Math.PI*2); c.fillStyle=INK; c.fill();
+    for(let i=0;i<6;i++){const a=i/6*Math.PI*2; c.beginPath(); c.arc(x+5.5*Math.cos(a),y+5.5*Math.sin(a),3.6,0,Math.PI*2); c.fillStyle=accent; c.fill();}
+    c.beginPath(); c.arc(x,y,2.8,0,Math.PI*2); c.fillStyle='#FFC53D'; c.fill();
+  });
+  // nose heart
+  c.beginPath(); c.moveTo(50,76); c.bezierCurveTo(42,70,45,63,50,67); c.bezierCurveTo(55,63,58,70,50,76); c.fillStyle=INK; c.fill();
+  // teeth
+  c.lineWidth=2.4; c.strokeStyle=INK;
+  c.beginPath(); c.moveTo(34,86); c.lineTo(66,86); c.stroke();
+  for(let x=38;x<=62;x+=6){ c.beginPath(); c.moveTo(x,81); c.lineTo(x,91); c.stroke(); }
+  // forehead petals
+  for(let i=0;i<5;i++){const a=-Math.PI/2+(i-2)*.42; c.beginPath(); c.ellipse(50+16*Math.cos(a),38+16*Math.sin(a),3,6,a+Math.PI/2,0,Math.PI*2); c.fillStyle=i%2?'#12A89D':accent; c.fill();}
+  c.beginPath(); c.arc(50,30,4,0,Math.PI*2); c.fillStyle='#FFC53D'; c.fill(); c.lineWidth=1.5; c.stroke();
+  // cheek swirls
+  [[24,64,1],[76,64,-1]].forEach(([x,y,d])=>{c.beginPath(); c.arc(x,y,5,0,Math.PI*1.5*d>0?4.7:4.7,d<0); c.lineWidth=2; c.strokeStyle='#12A89D'; c.stroke();});
+  c.restore();
+}
+function taco(c,w,h){
+  c.save(); c.scale(w/140,h/84);
+  // fillings
+  const blobs=[['#3FA34D',[30,44,14],[52,34,14],[76,32,14],[100,36,14],[116,46,12]],['#D62828',[44,40,8],[70,34,8],[96,38,8]],['#6B3A1E',[38,50,10],[62,44,10],[88,44,10],[108,52,9]]];
+  blobs.forEach(([col,...ps])=>ps.forEach(([x,y,r])=>{c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fillStyle=col;c.fill();}));
+  c.beginPath(); c.moveTo(14,70); c.bezierCurveTo(14,20,126,20,126,70); c.lineTo(126,74); c.lineTo(14,74); c.closePath();
+  c.beginPath(); c.moveTo(12,72); c.bezierCurveTo(16,40,50,30,70,52); c.bezierCurveTo(90,30,124,40,128,72); c.closePath();
+  c.fillStyle='#F2C14E'; c.fill(); c.lineWidth=3.5; c.strokeStyle=INK; c.stroke();
+  for(let i=0;i<9;i++){c.beginPath();c.arc(28+i*11,62-(i%2)*4,1.8,0,Math.PI*2);c.fillStyle='#C98A1E';c.fill();}
+  c.restore();
+}
+
+
+function mxBanner(W,H){
+  const cols=['#E6007E','#F7A21B','#12A89D','#9B5DE5','#1E9E57','#FFC53D','#2F5BD3'];
+  const fw=Math.max(46,Math.min(72,H*0.95)), gap=6, n=Math.ceil(W/(fw+gap))+1;
+  const fh=H-10;
+  let svg=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">`;
+  svg+=`<path d="M0 5 Q ${W/2} 12 ${W} 5" stroke="#F3E9D2" stroke-opacity=".7" stroke-width="1.5" fill="none"/>`;
+  for(let i=0;i<n;i++){
+    const x=i*(fw+gap)-fw/3, y=6, col=cols[i%cols.length];
+    const circ=(cx,cy,r)=>`M${cx-r} ${cy}a${r} ${r} 0 1 0 ${2*r} 0a${r} ${r} 0 1 0 ${-2*r} 0Z`;
+    let d=`M${x} ${y}H${x+fw}V${y+fh-6}`;
+    const sc=6; for(let k=sc;k>=0;k--){ const px=x+fw*k/sc; d+= k===sc?`L${px} ${y+fh-6}`:`Q${px+fw/sc/2} ${y+fh+2} ${px} ${y+fh-6}`; }
+    d+='Z';
+    const cx=x+fw/2, cy=y+fh*0.5, r=fh*0.1;
+    const motif=i%3;
+    if(motif===0){ d+=circ(cx,cy,r*0.8); for(let k=0;k<8;k++){const a=k/8*Math.PI*2; d+=circ(cx+r*2*Math.cos(a),cy+r*2*Math.sin(a),r*0.55);} }
+    else if(motif===1){ d+=`M${cx} ${cy-r*2.4}L${cx+r*1.6} ${cy}L${cx} ${cy+r*2.4}L${cx-r*1.6} ${cy}Z`; d+=circ(cx-r*2.6,cy-r*1.4,r*.45)+circ(cx+r*2.6,cy-r*1.4,r*.45)+circ(cx-r*2.6,cy+r*1.4,r*.45)+circ(cx+r*2.6,cy+r*1.4,r*.45); }
+    else { d+=circ(cx-r*0.9,cy-r*0.4,r*0.7)+circ(cx+r*0.9,cy-r*0.4,r*0.7); d+=`M${cx} ${cy+r*0.4}L${cx+r*.45} ${cy+r*1.1}L${cx-r*.45} ${cy+r*1.1}Z`; d+=`M${cx-r*1.4} ${cy+r*1.6}H${cx+r*1.4}V${cy+r*2}H${cx-r*1.4}Z`; }
+    for(let k=1;k<6;k++) d+=circ(x+fw*k/6,y+5,1.6);
+    svg+=`<g class="flag" style="animation-delay:${-(i*0.37)%4}s;transform-origin:${cx}px ${y}px"><path d="${d}" fill="${col}" fill-rule="evenodd"/></g>`;
+  }
+  svg+='</svg>';
+  return svg;
+}
+
+
+THEME.deco={
+  banner:mxBanner,
+  coverSide(c,w,h,i){ skull(c,w,h,i?'#9B5DE5':'#E6007E'); },
+  corner(c){ marigold(c,35,35,30); marigold(c,14,54,13); },
+  pause(c,w,h){ taco(c,w,h); }
+};
+
+const CINCO={code:'mx',name:'México',tz:'America/Mexico_City',seed:20260930,lang:'Spanish',words:[
+{w:'ULAMA',cat:'Ancient ballgame',lang:'Spanish',hint:'Played with the hips, still alive in Sinaloa',fact:'Ulama is still played in Sinaloa. It comes from the Mesoamerican ballgame: the oldest known court, at Paso de la Amada in Chiapas, is more than 3,500 years old.',src:'Wikipedia · Ulama'},
+{w:'LUCHA',cat:'Lucha libre',lang:'Spanish',hint:'Masks, ropes and flying bodies',fact:'Salvador Lutteroth founded the Empresa Mexicana de Lucha Libre in 1933. Today it is CMLL, the oldest professional wrestling promotion still running.',src:'Wikipedia · CMLL'},
+{w:'RUDOS',cat:'Lucha libre',lang:'Spanish',hint:'The bad guys of the ring; the good guys are the técnicos',fact:'In lucha libre the crowd picks a side: the rudos break the rules and the técnicos play fair. A wrestler can switch sides during a career, and the whole arena reacts.',src:'Wikipedia · Lucha libre'},
+{w:'ARENA',cat:'Venue',lang:'Spanish',hint:'The cathedral of lucha libre, in Mexico City',fact:'Arena México, in Colonia Doctores, opened in 1956 and is known as the cathedral of lucha libre. CMLL still runs its Friday night shows there.',src:'Wikipedia · Arena México'},
+{w:'AZTEC',cat:'Stadium',hint:'Estadio ___, where Pelé and Maradona lifted the Cup',fact:'Estadio Azteca hosted the opening match of the World Cup in 1970, 1986 and 2026. No other stadium has hosted three.',src:'FIFA'},
+{w:'PUMAS',cat:'Football club',hint:'The university club from Mexico City',fact:'Pumas is the club of UNAM, the national university. Its home, the Estadio Olímpico Universitario, was the main stadium of the 1968 Olympic Games.',src:'Wikipedia · Estadio Olímpico Universitario'},
+{w:'CHIVA',cat:'Football club',lang:'Spanish',hint:'A goat, and half of the Clásico Nacional',fact:'Chivas de Guadalajara has fielded only Mexican-born players since 1943, a policy no other big club in the world keeps.',src:'Wikipedia · C.D. Guadalajara'},
+{w:'TIGRE',cat:'Football club',lang:'Spanish',hint:'Big cat from Monterrey, in yellow and blue',fact:'Tigres UANL reached the final of the 2020 Club World Cup against Bayern Munich, the first club from CONCACAF ever to get that far.',src:'Wikipedia · Tigres UANL'},
+{w:'ATLAS',cat:'Football club',hint:'Guadalajara\'s other club, founded by students back from England',fact:'Atlas won the 2021 Apertura, its first league title in 70 years: the previous one was in 1951.',src:'Wikipedia · Atlas F.C.'},
+{w:'REATA',cat:'Charrería',lang:'Spanish',hint:'The charro\'s rope',fact:'In 2016 UNESCO added charrería, the Mexican equestrian tradition of roping and riding, to its list of the Intangible Cultural Heritage of Humanity.',src:'UNESCO'},
+{w:'RODEO',cat:'Charrería',lang:'Spanish',hint:'The word the whole world borrowed',fact:'The rodeo of the American West grew out of the contests of Mexican vaqueros; the word itself is Spanish, from rodear, to round up.',src:'Wikipedia · Rodeo'},
+{w:'BOXEO',cat:'Boxing',lang:'Spanish',hint:'Twelve rounds, one crowd of 132,000',fact:'On 20 February 1993 Julio César Chávez fought Greg Haugen at Estadio Azteca in front of more than 132,000 fans, the biggest crowd ever for a boxing match.',src:'Wikipedia · Chávez vs. Haugen'},
+{w:'RONDA',cat:'Boxing',lang:'Spanish',hint:'Three minutes, then the bell',fact:'Julio César Chávez went 89 fights without a defeat, from his debut in 1980 until 1994. Mexico has produced more world boxing champions than any country except the United States.',src:'Wikipedia · Julio César Chávez'},
+{w:'GOLPE',cat:'Boxing',lang:'Spanish',hint:'What Canelo lands',fact:'In 2021 Saúl "Canelo" Álvarez became the first undisputed super-middleweight champion of the four-belt era, holding all four titles at once.',src:'Wikipedia · Canelo Álvarez'},
+{w:'SALTO',cat:'Diving',lang:'Spanish',hint:'From the ten-metre platform',fact:'Joaquín Capilla won Mexico\'s first Olympic diving gold at Melbourne 1956. Diving has since become Mexico\'s most successful Olympic sport, ahead of boxing.',src:'Wikipedia · Joaquín Capilla'},
+{w:'CAMPO',cat:'Football',lang:'Spanish',hint:'The pitch',fact:'Mexico 1970 was the first World Cup broadcast in colour and the first with substitutes and yellow and red cards.',src:'Wikipedia · 1970 FIFA World Cup'},
+{w:'JUEGO',cat:'Ancient ballgame',lang:'Spanish',hint:'___ de pelota, the Mesoamerican court game',fact:'The Great Ballcourt at Chichén Itzá is the largest in Mesoamerica: about 168 metres long, with stone rings set high on its walls.',src:'Wikipedia · Mesoamerican ballgame'},
+{w:'PORRA',cat:'Fans',lang:'Spanish',hint:'The organised chant from the stands',fact:'At every Mexico match the stands sing Cielito Lindo, a song written in 1882 that became the unofficial anthem of the national team.',src:'Wikipedia · Cielito Lindo'}
+]};
+
+(function(){
+const $=id=>document.getElementById(id);
+const TZ=CINCO.tz||0, KEY='cinco-'+CINCO.code, TEST=/[?&]test=1/.test(location.search);
+const W=CINCO.words.map(w=>({...w,w:w.w.toUpperCase()}));
+// banner de papel picado (del tema de Stack)
+(function(){ const el=$('picado'); const W_=el.clientWidth||1000,H=el.clientHeight||74; el.innerHTML=THEME.deco.banner(W_,H); })();
+// ---- día ----
+function partes(){ try{ const f=new Intl.DateTimeFormat('en-CA',{timeZone:typeof TZ==='string'?TZ:'UTC',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}); const o={}; f.formatToParts(new Date()).forEach(p=>o[p.type]=p.value); return {date:o.year+'-'+o.month+'-'+o.day,h:+o.hour%24,m:+o.minute}; }catch(e){ const off=typeof TZ==='number'?TZ:0; const d=new Date(Date.now()+off*3600*1000); return {date:d.toISOString().slice(0,10),h:d.getUTCHours(),m:d.getUTCMinutes()}; } }
+function fechaDeHoy(){ return partes().date; }
+function restoDelDia(){ const a=partes(); const min=(23-a.h)*60+(60-a.m); const h=Math.floor(min/60),m=min%60; return (h?h+' h ':'')+m+' min'; }
+function numeroDeDia(){ return Math.floor(Date.parse(fechaDeHoy()+'T00:00:00Z')/86400000); }
+function azarFijo(semilla){ let s=semilla>>>0; return function(){ s=(s+0x6D2B79F5)>>>0; let t=s; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }; }
+let ORDEN=null; function ordenDeItems(){ if(ORDEN) return ORDEN; const a=W.slice(); const r=azarFijo(CINCO.seed||20260930); for(let i=a.length-1;i>0;i--){ const j=Math.floor(r()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return (ORDEN=a); }
+function delDia(){ const o=ordenDeItems(); const d=numeroDeDia(); return o[((d%o.length)+o.length)%o.length]; }
+// ---- estado ----
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ return {}; } }
+function save(d){ if(TEST||practice) return; try{ localStorage.setItem(KEY,JSON.stringify(d)); }catch(e){} }
+let S=load(); if(!S.stats) S.stats={played:0,won:0,streak:0,best:0,last:''};
+let practice=false, target=null, guesses=[], cur='', done=false, hinted=false;
+const ROWS=['QWERTYUIOP','ASDFGHJKL','ZXCVBNM'];
+function start(word,isPractice){ practice=!!isPractice; target=word; guesses=[]; cur=''; done=false; hinted=false; $('hint').className='hint'; $('hint').textContent=''; $('msg').textContent='';
+  if(!practice&&S.today&&S.today.date===fechaDeHoy()){ guesses=S.today.guesses.slice(); done=S.today.done; }
+  $('today').innerHTML=practice?'Practice · <b>random word</b>':'Word of the day · <b>'+fechaDeHoy()+'</b>'+(TEST?' · <b>TEST</b>':'');
+  draw(); drawKb(); stats();
+  if(done) setTimeout(()=>finish(guesses[guesses.length-1]===target.w,false),300); }
+function evalGuess(g){ const t=target.w.split(''), r=Array(5).fill('no'), used=Array(5).fill(false);
+  for(let i=0;i<5;i++) if(g[i]===t[i]){ r[i]='ok'; used[i]=true; }
+  for(let i=0;i<5;i++){ if(r[i]==='ok') continue; for(let k=0;k<5;k++){ if(!used[k]&&t[k]===g[i]){ r[i]='near'; used[k]=true; break; } } }
+  return r; }
+function draw(anim){ const b=$('board'); b.innerHTML=''; for(let r=0;r<6;r++){ const row=document.createElement('div'); row.className='row'; const g=guesses[r]||(r===guesses.length?cur:''); const ev=guesses[r]?evalGuess(guesses[r]):null;
+    for(let i=0;i<5;i++){ const t=document.createElement('div'); t.className='tile'+(ev?' '+ev[i]:(g[i]?' fill':'')); if(ev&&anim&&r===guesses.length-1){ t.classList.add('flip'); t.style.animationDelay=(i*0.12)+'s'; } t.textContent=g[i]||''; row.appendChild(t); }
+    b.appendChild(row); } }
+function kbState(){ const st={}; guesses.forEach(g=>{ const ev=evalGuess(g); for(let i=0;i<5;i++){ const L=g[i], v=ev[i]; if(v==='ok'||(v==='near'&&st[L]!=='ok')||(!st[L])) st[L]=v; } }); return st; }
+function drawKb(){ const kb=$('kb'); kb.innerHTML=''; const st=kbState(); ROWS.forEach((r,ri)=>{ const d=document.createElement('div'); if(ri===2){ d.appendChild(key('ENTER','wide')); } r.split('').forEach(L=>{ d.appendChild(key(L,st[L]||'')); }); if(ri===2){ d.appendChild(key('⌫','wide')); } kb.appendChild(d); }); }
+function key(L,cls){ const b=document.createElement('button'); b.textContent=L; b.className=cls; b.dataset.k=L; return b; }
+$('kb').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b) press(b.dataset.k); });
+document.addEventListener('keydown',e=>{ if(e.metaKey||e.ctrlKey||e.altKey) return; if(!$('endOv').hidden) return; const k=e.key; if(k==='Enter') press('ENTER'); else if(k==='Backspace') press('⌫'); else if(/^[a-zA-Z]$/.test(k)) press(k.toUpperCase()); });
+function press(k){ if(done) return; if(k==='ENTER'){ submit(); return; } if(k==='⌫'){ cur=cur.slice(0,-1); draw(); return; } if(cur.length<5){ cur+=k; draw(); } }
+function submit(){ if(cur.length<5){ shake('Five letters'); return; } guesses.push(cur); const won=cur===target.w; cur=''; draw(true); drawKb();
+  if(!practice){ S.today={date:fechaDeHoy(),guesses:guesses.slice(),done:won||guesses.length===6}; save(S); }
+  if(won||guesses.length===6){ done=true; if(!practice){ const st=S.stats; if(st.last!==fechaDeHoy()){ st.played++; if(won){ st.streak=(st.lastWon===prevDay()?st.streak:0)+1; st.won++; st.lastWon=fechaDeHoy(); } else st.streak=0; st.best=Math.max(st.best,st.streak); st.last=fechaDeHoy(); save(S); } }
+    setTimeout(()=>finish(won,true),5*120+500); } else { $('msg').textContent=['','Good start.','Warmer.','Keep going.','Two left.','Last one!'][guesses.length]||''; } }
+function prevDay(){ const d=new Date(Date.parse(fechaDeHoy()+'T00:00:00Z')-86400000); return d.toISOString().slice(0,10); }
+function shake(m){ const row=$('board').children[guesses.length]; if(row){ row.classList.add('shake'); setTimeout(()=>row.classList.remove('shake'),400); } $('msg').textContent=m; }
+function stats(){ const st=S.stats; $('sPlayed').textContent=st.played; $('sWon').textContent=st.won; $('sStreak').textContent=st.streak; $('next').textContent='in '+restoDelDia(); }
+setInterval(()=>{ $('next').textContent='in '+restoDelDia(); },60000);
+function finish(won,fresh){ const t=target; $('endTag').textContent=won?'Did you know?':'The word was';
+  $('endH').textContent=won?['Perfect!','Brilliant!','Great!','Nice one!','Got it!','Phew!'][guesses.length-1]:t.w; $('endWord').textContent=t.w+' · '+t.cat+(t.lang?' · '+t.lang:'');
+  $('endFact').textContent=t.fact; $('endSrc').textContent=t.src?'Source: '+t.src:'';
+  $('endGrid').textContent=guesses.map(g=>evalGuess(g).map(v=>v==='ok'?'🟩':v==='near'?'🟨':'⬛').join('')).join('\n');
+  $('btnAgain').hidden=false; $('endOv').hidden=false; stats(); }
+$('btnClose').onclick=()=>{ $('endOv').hidden=true; };
+$('btnAgain').onclick=()=>{ $('endOv').hidden=true; random(); };
+$('btnShare').onclick=()=>{ const txt='Cinco · '+CINCO.name+' · '+(practice?'practice':fechaDeHoy())+' · '+(guesses[guesses.length-1]===target.w?guesses.length:'X')+'/6\n'+$('endGrid').textContent+'\nfirstplace.games'; const ok=()=>{ $('btnShare').textContent='Copied!'; setTimeout(()=>$('btnShare').textContent='Copy result',1500); }; if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(ok,()=>{ $('endGrid').textContent=txt; }); else $('endGrid').textContent=txt; };
+$('btnHint').onclick=()=>{ if(done) return; hinted=true; const h=$('hint'); h.className='hint on'; h.innerHTML='<b>'+target.cat+'</b>'+(target.hint?' — '+target.hint:'')+(target.lang?'<br><span style="opacity:.7">A word in '+target.lang+'</span>':''); };
+function random(){ let w; do{ w=W[Math.floor(Math.random()*W.length)]; }while(W.length>1&&w===target); start(w,true); }
+$('btnRandom').onclick=()=>{ if(practice||done) random(); else if(confirmLeave()) random(); };
+function confirmLeave(){ if(guesses.length===0) return true; $('msg').textContent='Finish today\'s word first, or press Practice again to leave it.'; $('btnRandom').onclick=()=>random(); return false; }
+start(delDia(),false);
+})();
+</script>
+
+</body>
+</html>
