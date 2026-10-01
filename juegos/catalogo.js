@@ -30,7 +30,7 @@ window.FP_JUEGOS = [
       UY:'juegos/stack-uruguay.html', CL:'juegos/stack-chile.html', CO:'juegos/stack-colombia.html',
       CU:'juegos/stack-cuba.html' } },
   { id:'cancha', tipo:'adaptado', anim:'cancha', c:'#D6167A', em:'🟩',
-    nm:{es:'La Cancha', en:'La Cancha'}, urls:{ MX:'juegos/cancha.html' } },
+    nm:{es:'La Cancha', en:'The Court'}, urls:{ MX:'juegos/cancha.html' } },
 
   { id:'ulama', tipo:'tipico', anim:'ulama', c:'#C98A16', em:'⚫', estrella:['MX'], tag:{es:'Nuevo · 3D', en:'New · 3D'},
     nm:{es:'Ulama 3D', en:'Ulama 3D'}, urls:{ MX:'juegos/ulama.html' } },
@@ -50,14 +50,26 @@ window.FP_JUEGOS = [
   { id:'puzzle', tipo:'mundo', anim:'jigsaw', c:'#7B5BE6', em:'🧩',
     nm:{es:'Rompecabezas', en:'Jigsaw'}, abre:'puzzle' },
   { id:'vr', tipo:'mundo', anim:'kart', c:'#F4551D', em:'🏎️',
-    nm:{es:'Vuelta Rápida', en:'Vuelta Rápida'}, url:'juegos/vuelta-rapida.html' }
+    nm:{es:'Vuelta Rápida', en:'Fast Lap'}, url:'juegos/vuelta-rapida.html' }
 ];
 
 window.FP_PORTADAS = {
   'stack:AR':  'juegos/portadas/stack-argentina.jpg',
+  'stack:IN':  'juegos/portadas/stack-india.jpg',
+  'stack:CN':  'juegos/portadas/stack-china.jpg',
+  'stack:BR':  'juegos/portadas/stack-brasil.jpg',
+  'stack:JP':  'juegos/portadas/stack-japan.jpg',
+  'stack:IT':  'juegos/portadas/stack-italy.jpg',
   'cancha:MX': 'juegos/portadas/cancha-mexico.jpg',
   'ulama':     'juegos/portadas/ulama-3d.jpg',
+  'fronton':   'juegos/portadas/fronton.jpg',
+  'ruzzola':   'juegos/portadas/ruzzola.jpg',
+  'queso':     'juegos/portadas/queso.jpg',
+  'fierljeppen':'juegos/portadas/fierljeppen.jpg',
+  'petanca':   'juegos/portadas/petanca.jpg',
   'pool':      'juegos/portadas/pool-3d.jpg',
   'puzzle':    'juegos/portadas/rompecabezas.jpg',
+  'primero':   'juegos/portadas/primero.jpg',
+  'vr:MX':     'juegos/portadas/vuelta-rapida-mexico.jpg',
   'vr':        'juegos/portadas/vuelta-rapida.jpg'
 };
