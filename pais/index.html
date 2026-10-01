@@ -54,6 +54,9 @@ h1{font-size:clamp(34px,5.4vw,56px);line-height:1.02;margin:15px 0 6px;letter-sp
 .tres{display:grid;grid-template-columns:288px minmax(0,1fr) 288px;gap:24px;
   align-items:start;padding:30px 0 70px}
 .lado{position:sticky;top:20px;display:grid;gap:12px}
+/* con portadas las tarjetas de la izquierda son altas: si no entran en pantalla,
+   la columna hace scroll adentro en vez de dejar juegos inalcanzables */
+.lado.izq{max-height:calc(100vh - 40px);overflow-y:auto;scrollbar-width:thin;align-content:start;padding-right:2px}
 /* Estos dos rotulos son el unico texto que queda apoyado directo sobre el
    tejido, sin tarjeta debajo: necesitan su propia sombra o se pierden sobre
    una banda clara. */
@@ -77,6 +80,9 @@ h2{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#A9BBD3;
   padding:14px 15px;background:#0C1524E8;transition:border-color .15s,transform .15s}
 .juego:hover{border-color:#33466A;transform:translateX(2px)}
 .juego .em{font-size:21px;line-height:1}
+.juego .port{margin:-14px -15px 12px;aspect-ratio:16/10;overflow:hidden;border-radius:10px 10px 0 0;background:#121C2E}
+.juego .port img{width:100%;height:100%;object-fit:cover;display:block}
+.juego:has(.port) .em{display:none}
 .juego h3{margin:8px 0 4px;font-size:15.5px;font-weight:700}
 .juego p{margin:0;font-size:13px;line-height:1.5;color:var(--tinta2)}
 .sello{display:inline-block;margin-top:9px;font-size:10px;letter-spacing:.09em;
@@ -89,7 +95,7 @@ h2{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#A9BBD3;
 .centro .caja{padding:22px}
 h3.tit{margin:0 0 16px;font-size:21px;font-weight:700;letter-spacing:-.01em}
 .graf{display:grid;gap:13px}
-.fila{display:grid;grid-template-columns:128px 1fr 52px;align-items:center;gap:12px;
+.fila{display:grid;grid-template-columns:128px 1fr 78px;align-items:center;gap:12px;
   border-radius:8px;padding:3px 4px;margin:-3px -4px}
 .fila:hover{background:#1B283E}
 .fila .nom{font-size:14.5px;display:flex;align-items:center;gap:9px;min-width:0}
@@ -98,7 +104,8 @@ h3.tit{margin:0 0 16px;font-size:21px;font-weight:700;letter-spacing:-.01em}
 .pista{position:relative;height:15px;background:#18253C;border-radius:4px;overflow:hidden}
 .barra{position:absolute;left:0;top:0;bottom:0;border-radius:4px;
   transition:width .6s cubic-bezier(.2,.7,.3,1)}
-.val{text-align:right;font-size:14px;font-variant-numeric:tabular-nums}
+.val{display:flex;justify-content:flex-end;align-items:center;gap:7px;font-size:14px;font-variant-numeric:tabular-nums}
+.val .e{font-size:17px;line-height:1}
 .nota{margin:16px 0 0;font-size:13px;line-height:1.6;color:var(--tinta3);max-width:64ch}
 .nota b{color:var(--tinta2);font-weight:600}
 .verlos{margin-top:14px;background:none;border:1px solid var(--linea);color:var(--tinta2);
@@ -119,6 +126,45 @@ td:last-child,th:last-child{text-align:right;font-variant-numeric:tabular-nums}
 .saber b{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--tinta3);
   font-family:"IBM Plex Mono",monospace;line-height:1.5}
 @media (max-width:560px){ .saber li{grid-template-columns:1fr;gap:3px} }
+.alcance{margin:14px 0 0;font-size:13px;line-height:1.55;color:var(--tinta3);max-width:64ch}
+
+/* ── abajo: de dónde sale la energía (la comida de cada país) ─────────── */
+.comida{padding:6px 0 80px}
+.comida h3.tit{font-size:clamp(24px,3.2vw,34px);letter-spacing:-.02em;margin:0 0 8px;
+  text-shadow:0 2px 18px #0B1220}
+.comida .intro{margin:0 0 20px;max-width:70ch;color:#B7C6DC;font-size:15.5px;line-height:1.6;
+  text-shadow:0 1px 12px #0B1220}
+.historia{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0 0 22px;
+  border-left:3px solid var(--verde)}
+.historia .ic{font-size:30px;line-height:1;grid-row:1/3}
+.historia b{font-size:16px}
+.historia p{margin:0;font-size:14.5px;line-height:1.6;color:var(--tinta2)}
+.historia[hidden],.comida[hidden]{display:none}
+.historia small{display:block;margin-top:8px;font-size:11.5px;line-height:1.7;color:var(--tinta3)}
+.historia small a{color:var(--tinta2)}
+.platos{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.plato{background:var(--panel);border:1px solid var(--linea);border-radius:var(--r);padding:18px;
+  backdrop-filter:blur(7px);display:flex;flex-direction:column;gap:10px}
+.plato .cab2{display:flex;align-items:center;gap:11px}
+.plato .cab2 .e{font-size:30px;line-height:1}
+.plato h4{margin:0;font-size:16.5px;font-weight:700}
+.plato p{margin:0;font-size:13.5px;line-height:1.55;color:var(--tinta2)}
+.plato .kcal{display:flex;align-items:baseline;gap:7px}
+.plato .kcal b{font-size:30px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.plato .kcal span{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--tinta3);
+  font-family:"IBM Plex Mono",monospace}
+.mix{display:flex;height:9px;border-radius:5px;overflow:hidden;background:#18253C}
+.mix i{display:block;height:100%}
+.macros{display:grid;gap:6px}
+.macros div{display:flex;align-items:baseline;gap:7px;font-size:12px;color:var(--tinta3);
+  font-family:"IBM Plex Mono",monospace;line-height:1.4}
+.macros div b{margin-left:auto;font-size:14.5px;color:var(--tinta);font-family:Archivo,system-ui,sans-serif;
+  font-variant-numeric:tabular-nums}
+.macros div u{text-decoration:none;display:inline-block;width:8px;height:8px;border-radius:2px;flex:0 0 auto}
+.plato .mas{margin-top:auto;font-size:11.5px;line-height:1.5;color:var(--tinta3)}
+.plato .mas a{color:var(--tinta2)}
+.per100{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--tinta3);
+  font-family:"IBM Plex Mono",monospace;margin:-4px 0 0}
 .fuentes{font-size:11.5px;line-height:1.75;color:var(--tinta3)}
 .fuentes a{color:var(--tinta2)}
 .fuentes b{display:block;margin-bottom:6px;color:var(--tinta3);
@@ -137,7 +183,7 @@ td:last-child,th:last-child{text-align:right;font-variant-numeric:tabular-nums}
   .centro{order:1} .izq{order:2} .der{order:3}
 }
 @media (max-width:560px){
-  .fila{grid-template-columns:102px 1fr 46px;gap:9px}
+  .fila{grid-template-columns:102px 1fr 70px;gap:9px}
   .fila .nom{font-size:13.5px}
 }
 </style>
@@ -173,8 +219,9 @@ td:last-child,th:last-child{text-align:right;font-variant-numeric:tabular-nums}
       </div>
 
       <div class="caja">
-        <h3 class="tit">Deportes con sede acá</h3>
+        <h3 class="tit">Eventos deportivos de talla mundial</h3>
         <div class="chips" id="sedes"></div>
+        <p class="alcance">Solo figuran los eventos de escala global. El país tiene muchas más competencias locales y nacionales que no están en esta lista.</p>
       </div>
 
       <div class="caja">
@@ -190,8 +237,16 @@ td:last-child,th:last-child{text-align:right;font-variant-numeric:tabular-nums}
     </aside>
 
   </div>
+
+  <section class="env comida" id="comida" hidden>
+    <h3 class="tit" id="comTit"></h3>
+    <p class="intro" id="comIntro"></p>
+    <div class="caja historia" id="comHist" hidden></div>
+    <div class="platos" id="platos"></div>
+  </section>
 </div>
 
+<script src="../juegos/catalogo.js"></script>
 <script>
 /* ═══════════════════════════════════════════════════════════════════════
    UNA FICHA POR PAÍS
@@ -248,9 +303,29 @@ mx: {
 
   saber: [
     ['Deporte nacional','La charrería, declarada deporte nacional por decreto y reconocida por la UNESCO como patrimonio cultural inmaterial en 2016.'],
-    ['Juego propio','El ulama se juega desde hace más de tres mil años y es el deporte de equipo más antiguo que sigue vivo.'],
-    ['En el mapa','Cuatro deportes de FirstPlace tienen sede en el país, tres de ellos en la capital.']
+    ['Juego propio','El ulama se juega desde hace más de tres mil años y es el deporte de equipo más antiguo que sigue vivo.']
   ],
+
+  comida: {
+    titulo: '¿De dónde sacan la energía los mexicanos?',
+    intro: 'Lo que come el país que corre, boxea y juega con la cadera. Cada alimento muestra su composición por cada 100 g, según la base de datos del USDA.',
+    historia: {
+      em: '🏃', titulo: 'Los corredores rarámuri',
+      texto: 'En la sierra de Chihuahua, el pueblo rarámuri corre distancias enormes y el maíz está en el centro de su comida. El pinole —maíz tostado y molido, mezclado con agua— es su combustible de carrera, a veces endulzado con piloncillo, el azúcar de caña sin refinar. Una revisión de 2021 describe una dieta tradicional con mucho carbohidrato (maíz) y proteína vegetal (frijol), y cita a un joven que cargó 50 kg a lo largo de 180 km en 70 horas tomando solo pinole. Los investigadores advierten que su resistencia viene del trabajo, el estilo de vida y la determinación más que de un alimento mágico.',
+      fuentes: [
+        ['German Journal of Sports Medicine (2021) — los rarámuri como corredores de montaña','https://www.germanjournalsportsmedicine.com/archive/archive-2021/issue-2/why-are-the-tarahumara-amerindians-in-mexico-such-powerful-mountain-runners/'],
+        ['Lieberman y otros (2020), Current Anthropology — Running in Tarahumara (Rarámuri) Culture','https://www.journals.uchicago.edu/doi/full/10.1086/708810'],
+        ['Trail Runner — Rarámuri, perfect drink for night running','https://www.trailrunnermag.com/nutrition/raramuri-perfect-drink-for-night-running/']
+      ]
+    },
+    items: [
+      {em:'🌽', nombre:'Maíz molido integral (la base del pinole)', nota:'El pinole se hace con maíz tostado y molido. El USDA no lista pinole; se usa el maíz molido integral, su equivalente más cercano.', kcal:362, carbo:76.9, prot:8.12, grasa:3.59, fibra:7.3, fdc:169750, usda:'Cornmeal, whole-grain, white'},
+      {em:'🫓', nombre:'Tortilla de maíz', nota:'Está en casi todas las comidas del país. Maíz y frijol son la base de la dieta tradicional rarámuri.', kcal:218, carbo:44.6, prot:5.7, grasa:2.85, fibra:6.3, fdc:175036, usda:'Tortillas, ready-to-bake or -fry, corn'},
+      {em:'🫘', nombre:'Frijoles negros cocidos', nota:'El otro pilar del plato: carbohidrato, proteína vegetal y fibra con casi nada de grasa.', kcal:132, carbo:23.7, prot:8.86, grasa:0.54, fibra:8.7, fdc:173735, usda:'Beans, black, mature seeds, cooked, boiled, without salt'},
+      {em:'🌱', nombre:'Semillas de chía', nota:'Base de bebidas como el iskiate. Según Native Seeds/SEARCH, los rarámuri la consideran una fuente importante de energía para correr.', kcal:486, carbo:42.1, prot:16.5, grasa:30.7, fibra:34.4, fdc:170554, usda:'Seeds, chia seeds, dried'},
+      {em:'🥑', nombre:'Aguacate', nota:'Originario de México. La mayor parte de su energía viene de la grasa, y trae mucha fibra.', kcal:160, carbo:8.53, prot:2.0, grasa:14.7, fibra:6.7, fdc:171705, usda:'Avocados, raw, all commercial varieties'}
+    ]
+  },
 
   fuentes: [
     ['Worldometer — Mexico Demographics 2026','https://www.worldometers.info/demographics/mexico-demographics/'],
@@ -300,9 +375,20 @@ it: {
 
   saber: [
     ['Casi todos miran','El 86% de los italianos sigue al menos un deporte. Es de los países con menos gente afuera del deporte.'],
-    ['El envejecimiento','48,6 años de edad mediana y una población que se achica un 0,37% por año. Es el dato que más manda en Italia.'],
-    ['En el mapa','Ocho deportes con quince sedes: sexto del mapa en variedad, y tantas sedes como Francia.']
+    ['El envejecimiento','48,6 años de edad mediana y una población que se achica un 0,37% por año. Es el dato que más manda en Italia.']
   ],
+
+  comida: {
+    titulo: '¿De dónde sacan la energía los italianos?',
+    intro: 'Lo que pone en la mesa el país que mira fútbol y tenis, de lo más simple a lo cotidiano. Cada alimento muestra su composición por cada 100 g, según la base de datos del USDA.',
+    items: [
+      {em:'🍝', nombre:'Pasta cocida', nota:'La base de la mesa: sobre todo carbohidrato, con muy poca grasa.', kcal:158, carbo:30.9, prot:5.8, grasa:0.93, fibra:1.8, fdc:169737, usda:'Pasta, cooked, enriched, without added salt'},
+      {em:'🍞', nombre:'Pan italiano', nota:'Un alimento de mesa que aporta casi la mitad de su peso en carbohidratos.', kcal:259, carbo:48.1, prot:9.49, grasa:2.73, fibra:2.1, fdc:174913, usda:'Bread, Italian'},
+      {em:'🧀', nombre:'Queso parmesano', nota:'Queso duro: concentra proteína y grasa, casi sin carbohidratos.', kcal:392, carbo:3.22, prot:35.8, grasa:25.0, fibra:0, fdc:170848, usda:'Cheese, parmesan, hard'},
+      {em:'🫒', nombre:'Aceite de oliva', nota:'Es grasa pura: la fuente de energía más concentrada de la cocina italiana.', kcal:884, carbo:0, prot:0, grasa:100, fibra:0, fdc:171413, usda:'Oil, olive, salad or cooking'},
+      {em:'☕', nombre:'Espresso', nota:'Casi no aporta energía: es costumbre más que combustible.', kcal:9, carbo:1.67, prot:0.12, grasa:0.18, fibra:0, fdc:171891, usda:'Beverages, coffee, brewed, espresso, restaurant-prepared'}
+    ]
+  },
 
   fuentes: [
     ['Worldometer — Italy Demographics 2026','https://www.worldometers.info/demographics/italy-demographics/'],
@@ -354,6 +440,19 @@ jp: {
     ['La mitad pasa los 50','50,2 años de edad mediana, 85,1 de esperanza de vida y una población que se achica un 0,55% por año.']
   ],
 
+  comida: {
+    titulo: '¿De dónde sacan la energía los japoneses?',
+    intro: 'Lo que come el país del béisbol, el sumo y el golf: arroz, soja y pescado. Cada alimento muestra su composición por cada 100 g, según la base de datos del USDA.',
+    items: [
+      {em:'🍚', nombre:'Arroz blanco cocido', nota:'La base de la comida japonesa: carbohidrato limpio, casi sin grasa.', kcal:130, carbo:28.7, prot:2.36, grasa:0.19, fibra:0, fdc:168882, usda:'Rice, white, short-grain, enriched, cooked'},
+      {em:'🫘', nombre:'Natto', nota:'Soja fermentada: mucha proteína y fibra en un solo plato.', kcal:211, carbo:12.7, prot:19.4, grasa:11.0, fibra:5.4, fdc:172443, usda:'Natto'},
+      {em:'🥣', nombre:'Miso', nota:'Pasta de soja fermentada, la base de la sopa de todos los días.', kcal:198, carbo:25.4, prot:12.8, grasa:6.01, fibra:5.4, fdc:172442, usda:'Miso'},
+      {em:'🍲', nombre:'Tofu firme', nota:'Casi sin carbohidratos y con unos 17 g de proteína cada 100 g.', kcal:144, carbo:2.78, prot:17.3, grasa:8.72, fibra:2.3, fdc:172475, usda:'Tofu, raw, firm, prepared with calcium sulfate'},
+      {em:'🌱', nombre:'Edamame', nota:'Soja verde con su vaina: proteína y fibra para picar.', kcal:121, carbo:8.91, prot:11.9, grasa:5.2, fibra:5.2, fdc:168411, usda:'Edamame, frozen, prepared'},
+      {em:'🐟', nombre:'Salmón cocido', nota:'Proteína y grasa, sin carbohidratos. El USDA lista salmón de cría.', kcal:206, carbo:0, prot:22.1, grasa:12.4, fibra:0, fdc:175168, usda:'Fish, salmon, Atlantic, farmed, cooked, dry heat'}
+    ]
+  },
+
   fuentes: [
     ['Worldometer — Japan Demographics 2026','https://www.worldometers.info/demographics/japan-demographics/'],
     ['Chuo Chosa-sha — «人気スポーツ」調査 n.º 34 (PDF)','https://www.crs.or.jp/data/pdf/sports26.pdf']
@@ -381,6 +480,12 @@ $('cifras').innerHTML = F.cifras.map(c =>
 
 /* Barras, no torta: los porcentajes se solapan —una persona sigue el fútbol
    Y el box— así que no hay un entero que repartir. */
+/* un emoji por deporte, a la derecha del porcentaje */
+const EMO = {'Fútbol':'⚽','Box':'🥊','Boxeo':'🥊','Béisbol':'⚾','Fórmula 1':'🏎️','Tenis':'🎾','Pádel':'🎾',
+  'Vóleibol':'🏐','Voleibol':'🏐','Vóley':'🏐','Natación':'🏊','Atletismo':'🏃','Sumo':'🤼','Golf':'⛳',
+  'Baloncesto':'🏀','Básquet':'🏀','Ciclismo':'🚴','Rugby':'🏉','Críquet':'🏏','Cricket':'🏏','Hockey':'🏒',
+  'Fútbol americano':'🏈','MotoGP':'🏍️','Surf':'🏄','Judo':'🥋','Skateboarding':'🛹','Lucha':'🤼',
+  'Bádminton':'🏸','Tenis de mesa':'🏓','MMA':'🥊'};
 const porPublico = F.base === 'publico';
 const tope = Math.max.apply(null, F.deportes.map(d => d[1]));
 $('graf').innerHTML = F.deportes.map(d =>
@@ -389,7 +494,7 @@ $('graf').innerHTML = F.deportes.map(d =>
     '<div class="nom"><i style="background:var(--' + d[2] + ')"></i><u>' + d[0] + '</u></div>' +
     '<div class="pista"><div class="barra" style="width:' +
       (d[1] / tope * 100).toFixed(1) + '%;background:var(--' + d[2] + ')"></div></div>' +
-    '<div class="val">' + String(d[1]).replace('.', ',') + '%</div>' +
+    '<div class="val"><span>' + String(d[1]).replace('.', ',') + '%</span><span class="e">' + (EMO[d[0]] || '') + '</span></div>' +
   '</div>').join('');
 
 $('notaGraf').innerHTML =
@@ -413,18 +518,53 @@ $('btTabla').addEventListener('click', () => {
   $('btTabla').textContent = t.hidden ? 'Ver los números en tabla' : 'Ocultar la tabla';
 });
 
-$('juegos').innerHTML = F.juegos.map(j =>
-  '<a class="juego" href="' + j[4] + '">' +
+/* La portada de cada juego es la misma que se ve en el mapa (juegos/catalogo.js):
+   primero la del país ('vr:MX') y, si ese archivo no está, la general ('vr'). */
+const PORT = window.FP_PORTADAS || {};
+const idJuego = l => { l = l.replace(/^(\.\.\/|\/)/, '').replace(/\.html$/, '').replace(/^juegos\//, '');
+  if (l === 'juegos') return 'puzzle'; if (l === 'vuelta-rapida') return 'vr';
+  return /^stack(-|$)/.test(l) ? 'stack' : l; };
+$('juegos').innerHTML = F.juegos.map(j => {
+  const id = idJuego(j[4]), gen = PORT[id] || '', img = PORT[id + ':' + iso.toUpperCase()] || gen;
+  return '<a class="juego" href="' + j[4] + '">' +
+    (img ? '<div class="port"><img src="../' + img + '" alt="" loading="lazy" data-fb="' + (gen ? '../' + gen : '') +
+      '" onerror="var f=this.dataset.fb;this.onerror=null;if(f&&this.getAttribute(\'src\')!==f){this.src=f}else{this.closest(\'.port\').remove()}"></div>' : '') +
     '<div class="em">' + j[0] + '</div><h3>' + j[1] + '</h3><p>' + j[2] + '</p>' +
     (j[3] === 'propio' ? '<span class="sello propio">Propio de acá</span>'
                        : '<span class="sello">Adaptado</span>') +
-  '</a>').join('');
+  '</a>'; }).join('');
 
 $('sedes').innerHTML = F.sedes.map(s =>
   '<span class="chip">' + s[0] + ' <small>' + s[1] + '</small></span>').join('');
 
 $('saber').innerHTML = (F.saber || []).map(s =>
   '<li><b>' + s[0] + '</b><span>' + s[1] + '</span></li>').join('');
+
+/* ── de dónde sale la energía: la comida del país, por cada 100 g (USDA) ── */
+if (F.comida) {
+  const C = F.comida, f1 = n => String(Math.round(n * 10) / 10).replace('.', ',');
+  $('comida').hidden = false;
+  $('comTit').textContent = C.titulo;
+  $('comIntro').textContent = C.intro;
+  if (C.historia) {
+    const H = C.historia;
+    $('comHist').hidden = false;
+    $('comHist').innerHTML = '<div class="ic">' + H.em + '</div><b>' + H.titulo + '</b><div><p>' + H.texto + '</p><small>' +
+      H.fuentes.map(f => '<a href="' + f[1] + '" target="_blank" rel="noopener">' + f[0] + '</a>').join('<br>') + '</small></div>';
+  }
+  $('platos').innerHTML = C.items.map(i => {
+    const tot = (i.carbo + i.prot + i.grasa) || 1, w = x => (x / tot * 100).toFixed(1) + '%';
+    return '<article class="plato"><div class="cab2"><span class="e">' + i.em + '</span><h4>' + i.nombre + '</h4></div>' +
+      '<p>' + i.nota + '</p>' +
+      '<div class="kcal"><b>' + f1(i.kcal) + '</b><span>kcal</span></div>' +
+      '<div class="mix" aria-hidden="true"><i style="width:' + w(i.carbo) + ';background:var(--c1)"></i><i style="width:' + w(i.prot) + ';background:var(--c3)"></i><i style="width:' + w(i.grasa) + ';background:var(--c2)"></i></div>' +
+      '<div class="macros"><div><u style="background:var(--c1)"></u>Carbohidratos<b>' + f1(i.carbo) + ' g</b></div>' +
+      '<div><u style="background:var(--c3)"></u>Proteína<b>' + f1(i.prot) + ' g</b></div>' +
+      '<div><u style="background:var(--c2)"></u>Grasa<b>' + f1(i.grasa) + ' g</b></div></div>' +
+      '<div class="mas">Fibra: ' + f1(i.fibra) + ' g · por cada 100 g<br>USDA: ' + i.usda + '<br>' +
+      '<a href="https://fdc.nal.usda.gov/food-details/' + i.fdc + '/nutrients" target="_blank" rel="noopener">Ver el detalle en USDA FoodData Central ↗</a></div></article>';
+  }).join('');
+}
 
 $('fuentes').innerHTML = '<b>Fuentes</b>' + F.fuentes.map(f =>
   '<a href="' + f[1] + '" target="_blank" rel="noopener">' + f[0] + '</a>').join('<br>') +
