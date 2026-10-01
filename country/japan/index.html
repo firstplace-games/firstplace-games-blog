@@ -66,6 +66,9 @@ h1{font-size:clamp(34px,5.4vw,56px);line-height:1.02;margin:15px 0 6px;letter-sp
 .tres{display:grid;grid-template-columns:288px minmax(0,1fr) 288px;gap:24px;
   align-items:start;padding:30px 0 70px}
 .lado{position:sticky;top:20px;display:grid;gap:12px}
+/* con portadas las tarjetas de la izquierda son altas: si no entran en pantalla,
+   la columna hace scroll adentro en vez de dejar juegos inalcanzables */
+.lado.izq{max-height:calc(100vh - 40px);overflow-y:auto;scrollbar-width:thin;align-content:start;padding-right:2px}
 /* Estos dos rotulos son el unico texto que queda apoyado directo sobre el
    tejido, sin tarjeta debajo: necesitan su propia sombra o se pierden sobre
    una banda clara. */
@@ -89,6 +92,9 @@ h2{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#A9BBD3;
   padding:14px 15px;background:#0C1524E8;transition:border-color .15s,transform .15s}
 .juego:hover{border-color:#33466A;transform:translateX(2px)}
 .juego .em{font-size:21px;line-height:1}
+.juego .port{margin:-14px -15px 12px;aspect-ratio:16/10;overflow:hidden;border-radius:10px 10px 0 0;background:#121C2E}
+.juego .port img{width:100%;height:100%;object-fit:cover;display:block}
+.juego:has(.port) .em{display:none}
 .juego h3{margin:8px 0 4px;font-size:15.5px;font-weight:700}
 .juego p{margin:0;font-size:13px;line-height:1.5;color:var(--tinta2)}
 .sello{display:inline-block;margin-top:9px;font-size:10px;letter-spacing:.09em;
@@ -101,7 +107,7 @@ h2{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#A9BBD3;
 .centro .caja{padding:22px}
 h3.tit{margin:0 0 16px;font-size:21px;font-weight:700;letter-spacing:-.01em}
 .graf{display:grid;gap:13px}
-.fila{display:grid;grid-template-columns:128px 1fr 52px;align-items:center;gap:12px;
+.fila{display:grid;grid-template-columns:128px 1fr 78px;align-items:center;gap:12px;
   border-radius:8px;padding:3px 4px;margin:-3px -4px}
 .fila:hover{background:#1B283E}
 .fila .nom{font-size:14.5px;display:flex;align-items:center;gap:9px;min-width:0}
@@ -110,7 +116,8 @@ h3.tit{margin:0 0 16px;font-size:21px;font-weight:700;letter-spacing:-.01em}
 .pista{position:relative;height:15px;background:#18253C;border-radius:4px;overflow:hidden}
 .barra{position:absolute;left:0;top:0;bottom:0;border-radius:4px;
   transition:width .6s cubic-bezier(.2,.7,.3,1)}
-.val{text-align:right;font-size:14px;font-variant-numeric:tabular-nums}
+.val{display:flex;justify-content:flex-end;align-items:center;gap:7px;font-size:14px;font-variant-numeric:tabular-nums}
+.val .e{font-size:17px;line-height:1}
 .nota{margin:16px 0 0;font-size:13px;line-height:1.6;color:var(--tinta3);max-width:64ch}
 .nota b{color:var(--tinta2);font-weight:600}
 .verlos{margin-top:14px;background:none;border:1px solid var(--linea);color:var(--tinta2);
@@ -131,6 +138,45 @@ td:last-child,th:last-child{text-align:right;font-variant-numeric:tabular-nums}
 .saber b{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--tinta3);
   font-family:"IBM Plex Mono",monospace;line-height:1.5}
 @media (max-width:560px){ .saber li{grid-template-columns:1fr;gap:3px} }
+.alcance{margin:14px 0 0;font-size:13px;line-height:1.55;color:var(--tinta3);max-width:64ch}
+
+/* ── abajo: de dónde sale la energía (la comida de cada país) ─────────── */
+.comida{padding:6px 0 80px}
+.comida h3.tit{font-size:clamp(24px,3.2vw,34px);letter-spacing:-.02em;margin:0 0 8px;
+  text-shadow:0 2px 18px #0B1220}
+.comida .intro{margin:0 0 20px;max-width:70ch;color:#B7C6DC;font-size:15.5px;line-height:1.6;
+  text-shadow:0 1px 12px #0B1220}
+.historia{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0 0 22px;
+  border-left:3px solid var(--verde)}
+.historia .ic{font-size:30px;line-height:1;grid-row:1/3}
+.historia b{font-size:16px}
+.historia p{margin:0;font-size:14.5px;line-height:1.6;color:var(--tinta2)}
+.historia[hidden],.comida[hidden]{display:none}
+.historia small{display:block;margin-top:8px;font-size:11.5px;line-height:1.7;color:var(--tinta3)}
+.historia small a{color:var(--tinta2)}
+.platos{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.plato{background:var(--panel);border:1px solid var(--linea);border-radius:var(--r);padding:18px;
+  backdrop-filter:blur(7px);display:flex;flex-direction:column;gap:10px}
+.plato .cab2{display:flex;align-items:center;gap:11px}
+.plato .cab2 .e{font-size:30px;line-height:1}
+.plato h4{margin:0;font-size:16.5px;font-weight:700}
+.plato p{margin:0;font-size:13.5px;line-height:1.55;color:var(--tinta2)}
+.plato .kcal{display:flex;align-items:baseline;gap:7px}
+.plato .kcal b{font-size:30px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.plato .kcal span{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--tinta3);
+  font-family:"IBM Plex Mono",monospace}
+.mix{display:flex;height:9px;border-radius:5px;overflow:hidden;background:#18253C}
+.mix i{display:block;height:100%}
+.macros{display:grid;gap:6px}
+.macros div{display:flex;align-items:baseline;gap:7px;font-size:12px;color:var(--tinta3);
+  font-family:"IBM Plex Mono",monospace;line-height:1.4}
+.macros div b{margin-left:auto;font-size:14.5px;color:var(--tinta);font-family:Archivo,system-ui,sans-serif;
+  font-variant-numeric:tabular-nums}
+.macros div u{text-decoration:none;display:inline-block;width:8px;height:8px;border-radius:2px;flex:0 0 auto}
+.plato .mas{margin-top:auto;font-size:11.5px;line-height:1.5;color:var(--tinta3)}
+.plato .mas a{color:var(--tinta2)}
+.per100{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--tinta3);
+  font-family:"IBM Plex Mono",monospace;margin:-4px 0 0}
 .fuentes{font-size:11.5px;line-height:1.75;color:var(--tinta3)}
 .fuentes a{color:var(--tinta2)}
 .fuentes b{display:block;margin-bottom:6px;color:var(--tinta3);
@@ -149,12 +195,14 @@ td:last-child,th:last-child{text-align:right;font-variant-numeric:tabular-nums}
   .centro{order:1} .izq{order:2} .der{order:3}
 }
 @media (max-width:560px){
-  .fila{grid-template-columns:102px 1fr 46px;gap:9px}
+  .fila{grid-template-columns:102px 1fr 70px;gap:9px}
   .fila .nom{font-size:13.5px}
 }
 
 .intro{max-width:760px;font-size:16px;line-height:1.6;color:var(--tinta2);margin:10px 0 0}
 .es{font-size:12px;margin-left:14px;color:var(--tinta3)}
+.comida h2.tit{font-size:clamp(24px,3.2vw,34px);letter-spacing:-.02em;margin:0 0 8px;text-shadow:0 2px 18px #0B1220;text-transform:none;font-family:Archivo,system-ui,sans-serif;color:var(--tinta);font-weight:800}
+.plato h3{margin:0;font-size:16.5px;font-weight:700}
 </style>
 </head>
 <body>
@@ -172,19 +220,20 @@ td:last-child,th:last-child{text-align:right;font-variant-numeric:tabular-nums}
   <div class="env tres">
     <aside class="lado izq">
       <h2>Games from Japan</h2>
-      <div id="juegos" style="display:grid;gap:12px"><a class="juego" href="/juegos/vuelta-rapida"><div class="em">🏎️</div><h3>Vuelta Rápida</h3><p>The Suzuka circuit, the only one of the twenty-four that crosses over itself.</p><span class="sello">Adapted</span></a><a class="juego" href="/juegos/stack-japan"><div class="em">🧱</div><h3>Stack</h3><p>Every piece is a Japanese sport. Clear ten lines and learn something new.</p><span class="sello">Adapted</span></a><a class="juego" href="/juegos"><div class="em">🧩</div><h3>Puzzles</h3><p>Put together stadiums, trophies and great moments of sport.</p><span class="sello">Adapted</span></a><a class="juego" href="/juegos/primero"><div class="em">🥇</div><h3>Primero</h3><p>One hidden champion a day, six guesses, five clues.</p><span class="sello">Adapted</span></a></div>
+      <div id="juegos" style="display:grid;gap:12px"><a class="juego" href="/juegos/vuelta-rapida"><div class="port"><img src="/juegos/portadas/vuelta-rapida.jpg" alt="" loading="lazy" data-fb="/juegos/portadas/vuelta-rapida.jpg" onerror="var f=this.dataset.fb;this.onerror=null;if(f&&this.getAttribute('src')!==f){this.src=f}else{this.closest('.port').remove()}"></div><div class="em">🏎️</div><h3>Vuelta Rápida</h3><p>The Suzuka circuit, the only one of the twenty-four that crosses over itself.</p><span class="sello">Adapted</span></a><a class="juego" href="/juegos/stack-japan"><div class="port"><img src="/juegos/portadas/stack-japan.jpg" alt="" loading="lazy" data-fb="" onerror="var f=this.dataset.fb;this.onerror=null;if(f&&this.getAttribute('src')!==f){this.src=f}else{this.closest('.port').remove()}"></div><div class="em">🧱</div><h3>Stack</h3><p>Every piece is a Japanese sport. Clear ten lines and learn something new.</p><span class="sello">Adapted</span></a><a class="juego" href="/juegos"><div class="port"><img src="/juegos/portadas/rompecabezas.jpg" alt="" loading="lazy" data-fb="/juegos/portadas/rompecabezas.jpg" onerror="var f=this.dataset.fb;this.onerror=null;if(f&&this.getAttribute('src')!==f){this.src=f}else{this.closest('.port').remove()}"></div><div class="em">🧩</div><h3>Puzzles</h3><p>Put together stadiums, trophies and great moments of sport.</p><span class="sello">Adapted</span></a><a class="juego" href="/juegos/primero"><div class="port"><img src="/juegos/portadas/primero.jpg" alt="" loading="lazy" data-fb="/juegos/portadas/primero.jpg" onerror="var f=this.dataset.fb;this.onerror=null;if(f&&this.getAttribute('src')!==f){this.src=f}else{this.closest('.port').remove()}"></div><div class="em">🥇</div><h3>Primero</h3><p>One hidden champion a day, six guesses, five clues.</p><span class="sello">Adapted</span></a></div>
     </aside>
     <main class="centro">
       <div class="caja">
         <h2 class="tit">What people in Japan watch</h2>
-        <div class="graf" id="graf"><div class="fila"><div class="nom"><i style="background:var(--c1)"></i><u>Baseball</u></div><div class="pista"><div class="barra" style="width:100.0%;background:var(--c1)"></div></div><div class="val">47.5%</div></div><div class="fila"><div class="nom"><i style="background:var(--c2)"></i><u>Football</u></div><div class="pista"><div class="barra" style="width:45.7%;background:var(--c2)"></div></div><div class="val">21.7%</div></div><div class="fila"><div class="nom"><i style="background:var(--c3)"></i><u>Sumo</u></div><div class="pista"><div class="barra" style="width:43.8%;background:var(--c3)"></div></div><div class="val">20.8%</div></div><div class="fila"><div class="nom"><i style="background:var(--c4)"></i><u>Golf</u></div><div class="pista"><div class="barra" style="width:22.7%;background:var(--c4)"></div></div><div class="val">10.8%</div></div><div class="fila"><div class="nom"><i style="background:var(--c5)"></i><u>Basketball</u></div><div class="pista"><div class="barra" style="width:21.7%;background:var(--c5)"></div></div><div class="val">10.3%</div></div></div>
+        <div class="graf" id="graf"><div class="fila"><div class="nom"><i style="background:var(--c1)"></i><u>Baseball</u></div><div class="pista"><div class="barra" style="width:100.0%;background:var(--c1)"></div></div><div class="val"><span>47.5%</span><span class="e">⚾</span></div></div><div class="fila"><div class="nom"><i style="background:var(--c2)"></i><u>Football</u></div><div class="pista"><div class="barra" style="width:45.7%;background:var(--c2)"></div></div><div class="val"><span>21.7%</span><span class="e">⚽</span></div></div><div class="fila"><div class="nom"><i style="background:var(--c3)"></i><u>Sumo</u></div><div class="pista"><div class="barra" style="width:43.8%;background:var(--c3)"></div></div><div class="val"><span>20.8%</span><span class="e">🤼</span></div></div><div class="fila"><div class="nom"><i style="background:var(--c4)"></i><u>Golf</u></div><div class="pista"><div class="barra" style="width:22.7%;background:var(--c4)"></div></div><div class="val"><span>10.8%</span><span class="e">⛳</span></div></div><div class="fila"><div class="nom"><i style="background:var(--c5)"></i><u>Basketball</u></div><div class="pista"><div class="barra" style="width:21.7%;background:var(--c5)"></div></div><div class="val"><span>10.3%</span><span class="e">🏀</span></div></div></div>
         <p class="nota" id="notaGraf"><b>They add up to more than 100 on purpose.</b> Share of the population that follows each sport. The same person follows several sports, so there is no whole to split: that is why these are bars and not a pie chart. Central Research Services (Chuo Chosa-sha), 34th “Popular Sports” survey, May 2026: 1,201 people aged 20 and over.</p>
         <button class="verlos mono" id="btTabla">Show the numbers as a table</button>
         <div id="tabla" hidden><table><thead><tr><th>Sport</th><th>Of the population</th></tr></thead><tbody><tr><td>Baseball</td><td>47.5%</td></tr><tr><td>Football</td><td>21.7%</td></tr><tr><td>Sumo</td><td>20.8%</td></tr><tr><td>Golf</td><td>10.8%</td></tr><tr><td>Basketball</td><td>10.3%</td></tr></tbody></table></div>
       </div>
       <div class="caja">
-        <h2 class="tit">Sports with events in Japan</h2>
+        <h2 class="tit">World-class sports events in Japan</h2>
         <div class="chips" id="sedes"><span class="chip">Formula 1 <small>Suzuka</small></span><span class="chip">MotoGP <small>Motegi</small></span><span class="chip">Baseball <small>Tokyo and Osaka</small></span><span class="chip">Athletics <small>Tokyo</small></span><span class="chip">Boxing <small>Tokyo</small></span><span class="chip">Skateboarding <small>Tokyo</small></span></div>
+        <p class="alcance">Only events of global scale are listed here. Japan hosts many more local and national competitions that are not on this list.</p>
       </div>
       <div class="caja">
         <h2 class="tit">Good to know</h2>
@@ -197,6 +246,11 @@ td:last-child,th:last-child{text-align:right;font-variant-numeric:tabular-nums}
       <div class="caja fuentes" id="fuentes"><b>Sources</b><a href="https://www.worldometers.info/demographics/japan-demographics/" target="_blank" rel="noopener">Worldometer — Japan Demographics 2026</a><br><a href="https://www.crs.or.jp/data/pdf/sports26.pdf" target="_blank" rel="noopener">Central Research Services — 34th “Popular Sports” survey (PDF, in Japanese)</a><br><br>Population figures are 2026 estimates. Sports audiences come from surveys and are approximate: there is no census of who likes what.</div>
     </aside>
   </div>
+  <section class="env comida" id="comida">
+    <h2 class="tit">Where do the Japanese get their energy?</h2>
+    <p class="intro">What the country of baseball, sumo and golf eats: rice, soy and fish. Each food shows its composition per 100 g, from the USDA database.</p>
+    <div class="platos"><article class="plato"><div class="cab2"><span class="e">🍚</span><h3>Cooked white rice</h3></div><p>The base of Japanese food: clean carbohydrate, almost no fat.</p><div class="kcal"><b>130</b><span>kcal</span></div><div class="mix" aria-hidden="true"><i style="width:91.8%;background:var(--c1)"></i><i style="width:7.6%;background:var(--c3)"></i><i style="width:0.6%;background:var(--c2)"></i></div><div class="macros"><div><u style="background:var(--c1)"></u>Carbs<b>28.7 g</b></div><div><u style="background:var(--c3)"></u>Protein<b>2.4 g</b></div><div><u style="background:var(--c2)"></u>Fat<b>0.2 g</b></div></div><div class="mas">Fibre: 0 g · per 100 g<br>USDA: Rice, white, short-grain, enriched, cooked<br><a href="https://fdc.nal.usda.gov/food-details/168882/nutrients" target="_blank" rel="noopener">See the full detail on USDA FoodData Central ↗</a></div></article><article class="plato"><div class="cab2"><span class="e">🫘</span><h3>Natto</h3></div><p>Fermented soybeans: plenty of protein and fibre in one dish.</p><div class="kcal"><b>211</b><span>kcal</span></div><div class="mix" aria-hidden="true"><i style="width:29.5%;background:var(--c1)"></i><i style="width:45.0%;background:var(--c3)"></i><i style="width:25.5%;background:var(--c2)"></i></div><div class="macros"><div><u style="background:var(--c1)"></u>Carbs<b>12.7 g</b></div><div><u style="background:var(--c3)"></u>Protein<b>19.4 g</b></div><div><u style="background:var(--c2)"></u>Fat<b>11 g</b></div></div><div class="mas">Fibre: 5.4 g · per 100 g<br>USDA: Natto<br><a href="https://fdc.nal.usda.gov/food-details/172443/nutrients" target="_blank" rel="noopener">See the full detail on USDA FoodData Central ↗</a></div></article><article class="plato"><div class="cab2"><span class="e">🥣</span><h3>Miso</h3></div><p>Fermented soybean paste, the base of the everyday soup.</p><div class="kcal"><b>198</b><span>kcal</span></div><div class="mix" aria-hidden="true"><i style="width:57.5%;background:var(--c1)"></i><i style="width:29.0%;background:var(--c3)"></i><i style="width:13.6%;background:var(--c2)"></i></div><div class="macros"><div><u style="background:var(--c1)"></u>Carbs<b>25.4 g</b></div><div><u style="background:var(--c3)"></u>Protein<b>12.8 g</b></div><div><u style="background:var(--c2)"></u>Fat<b>6 g</b></div></div><div class="mas">Fibre: 5.4 g · per 100 g<br>USDA: Miso<br><a href="https://fdc.nal.usda.gov/food-details/172442/nutrients" target="_blank" rel="noopener">See the full detail on USDA FoodData Central ↗</a></div></article><article class="plato"><div class="cab2"><span class="e">🍲</span><h3>Firm tofu</h3></div><p>Almost no carbohydrate and about 17 g of protein per 100 g.</p><div class="kcal"><b>144</b><span>kcal</span></div><div class="mix" aria-hidden="true"><i style="width:9.7%;background:var(--c1)"></i><i style="width:60.1%;background:var(--c3)"></i><i style="width:30.3%;background:var(--c2)"></i></div><div class="macros"><div><u style="background:var(--c1)"></u>Carbs<b>2.8 g</b></div><div><u style="background:var(--c3)"></u>Protein<b>17.3 g</b></div><div><u style="background:var(--c2)"></u>Fat<b>8.7 g</b></div></div><div class="mas">Fibre: 2.3 g · per 100 g<br>USDA: Tofu, raw, firm, prepared with calcium sulfate<br><a href="https://fdc.nal.usda.gov/food-details/172475/nutrients" target="_blank" rel="noopener">See the full detail on USDA FoodData Central ↗</a></div></article><article class="plato"><div class="cab2"><span class="e">🌱</span><h3>Edamame</h3></div><p>Green soybeans in the pod: protein and fibre for snacking.</p><div class="kcal"><b>121</b><span>kcal</span></div><div class="mix" aria-hidden="true"><i style="width:34.3%;background:var(--c1)"></i><i style="width:45.8%;background:var(--c3)"></i><i style="width:20.0%;background:var(--c2)"></i></div><div class="macros"><div><u style="background:var(--c1)"></u>Carbs<b>8.9 g</b></div><div><u style="background:var(--c3)"></u>Protein<b>11.9 g</b></div><div><u style="background:var(--c2)"></u>Fat<b>5.2 g</b></div></div><div class="mas">Fibre: 5.2 g · per 100 g<br>USDA: Edamame, frozen, prepared<br><a href="https://fdc.nal.usda.gov/food-details/168411/nutrients" target="_blank" rel="noopener">See the full detail on USDA FoodData Central ↗</a></div></article><article class="plato"><div class="cab2"><span class="e">🐟</span><h3>Cooked salmon</h3></div><p>Protein and fat, no carbohydrate. USDA lists farmed salmon.</p><div class="kcal"><b>206</b><span>kcal</span></div><div class="mix" aria-hidden="true"><i style="width:0.0%;background:var(--c1)"></i><i style="width:64.1%;background:var(--c3)"></i><i style="width:35.9%;background:var(--c2)"></i></div><div class="macros"><div><u style="background:var(--c1)"></u>Carbs<b>0 g</b></div><div><u style="background:var(--c3)"></u>Protein<b>22.1 g</b></div><div><u style="background:var(--c2)"></u>Fat<b>12.4 g</b></div></div><div class="mas">Fibre: 0 g · per 100 g<br>USDA: Fish, salmon, Atlantic, farmed, cooked, dry heat<br><a href="https://fdc.nal.usda.gov/food-details/175168/nutrients" target="_blank" rel="noopener">See the full detail on USDA FoodData Central ↗</a></div></article></div>
+  </section>
 </div>
 <script>
 document.getElementById('btTabla').addEventListener('click',function(){var t=document.getElementById('tabla');t.hidden=!t.hidden;this.textContent=t.hidden?'Show the numbers as a table':'Hide the table';});
