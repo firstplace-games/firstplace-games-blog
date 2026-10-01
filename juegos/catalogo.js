@@ -45,6 +45,8 @@ window.FP_JUEGOS = [
   { id:'petanca', tipo:'tipico', anim:'emoji', c:'#566C8C', em:'🎯',
     nm:{es:'Pétanque', en:'Pétanque'}, urls:{ FR:'juegos/petanca.html' } },
 
+  { id:'pool', tipo:'mundo', anim:'emoji', c:'#0E7A45', em:'🎱', tag:{es:'Nuevo · 3D', en:'New · 3D'},
+    nm:{es:'Pool 3D', en:'Pool 3D'}, url:'juegos/pool.html' },
   { id:'puzzle', tipo:'mundo', anim:'jigsaw', c:'#7B5BE6', em:'🧩',
     nm:{es:'Rompecabezas', en:'Jigsaw'}, abre:'puzzle' },
   { id:'vr', tipo:'mundo', anim:'kart', c:'#F4551D', em:'🏎️',
@@ -55,6 +57,7 @@ window.FP_PORTADAS = {
   'stack:AR':  'juegos/portadas/stack-argentina.jpg',
   'cancha:MX': 'juegos/portadas/cancha-mexico.jpg',
   'ulama':     'juegos/portadas/ulama-3d.jpg',
+  'pool':      'juegos/portadas/pool-3d.jpg',
   'puzzle':    'juegos/portadas/rompecabezas.jpg',
   'vr':        'juegos/portadas/vuelta-rapida.jpg'
 };
