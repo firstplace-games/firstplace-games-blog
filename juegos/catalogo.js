@@ -33,6 +33,23 @@ window.FP_JUEGOS = [
   { id:'maze', tipo:'adaptado', anim:'emoji', c:'#2F5BD3', em:'🎭',
     nm:{es:'Maze', en:'Maze'}, conPais:true,
     urls:{ MX:'juegos/maze-mexico.html', US:'juegos/maze-usa.html', FR:'juegos/maze-france.html', IN:'juegos/maze-india.html', CN:'juegos/maze-china.html', BR:'juegos/maze-brasil.html', ID:'juegos/maze-indonesia.html', NG:'juegos/maze-nigeria.html', PK:'juegos/maze-pakistan.html', BD:'juegos/maze-bangladesh.html', RU:'juegos/maze-russia.html', ET:'juegos/maze-ethiopia.html', JP:'juegos/maze-japan.html', KR:'juegos/maze-korea.html', IT:'juegos/maze-italy.html', ES:'juegos/maze-spain.html', GB:'juegos/maze-uk.html', DE:'juegos/maze-germany.html', NL:'juegos/maze-netherlands.html', PT:'juegos/maze-portugal.html', AR:'juegos/maze-argentina.html', UY:'juegos/maze-uruguay.html', CL:'juegos/maze-chile.html', CO:'juegos/maze-colombia.html', CU:'juegos/maze-cuba.html' } },
+  /* Cinco: palabra de cinco letras del deporte del pais, una por dia (30/09) */
+  { id:'cinco', tipo:'adaptado', anim:'emoji', c:'#3E9B6B', em:'🔤',
+    nm:{es:'Cinco', en:'Cinco'}, conPais:true, tag:{es:'Del día', en:'Daily'},
+    urls:{ MX:'juegos/cinco-mexico.html', US:'juegos/cinco-usa.html', FR:'juegos/cinco-france.html',
+      IN:'juegos/cinco-india.html', CN:'juegos/cinco-china.html', BR:'juegos/cinco-brasil.html',
+      ID:'juegos/cinco-indonesia.html', NG:'juegos/cinco-nigeria.html', PK:'juegos/cinco-pakistan.html',
+      BD:'juegos/cinco-bangladesh.html', RU:'juegos/cinco-russia.html', ET:'juegos/cinco-ethiopia.html',
+      JP:'juegos/cinco-japan.html', KR:'juegos/cinco-korea.html', IT:'juegos/cinco-italy.html',
+      ES:'juegos/cinco-spain.html', GB:'juegos/cinco-uk.html', DE:'juegos/cinco-germany.html',
+      NL:'juegos/cinco-netherlands.html', PT:'juegos/cinco-portugal.html', AR:'juegos/cinco-argentina.html',
+      UY:'juegos/cinco-uruguay.html', CL:'juegos/cinco-chile.html', CO:'juegos/cinco-colombia.html',
+      CU:'juegos/cinco-cuba.html' } },
+  /* La Villa: prototipo de cuatro paises, el pais se elige adentro (02/10) */
+  { id:'villa', tipo:'adaptado', anim:'emoji', c:'#B5581F', em:'🏘️',
+    nm:{es:'La Villa', en:'The Village'}, conPais:true,
+    tag:{es:'Prototipo · 4 países', en:'Prototype · 4 countries'},
+    urls:{ MX:'juegos/villa.html', IT:'juegos/villa.html', ES:'juegos/villa.html', JP:'juegos/villa.html' } },
   { id:'cancha', tipo:'adaptado', anim:'cancha', c:'#D6167A', em:'🟩',
     nm:{es:'La Cancha', en:'The Court'}, urls:{ MX:'juegos/cancha.html' } },
 
@@ -49,6 +66,9 @@ window.FP_JUEGOS = [
   { id:'petanca', tipo:'tipico', anim:'emoji', c:'#566C8C', em:'🎯',
     nm:{es:'Pétanque', en:'Pétanque'}, urls:{ FR:'juegos/petanca.html' } },
 
+  { id:'primero', tipo:'mundo', anim:'emoji', c:'#E0A32B', em:'🥇',
+    tag:{es:'Del día', en:'Daily'},
+    nm:{es:'Primero', en:'Primero'}, url:'juegos/primero.html' },
   { id:'pool', tipo:'mundo', anim:'emoji', c:'#0E7A45', em:'🎱', tag:{es:'Nuevo · 3D', en:'New · 3D'},
     nm:{es:'Pool 3D', en:'Pool 3D'}, url:'juegos/pool.html' },
   { id:'puzzle', tipo:'mundo', anim:'jigsaw', c:'#7B5BE6', em:'🧩',
@@ -74,6 +94,7 @@ window.FP_PORTADAS = {
   'pool':      'juegos/portadas/pool-3d.jpg',
   'puzzle':    'juegos/portadas/rompecabezas.jpg',
   'primero':   'juegos/portadas/primero.jpg',
+  'villa':     'juegos/portadas/villa.jpg',
   'vr:MX':     'juegos/portadas/vuelta-rapida-mexico.jpg',
   'vr':        'juegos/portadas/vuelta-rapida.jpg'
 };
