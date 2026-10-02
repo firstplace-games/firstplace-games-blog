@@ -314,10 +314,10 @@ var CHICOS = [
    ba:{es:'Cinco siluetas a contraluz: un estadio, un trazado, un trofeo. ¿Cuál es?',
        en:'Five backlit silhouettes: a stadium, a circuit, a trophy. Which one?'},
    md:{es:'Dibujo propio', en:'Our own artwork'}},
-  {ic:'letras', nm:'El Apellido', lado:'B',
-   ba:{es:'Cinco letras, seis intentos. El apellido de un campeón, distinto cada día.',
-       en:'Five letters, six guesses. A champion’s surname, a new one each day.'},
-   md:{es:'Sirve igual en inglés', en:'Works the same in Spanish'}}
+  {id:'cinco', ic:'letras', nm:'Cinco', lado:'B', url:'juegos/cinco.html',
+   ba:{es:'Cinco letras, seis intentos. Una palabra del deporte de cada país, distinta cada día.',
+       en:'Five letters, six guesses. A word from each country’s sport, a new one every day.'},
+   md:{es:'25 países · con dato y fuente', en:'25 countries · with a sourced fact'}}
 ];
 
 var JUEGOS = [
@@ -330,12 +330,16 @@ var JUEGOS = [
   {z:'arcade', ic:'piezas', nm:'Rompecabezas',
    ba:{es:'Cuatro, nueve o cien piezas.', en:'Four, nine or a hundred pieces.'},
    meta:{es:'Construido', en:'Built'}},
-  {z:'arcade', ic:'bloques', nm:'Stack', url:'juegos/stack-mexico.html',
+  {z:'arcade', ic:'bloques', nm:'Stack', url:'juegos/stack.html',
    ba:{es:'Piezas que caen. Cada una es un deporte del país.', en:'Falling blocks. Each one is a sport from the country.'},
-   meta:{es:'México · EE. UU. · Francia', en:'Mexico · US · France'}},
-  {z:'arcade', ic:'laberinto', nm:'Escape', pronto:1,
+   meta:{es:'25 países', en:'25 countries'}},
+  {z:'arcade', ic:'laberinto', nm:'Maze', url:'juegos/maze.html',
    ba:{es:'Laberinto y persecución, con piel por país.', en:'Maze and chase, skinned per country.'},
-   meta:{es:'Pronto', en:'Soon'}},
+   meta:{es:'25 países', en:'25 countries'}},
+  {z:'arcade', ic:'mapa', nm:'La Villa', url:'juegos/villa.html',
+   ba:{es:'Cinco pruebas repartidas por una villa de juguete, contra reloj.',
+       en:'Five tasks spread across a toy-sized village, against the clock.'},
+   meta:{es:'Prototipo · 4 países', en:'Prototype · 4 countries'}},
   {z:'arcade', ic:'dedo', nm:'Pulso', pronto:1,
    ba:{es:'Tres segundos de fuerza contra otro.', en:'Three seconds of strength against someone.'},
    meta:{es:'Pronto', en:'Soon'}},
