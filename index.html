@@ -2390,6 +2390,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:none;border-ra
       <button class="tool-btn" id="globeBtn" title="Mapa mundial"><span>🌍</span></button>
       <button class="tool-btn" id="econBtn" title="Economía del deporte"><span>💰</span></button>
       <button class="tool-btn" id="probBtn" title="Probabilidad y estadística"><span>📊</span></button>
+      <button class="tool-btn" id="fitBtn" title="Fitness"><span>💪</span></button>
     </div>
     <button class="nav-btn" id="todayBtn"><span class="blink"></span><span data-t="todayBtn">Hoy</span></button>
     </div>
@@ -12772,7 +12773,8 @@ function init(){
   $("#todayBtn").onclick=openToday;
   DAILY.today=dayNo(TODAY); DAILY.view=DAILY.today;
   initAuth();
-  $("#gamesBtn").onclick=()=>{ location.href="juegos.html"; };   /* la sala de juegos vive en juegos.html */
+  $("#gamesBtn").onclick=()=>{ location.href="juegos.html"; };
+  $("#fitBtn").onclick=()=>{ location.href="fitness.html"; };   /* Fitness · Gym → Game */   /* la sala de juegos vive en juegos.html */
   $("#econBtn").onclick=openEcon;
   $("#calBtn").onclick=e=>{ e.stopPropagation(); calAbrir(e.currentTarget, STATE.sports[0]); };
   $("#probBtn").onclick=openProb;

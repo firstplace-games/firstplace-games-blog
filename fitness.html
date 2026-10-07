@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Gym to Game — Exercises That Build Your Sport | FirstPlace.games</title>
+<meta name="description" content="Every exercise next to the move it builds: Bulgarian split squats for cutting in football, box jumps for rebounds, rotational throws for your forehand, plus desk-friendly moves for office workers.">
+<link rel="canonical" href="https://firstplace.games/fitness">
+<meta property="og:site_name" content="FirstPlace.games">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Gym to Game — Exercises That Build Your Sport">
+<meta property="og:description" content="Every exercise next to the move it builds, on the pitch, on the court or at your desk.">
+<meta property="og:url" content="https://firstplace.games/fitness">
+<meta property="og:image" content="https://firstplace.games/fitness/img/pia-futbol.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Archivo+Narrow:wght@600;700&display=swap">
+<style>
+/* Layout: FirstPlace banner on top, then one feed of split cards — the exercise on the left, the real-life move on the right. */
+:root{
+  --fondo:#F6F8FC; --panel:#FFFFFF; --panel2:#EEF3FA; --linea:#D5DEEB;
+  --tinta:#0F1A2E; --tinta2:#34445F; --tinta3:#5A6C88;
+  --verde:#0E8A62; --azul:#1B63B0; --verde-suave:#E2F5EE; --azul-suave:#E4EEFA;
+  --f-display:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-narrow:'Archivo Narrow','Archivo',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --fondo:#0B1220; --panel:#101A2D; --panel2:#0E1727; --linea:#2B3B56;
+  --tinta:#E8EFF8; --tinta2:#B3C3DA; --tinta3:#8196B3;
+  --verde:#31E0A0; --azul:#6EB0F0; --verde-suave:#10302A; --azul-suave:#13243F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --fondo:#0B1220; --panel:#101A2D; --panel2:#0E1727; --linea:#2B3B56;
+  --tinta:#E8EFF8; --tinta2:#B3C3DA; --tinta3:#8196B3;
+  --verde:#31E0A0; --azul:#6EB0F0; --verde-suave:#10302A; --azul-suave:#13243F; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--fondo);color:var(--tinta);font:15px/1.55 var(--f-display);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--azul);outline-offset:2px}
+
+/* banner del sitio */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--panel);border-bottom:1px solid var(--linea)}
+.topbar .in{max-width:1200px;margin:0 auto;padding-inline:16px;padding-block:10px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{font-weight:800;letter-spacing:-.01em;white-space:nowrap}
+.logo b{color:var(--verde)}
+.accesos{display:flex;gap:4px}
+.accesos a{text-decoration:none;width:38px;height:38px;border-radius:10px;border:1px solid transparent;background:none;font-size:19px;line-height:1;display:grid;place-items:center;position:relative}
+.accesos a:hover{background:var(--panel2)}
+.accesos a.on{background:var(--verde-suave);border-color:var(--verde)}
+.hoy{font-weight:600;font-size:14px;color:var(--tinta2);border:0;background:none;padding:6px 8px}
+.der{margin-left:auto;display:flex;gap:8px;align-items:center}
+.maqueta{font:700 11px/1 var(--f-narrow);letter-spacing:.08em;text-transform:uppercase;color:var(--tinta3);border:1px dashed var(--linea);border-radius:999px;padding:6px 10px}
+.idioma{display:flex;border:1px solid var(--linea);border-radius:999px;overflow:hidden}
+.idioma button{border:0;background:none;padding:5px 11px;font-weight:700;font-size:12px;color:var(--tinta3)}
+.idioma button[aria-pressed="true"]{background:var(--tinta);color:var(--fondo)}
+
+/* cabecera de la sección */
+.env{max-width:1200px;margin:0 auto;padding-inline:16px;padding-block:28px 64px}
+.cab{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px 32px;align-items:end}
+@media (max-width:760px){.cab{grid-template-columns:minmax(0,1fr)}}
+.kicker{font:700 12px/1 var(--f-narrow);letter-spacing:.12em;text-transform:uppercase;color:var(--verde);margin:0 0 10px}
+h1{font-size:clamp(34px,6vw,58px);line-height:1;letter-spacing:-.03em;margin:0;font-weight:800;text-wrap:balance}
+h1 .flecha{color:var(--verde)}
+.bajada{max-width:60ch;color:var(--tinta2);font-size:17px;margin:12px 0 0}
+.cifras{display:flex;gap:22px;font-variant-numeric:tabular-nums}
+.cifras div{display:grid}
+.cifras b{font-size:28px;font-weight:800;line-height:1}
+.cifras span{font-size:12px;color:var(--tinta3)}
+
+.tabs{display:flex;gap:2px;margin-top:26px;border-bottom:1px solid var(--linea);overflow-x:auto}
+.tabs button{border:0;background:none;padding:12px 16px;font-weight:700;color:var(--tinta3);border-bottom:3px solid transparent;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--tinta);border-bottom-color:var(--verde)}
+.tabs .tag{font:700 10px/1 var(--f-narrow);letter-spacing:.06em;text-transform:uppercase;background:var(--azul-suave);color:var(--azul);border-radius:999px;padding:3px 6px;margin-left:6px;vertical-align:2px}
+
+.filtros{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 22px}
+.chip{border:1px solid var(--linea);background:var(--panel);border-radius:999px;padding:7px 13px;font-size:14px;font-weight:600;color:var(--tinta2)}
+.chip[aria-pressed="true"]{background:var(--tinta);border-color:var(--tinta);color:var(--fondo)}
+
+/* la tarjeta dividida */
+.feed{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,540px),1fr));gap:18px}
+.card{background:var(--panel);border:1px solid var(--linea);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.card-top{display:flex;align-items:center;gap:10px;padding:14px 16px 0}
+.dep{font:700 11px/1 var(--f-narrow);letter-spacing:.08em;text-transform:uppercase;color:var(--tinta3);display:flex;align-items:center;gap:6px}
+.dep i{font-style:normal;font-size:16px}
+.nivel{margin-left:auto;font:700 11px/1 var(--f-narrow);letter-spacing:.06em;text-transform:uppercase;padding:4px 8px;border-radius:999px;border:1px solid var(--linea);color:var(--tinta2)}
+.par{display:grid;grid-template-columns:minmax(0,1fr) 26px minmax(0,1fr);align-items:stretch;padding:12px 16px 0}
+@media (max-width:520px){.par{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.par .igual{display:none}}
+.lado{min-width:0;display:flex;flex-direction:column;gap:8px}
+.etq{font:700 10.5px/1 var(--f-narrow);letter-spacing:.1em;text-transform:uppercase}
+.lado.ej .etq{color:var(--verde)}
+.lado.vida .etq{color:var(--azul)}
+.lienzo{position:relative;border-radius:12px;aspect-ratio:1/1;max-width:100%;overflow:hidden}
+.lienzo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.lado.ej .lienzo{background:var(--verde-suave)}
+.lado.vida .lienzo{background:var(--azul-suave)}
+.lienzo canvas{position:absolute;inset:0;width:100%;height:100%}
+.lienzo .rep{position:absolute;left:8px;top:8px;font:700 11px/1 var(--f-narrow);letter-spacing:.04em;background:var(--panel);color:var(--tinta2);border-radius:6px;padding:4px 6px;font-variant-numeric:tabular-nums}
+.lado h3{margin:2px 0 0;font-size:16.5px;line-height:1.2;font-weight:800;text-wrap:balance}
+.igual{display:grid;place-items:center;color:var(--tinta3);font-weight:800;font-size:18px;padding-top:22px}
+.igual span{display:block;transform:translateY(-30px)}
+.datos{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12.5px;color:var(--tinta3)}
+.datos b{color:var(--tinta2);font-weight:600}
+.musc{display:flex;flex-wrap:wrap;gap:4px}
+.musc span{font-size:11.5px;font-weight:600;background:var(--panel2);border:1px solid var(--linea);border-radius:6px;padding:2px 6px;color:var(--tinta2)}
+.puente{margin:14px 16px 0;padding:12px 14px;border-radius:10px;background:var(--panel2);font-size:14.5px;color:var(--tinta);line-height:1.45}
+.puente b{color:var(--verde)}
+.card-pie{display:flex;align-items:center;gap:10px;padding:12px 16px 14px;margin-top:auto;font-size:12.5px;color:var(--tinta3)}
+.card-pie .clave{flex:1;min-width:0}
+.card-pie .clave b{color:var(--tinta2)}
+.autor{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.autor .av{width:26px;height:26px;border-radius:50%;object-fit:cover;border:1.5px solid var(--verde)}
+.autor b{color:var(--tinta);font-weight:700}
+.coaches{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:18px;margin-top:22px}
+.coach{display:grid;grid-template-columns:96px minmax(0,1fr);gap:16px;align-items:start}
+.coach img{width:96px;height:96px;border-radius:18px;object-fit:cover;border:2px solid var(--verde)}
+.coach h2{margin:0 0 2px}
+.coach .rol{font-size:13px;color:var(--tinta3);margin:0 0 10px}
+.coach .esp{display:flex;flex-wrap:wrap;gap:4px;margin-top:10px}
+.coach .esp span{font-size:11.5px;font-weight:600;background:var(--panel2);border:1px solid var(--linea);border-radius:6px;padding:2px 6px;color:var(--tinta2)}
+.personaje{font:700 10.5px/1 var(--f-narrow);letter-spacing:.08em;text-transform:uppercase;color:var(--tinta3)}
+
+/* trainers y programas */
+.bloque{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:22px;margin-top:22px}
+@media (max-width:860px){.bloque{grid-template-columns:minmax(0,1fr)}}
+.caja{background:var(--panel);border:1px solid var(--linea);border-radius:16px;padding:22px}
+.caja h2{margin:0 0 6px;font-size:24px;letter-spacing:-.01em;line-height:1.15;text-wrap:balance}
+.caja p{color:var(--tinta2);margin:0 0 14px;max-width:62ch}
+.pasos{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:12px;counter-reset:p}
+.pasos li{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;counter-increment:p}
+.pasos li::before{content:counter(p);width:30px;height:30px;border-radius:50%;border:2px solid var(--verde);display:grid;place-items:center;font-weight:800;color:var(--verde);font-size:13px}
+.pasos b{display:block}
+.pasos span{color:var(--tinta2);font-size:14px}
+.ventajas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}
+@media (max-width:620px){.ventajas{grid-template-columns:minmax(0,1fr)}}
+.ventajas div{border-top:2px solid var(--verde);padding-top:10px;font-size:14px;color:var(--tinta2)}
+.ventajas b{display:block;color:var(--tinta);font-size:15px}
+.perfil{display:grid;grid-template-columns:64px minmax(0,1fr);gap:14px;align-items:center}
+.perfil .foto{width:64px;height:64px;border-radius:14px;background:var(--azul-suave);display:grid;place-items:center;font-size:30px}
+.ejemplo{font:700 10.5px/1 var(--f-narrow);letter-spacing:.1em;text-transform:uppercase;color:var(--tinta3);border:1px dashed var(--linea);border-radius:999px;padding:4px 8px;display:inline-block;margin-bottom:12px}
+.form{display:grid;gap:12px;margin-top:14px}
+.form label{display:grid;gap:5px;font-size:13px;font-weight:600;color:var(--tinta2)}
+.form input,.form select{font:inherit;color:var(--tinta);background:var(--fondo);border:1px solid var(--linea);border-radius:10px;padding:10px 12px;width:100%}
+.fila2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+@media (max-width:480px){.fila2{grid-template-columns:minmax(0,1fr)}}
+.btn{border:0;border-radius:10px;padding:12px 18px;background:var(--verde);color:var(--fondo);font-weight:800}
+.aviso{font-size:13.5px;color:var(--verde);font-weight:600}
+.progs{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:18px;margin-top:22px}
+.prog .sem{display:grid;gap:8px;margin-top:12px}
+.prog .sem div{display:grid;grid-template-columns:70px minmax(0,1fr);gap:10px;font-size:14px;padding-top:8px;border-top:1px solid var(--linea)}
+.prog .sem span:first-child{font:700 12px/1.6 var(--f-narrow);letter-spacing:.06em;text-transform:uppercase;color:var(--tinta3)}
+.prog .meta{display:flex;gap:12px;font-size:13px;color:var(--tinta3);margin-bottom:6px}
+.premium{font:700 10.5px/1 var(--f-narrow);letter-spacing:.08em;text-transform:uppercase;color:var(--azul);background:var(--azul-suave);border-radius:999px;padding:4px 8px}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="in">
+    <a class="logo" href="index.html" style="color:inherit;text-decoration:none">FirstPlace<b>.games</b></a>
+    <nav class="accesos" aria-label="Sections">
+      <a href="juegos.html" title="Games" aria-label="Games">🧩</a>
+      <a href="index.html" title="World map" aria-label="World map">🌍</a>
+      <a href="index.html" title="Economy" aria-label="Economy">💰</a>
+      <a href="index.html" title="Probability" aria-label="Probability">📊</a>
+      <a class="on" href="fitness.html" title="Fitness" aria-label="Fitness" aria-current="page">💪</a>
+    </nav>
+    <a class="hoy" href="index.html" style="text-decoration:none">← <span data-t="hoy">Map</span></a>
+    <div class="der">
+            <div class="idioma" role="group" aria-label="Language">
+        <button id="lang-en" aria-pressed="true">EN</button>
+        <button id="lang-es" aria-pressed="false">ES</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="env">
+  <section class="cab">
+    <div>
+      <p class="kicker" data-t="kicker">Fitness · Train like an athlete</p>
+      <h1>Gym <span class="flecha">→</span> Game</h1>
+      <p class="bajada" data-t="bajada">Every exercise next to the move it builds. Left, the drill. Right, where it shows up: on the pitch, on the court, or at your desk.</p>
+    </div>
+    <div class="cifras" aria-label="Section totals">
+      <div><b id="n-tarjetas">8</b><span data-t="c1">cards</span></div>
+      <div><b>6</b><span data-t="c2">sports & daily life</span></div>
+      <div><b>2</b><span data-t="c3">coaches</span></div>
+    </div>
+  </section>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" id="tab-deporte" aria-selected="true" data-tab="deporte" data-t="t1">By sport</button>
+    <button role="tab" id="tab-diario" aria-selected="false" data-tab="diario" data-t="t2">Everyday</button>
+    <button role="tab" id="tab-trainers" aria-selected="false" data-tab="trainers"><span data-t="t3">Trainers</span><span class="tag">B2B</span></button>
+    <button role="tab" id="tab-programas" aria-selected="false" data-tab="programas" data-t="t4">Programs</button>
+  </div>
+
+  <section id="vista-tarjetas">
+    <div class="filtros" id="filtros"></div>
+    <div class="feed" id="feed"></div>
+  </section>
+
+  <section id="vista-trainers" hidden>
+    <div class="coaches" id="coaches"></div>
+    <div class="bloque">
+      <div class="caja">
+        <h2 data-t="tr-h">Show what your training does on the field</h2>
+        <p data-t="tr-p">FirstPlace already brings sports fans in through games, calendars and 50 sports. Personal trainers publish cards here and get seen by people looking for exactly that sport.</p>
+        <div class="ventajas">
+          <div><b data-t="v1b">Free profile</b><span data-t="v1">Photo, specialty, city, and a contact button.</span></div>
+          <div><b data-t="v2b">On the map</b><span data-t="v2">Pick a country on the map and its trainers show up.</span></div>
+          <div><b data-t="v3b">Every card ranks</b><span data-t="v3">Each card is its own page, built to show up in search.</span></div>
+        </div>
+        <ol class="pasos">
+          <li><div><b data-t="p1b">Film the exercise</b><span data-t="p1">A 6 to 10 second loop, side view, one clean rep.</span></div></li>
+          <li><div><b data-t="p2b">Film or pick the real move</b><span data-t="p2">The sport gesture or the everyday task it trains.</span></div></li>
+          <li><div><b data-t="p3b">Write one sentence that links them</b><span data-t="p3">We pair both clips and publish the card under your name.</span></div></li>
+        </ol>
+      </div>
+      <div class="caja">
+        <span class="ejemplo" data-t="ej">Example profile</span>
+        <div class="perfil">
+          <div class="foto" aria-hidden="true">🏃</div>
+          <div><h2 style="font-size:20px;margin:0" data-t="pf-n">Your name here</h2>
+            <p style="margin:0;font-size:14px" data-t="pf-d">Football and padel strength coach · Montevideo, Uruguay</p></div>
+        </div>
+        <form class="form" id="form-trainer">
+          <div class="fila2">
+            <label><span data-t="f1">Full name</span><input id="f-nombre" autocomplete="name"></label>
+            <label><span data-t="f2">City and country</span><input id="f-ciudad"></label>
+          </div>
+          <label><span data-t="f3">Main sport</span>
+            <select id="f-deporte"><option>Football</option><option>Tennis</option><option>Padel</option><option>Basketball</option><option>Golf</option><option>Running</option><option data-t="f-of">Office & everyday</option></select></label>
+          <label><span data-t="f4">Instagram or website</span><input id="f-red" placeholder="@yourhandle"></label>
+          <button class="btn" type="submit" data-t="f5">Apply as a trainer</button>
+          <p class="aviso" id="f-aviso" hidden data-t="f6">Thanks! Trainer sign-ups open soon. This form does not send anything yet.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section id="vista-programas" hidden>
+    <div class="progs" id="progs"></div>
+  </section>
+</main>
+
+<script>
+(() => {
+/* ───────── textos ───────── */
+const T = {
+ en:{hoy:"Map",kicker:"Fitness · Train like an athlete",
+  bajada:"Every exercise next to the move it builds. Left, the drill. Right, where it shows up: on the pitch, on the court, or at your desk.",
+  c1:"cards",c2:"sports & daily life",c3:"coaches",t1:"By sport",t2:"Everyday",t3:"Trainers",t4:"Programs",
+  "tr-h":"Show what your training does on the field",
+  "tr-p":"FirstPlace already brings sports fans in through games, calendars and 50 sports. Personal trainers publish cards here and get seen by people looking for exactly that sport.",
+  v1b:"Free profile",v1:"Photo, specialty, city, and a contact button.",v2b:"On the map",v2:"Pick a country on the map and its trainers show up.",v3b:"Every card ranks",v3:"Each card is its own page, built to show up in search.",
+  p1b:"Film the exercise",p1:"A 6 to 10 second loop, side view, one clean rep.",p2b:"Film or pick the real move",p2:"The sport gesture or the everyday task it trains.",p3b:"Write one sentence that links them",p3:"We pair both clips and publish the card under your name.",
+  ej:"Example profile","pf-n":"Your name here","pf-d":"Football and padel strength coach · Montevideo, Uruguay",
+  f1:"Full name",f2:"City and country",f3:"Main sport",f4:"Instagram or website",f5:"Apply as a trainer",f6:"Thanks! Trainer sign-ups open soon. This form does not send anything yet.","f-of":"Office & everyday",
+  ejercicio:"The exercise",vida:"In real life",dosis:"Dose",equipo:"Gear",clave:"Key cue",todos:"All",
+  semanas:"weeks",sesiones:"sessions / week",sem:"Week"},
+ es:{hoy:"Mapa",kicker:"Fitness · Entrená como un deportista",
+  bajada:"Cada ejercicio al lado del movimiento que construye. A la izquierda, el ejercicio. A la derecha, dónde aparece: en la cancha, en la pista o en tu escritorio.",
+  c1:"tarjetas",c2:"deportes y día a día",c3:"coaches",t1:"Por deporte",t2:"Día a día",t3:"Trainers",t4:"Programas",
+  "tr-h":"Mostrá lo que tu entrenamiento hace en la cancha",
+  "tr-p":"FirstPlace ya atrae fans del deporte con juegos, calendarios y 50 deportes. Los personal trainers publican tarjetas acá y los ve gente que busca justo ese deporte.",
+  v1b:"Perfil gratis",v1:"Foto, especialidad, ciudad y botón de contacto.",v2b:"En el mapa",v2:"Elegís un país en el mapa y aparecen sus trainers.",v3b:"Cada tarjeta posiciona",v3:"Cada tarjeta es su propia página, hecha para aparecer en Google.",
+  p1b:"Filmá el ejercicio",p1:"Un loop de 6 a 10 segundos, de costado, una repetición limpia.",p2b:"Filmá o elegí el gesto real",p2:"El gesto del deporte o la tarea del día a día que entrena.",p3b:"Escribí una frase que los una",p3:"Nosotros juntamos los dos clips y publicamos la tarjeta con tu nombre.",
+  ej:"Perfil de ejemplo","pf-n":"Tu nombre acá","pf-d":"Preparador físico de fútbol y pádel · Montevideo, Uruguay",
+  f1:"Nombre completo",f2:"Ciudad y país",f3:"Deporte principal",f4:"Instagram o web",f5:"Postularme como trainer",f6:"¡Gracias! Las altas de trainers abren pronto. Este formulario todavía no envía nada.","f-of":"Oficina y día a día",
+  ejercicio:"El ejercicio",vida:"En la vida real",dosis:"Dosis",equipo:"Equipo",clave:"Clave",todos:"Todos",
+  semanas:"semanas",sesiones:"sesiones / semana",sem:"Semana"}
+};
+
+/* ───────── poses (lienzo 220 × 200, suelo y = 182) ───────── */
+const S = {head:[100,50],neck:[100,64],hip:[100,116],kL:[94,148],fL:[92,182],kR:[106,148],fR:[108,182],eL:[92,90],hL:[90,114],eR:[108,90],hR:[110,114]};
+const P = (o) => Object.assign({}, S, o);
+
+const ANIM = {
+ /* 1 · sentadilla búlgara */
+ bulgara:{dur:1100,hold:250,frames:[
+  P({head:[94,48],neck:[94,62],hip:[98,112],kL:[86,146],fL:[80,182],kR:[122,138],fR:[156,148],eL:[92,88],hL:[92,112],eR:[96,88],hR:[96,112]}),
+  P({head:[90,72],neck:[91,86],hip:[100,138],kL:[70,144],fL:[80,182],kR:[124,170],fR:[156,148],eL:[88,112],hL:[88,136],eR:[93,112],hR:[93,136]})],
+  draw(c,p,C){bench(c,C,142,148,36);dumb(c,C,p.hL);dumb(c,C,p.hR)}},
+ corte:{dur:700,hold:200,frames:[
+  P({head:[112,50],neck:[110,64],hip:[106,114],kL:[120,138],fL:[112,166],kR:[100,148],fR:[90,182],eL:[98,86],hL:[106,104],eR:[120,86],hR:[126,72],ball:[136,174]}),
+  P({head:[82,76],neck:[88,90],hip:[102,136],kL:[74,146],fL:[62,182],kR:[124,160],fR:[142,182],eL:[70,92],hL:[56,100],eR:[108,102],hR:[124,112],ball:[70,174]}),
+  P({head:[74,54],neck:[76,68],hip:[86,116],kL:[72,142],fL:[64,170],kR:[98,150],fR:[112,182],eL:[66,88],hL:[60,74],eR:[88,92],hR:[96,108],ball:[30,174]})],
+  draw(c,p,C){ball(c,C,p.ball,8,'futbol')}},
+
+ /* 2 · lanzamiento rotacional */
+ lanz:{dur:650,hold:350,frames:[
+  P({head:[106,56],neck:[106,70],hip:[104,120],kL:[92,150],fL:[84,182],kR:[116,150],fR:[122,182],eL:[118,98],hL:[130,116],eR:[122,100],hR:[132,118],ball:[132,118]}),
+  P({head:[94,52],neck:[96,66],hip:[100,118],kL:[90,148],fL:[84,182],kR:[114,150],fR:[126,180],eL:[80,82],hL:[62,84],eR:[84,86],hR:[64,88],ball:[40,82]})],
+  draw(c,p,C){wall(c,C,14);ball(c,C,p.ball,10,'med')}},
+ drive:{dur:450,hold:450,frames:[
+  P({head:[106,54],neck:[106,68],hip:[104,118],kL:[92,148],fL:[84,182],kR:[116,150],fR:[122,182],eL:[88,86],hL:[76,84],eR:[120,94],hR:[136,104],tip:[160,96],ball:[50,90]}),
+  P({head:[96,52],neck:[98,66],hip:[100,118],kL:[90,148],fL:[84,182],kR:[114,150],fR:[126,180],eL:[94,94],hL:[98,104],eR:[86,82],hR:[70,84],tip:[44,80],ball:[66,86]})],
+  draw(c,p,C){racket(c,C,p.hR,p.tip);ball(c,C,p.ball,5,'tenis')}},
+
+ /* 3 · salto al cajón */
+ cajon:{dur:520,hold:260,frames:[
+  P({head:[72,84],neck:[74,98],hip:[82,138],kL:[68,154],fL:[76,182],kR:[72,156],fR:[82,182],eL:[88,114],hL:[98,128],eR:[90,116],hR:[100,130]}),
+  P({head:[106,24],neck:[106,38],hip:[110,88],kL:[124,104],fL:[118,124],kR:[128,106],fR:[122,126],eL:[102,22],hL:[98,6],eR:[112,22],hR:[116,6]}),
+  P({head:[136,74],neck:[136,88],hip:[134,124],kL:[150,134],fL:[140,148],kR:[154,136],fR:[146,148],eL:[148,100],hL:[160,110],eR:[150,102],hR:[162,112]})],
+  draw(c,p,C){box(c,C,116,148,52,34)}},
+ rebote:{dur:520,hold:260,frames:[
+  P({head:[92,84],neck:[94,98],hip:[102,138],kL:[88,154],fL:[96,182],kR:[92,156],fR:[102,182],eL:[108,114],hL:[118,128],eR:[110,116],hR:[120,130],ball:[150,36]}),
+  P({head:[106,34],neck:[106,48],hip:[108,98],kL:[118,118],fL:[112,140],kR:[122,120],fR:[116,142],eL:[112,26],hL:[118,10],eR:[120,28],hR:[128,12],ball:[124,8]}),
+  P({head:[100,60],neck:[100,74],hip:[102,124],kL:[92,152],fL:[94,182],kR:[110,152],fR:[110,182],eL:[90,86],hL:[100,76],eR:[112,88],hR:[106,78],ball:[103,74]})],
+  draw(c,p,C){rim(c,C);ball(c,C,p.ball,9,'basket')}},
+
+ /* 4 · leñador en polea */
+ lenador:{dur:800,hold:300,frames:[
+  P({head:[100,52],neck:[100,66],hip:[100,118],kL:[90,148],fL:[84,182],kR:[112,148],fR:[118,182],eL:[118,72],hL:[136,58],eR:[122,76],hR:[138,62]}),
+  P({head:[96,60],neck:[96,74],hip:[100,120],kL:[88,150],fL:[84,182],kR:[110,150],fR:[118,182],eL:[82,104],hL:[70,128],eR:[86,108],hR:[72,132]})],
+  draw(c,p,C){cable(c,C,p.hR)}},
+ swing:{dur:520,hold:320,frames:[
+  P({head:[98,68],neck:[100,82],hip:[110,124],kL:[100,152],fL:[96,182],kR:[118,152],fR:[124,182],eL:[120,74],hL:[134,58],eR:[124,78],hR:[136,60],tip:[112,34]}),
+  P({head:[96,70],neck:[98,84],hip:[108,124],kL:[98,152],fL:[94,182],kR:[116,152],fR:[122,182],eL:[98,110],hL:[100,136],eR:[102,112],hR:[102,138],tip:[100,180]}),
+  P({head:[100,58],neck:[102,72],hip:[106,120],kL:[96,150],fL:[94,182],kR:[118,152],fR:[126,180],eL:[86,62],hL:[74,52],eR:[88,66],hR:[76,54],tip:[118,72]})],
+  draw(c,p,C){club(c,C,p.hR,p.tip);ball(c,C,[104,178],4,'golf')}},
+
+ /* 5 · extensión torácica */
+ torax:{dur:1300,hold:500,frames:[
+  P({head:[114,72],neck:[106,82],hip:[94,130],kL:[126,130],fL:[128,182],kR:[130,132],fR:[132,182],eL:[118,70],hL:[106,62],eR:[120,72],hR:[108,64]}),
+  P({head:[86,62],neck:[90,78],hip:[94,130],kL:[126,130],fL:[128,182],kR:[130,132],fR:[132,182],eL:[100,54],hL:[84,56],eR:[102,56],hR:[86,58]})],
+  draw(c,p,C){chair(c,C)}},
+ escritorio:{dur:1300,hold:900,frames:[
+  P({head:[120,78],neck:[110,86],hip:[94,130],kL:[126,130],fL:[128,182],kR:[130,132],fR:[132,182],eL:[118,112],hL:[142,112],eR:[120,114],hR:[144,114]}),
+  P({head:[98,58],neck:[98,74],hip:[94,130],kL:[126,130],fL:[128,182],kR:[130,132],fR:[132,182],eL:[106,104],hL:[140,112],eR:[108,106],hR:[142,114]})],
+  draw(c,p,C){chair(c,C);desk(c,C)}},
+
+ /* 6 · peso muerto */
+ muerto:{dur:1000,hold:300,frames:[
+  P({head:[100,50],neck:[100,64],hip:[102,116],kL:[100,148],fL:[100,182],kR:[106,148],fR:[106,182],eL:[100,90],hL:[100,114],eR:[104,90],hR:[104,114]}),
+  P({head:[70,92],neck:[82,98],hip:[124,112],kL:[110,146],fL:[100,182],kR:[116,146],fR:[106,182],eL:[84,128],hL:[88,156],eR:[88,128],hR:[92,156]})],
+  draw(c,p,C){kb(c,C,midp(p.hL,p.hR))}},
+ caja:{dur:1000,hold:300,frames:[
+  P({head:[70,92],neck:[82,98],hip:[124,112],kL:[110,146],fL:[100,182],kR:[116,146],fR:[106,182],eL:[80,128],hL:[80,160],eR:[90,130],hR:[96,160]}),
+  P({head:[100,50],neck:[100,64],hip:[102,116],kL:[100,148],fL:[100,182],kR:[106,148],fR:[106,182],eL:[86,88],hL:[82,108],eR:[96,90],hR:[96,110]})],
+  draw(c,p,C){crate(c,C,midp(p.hL,p.hR))}},
+
+ /* 7 · sentadilla a la silla */
+ silla:{dur:1100,hold:300,frames:[
+  P({head:[104,50],neck:[104,64],hip:[104,116],kL:[106,148],fL:[108,182],kR:[112,148],fR:[114,182],eL:[118,72],hL:[140,74],eR:[120,74],hR:[142,76]}),
+  P({head:[110,70],neck:[106,84],hip:[90,128],kL:[122,128],fL:[114,182],kR:[126,130],fR:[118,182],eL:[124,84],hL:[146,82],eR:[126,86],hR:[148,84]})],
+  draw(c,p,C){chair(c,C,true)}},
+ levantarse:{dur:1100,hold:600,frames:[
+  P({head:[110,70],neck:[106,84],hip:[90,128],kL:[122,128],fL:[114,182],kR:[126,130],fR:[118,182],eL:[112,108],hL:[124,118],eR:[116,110],hR:[128,118]}),
+  P({head:[104,50],neck:[104,64],hip:[104,116],kL:[106,148],fL:[108,182],kR:[112,148],fR:[114,182],eL:[100,90],hL:[100,112],eR:[114,88],hR:[124,100]})],
+  draw(c,p,C){chair(c,C,true);cup(c,C,p.hR)}}
+};
+
+/* ───────── tarjetas ───────── */
+const CARDS = [
+ {id:"futbol",coach:"pia",img:["fitness/img/pia-bulgara.jpg","fitness/img/pia-futbol.jpg"],cat:"deporte",dep:"football",em:"⚽",ex:"bulgara",vi:"corte",nivel:{en:"Intermediate",es:"Intermedio"},
+  en:{ej:"Bulgarian split squat",vida:"Planting to cut",dosis:"3 × 8 per leg",equipo:"Bench, 2 dumbbells",musc:["Quads","Glutes","Adductors"],
+      puente:"One leg absorbs your whole body's braking. That is <b>the plant foot before every change of direction</b>.",clave:"Knee tracks over the toes. Push the floor away."},
+  es:{ej:"Sentadilla búlgara",vida:"Frenar para cambiar de dirección",dosis:"3 × 8 por pierna",equipo:"Banco, 2 mancuernas",musc:["Cuádriceps","Glúteos","Aductores"],
+      puente:"Una sola pierna frena todo el cuerpo. Es <b>el pie de apoyo antes de cada cambio de dirección</b>.",clave:"La rodilla sigue la punta del pie. Empujá el piso."}},
+ {id:"tenis",coach:"leo",img:["fitness/img/leo-lanzamiento.jpg","fitness/img/leo-drive.jpg"],cat:"deporte",dep:"tennis",em:"🎾",ex:"lanz",vi:"drive",nivel:{en:"Beginner",es:"Principiante"},
+  en:{ej:"Rotational med-ball throw",vida:"Forehand",dosis:"3 × 6 per side",equipo:"3–4 kg med ball, wall",musc:["Obliques","Glutes","Shoulders"],
+      puente:"Power starts in the hips, goes through the trunk and leaves through the arm. <b>The throw trains that same order</b>.",clave:"Turn the back hip first, arms last."},
+  es:{ej:"Lanzamiento rotacional con balón medicinal",vida:"Drive",dosis:"3 × 6 por lado",equipo:"Balón de 3–4 kg, pared",musc:["Oblicuos","Glúteos","Hombros"],
+      puente:"La potencia nace en la cadera, pasa por el tronco y sale por el brazo. <b>El lanzamiento entrena ese mismo orden</b>.",clave:"Primero gira la cadera de atrás, los brazos al final."}},
+ {id:"basket",coach:"pia",img:["fitness/img/pia-cajon.jpg","fitness/img/pia-rebote.jpg"],cat:"deporte",dep:"basketball",em:"🏀",ex:"cajon",vi:"rebote",nivel:{en:"Intermediate",es:"Intermedio"},
+  en:{ej:"Box jump",vida:"Rebound",dosis:"4 × 5, full rest",equipo:"50–60 cm plyo box",musc:["Calves","Quads","Glutes"],
+      puente:"Fast arm swing, ankles, knees and hips extending together, soft landing: <b>a rebound in three steps</b>.",clave:"Land quiet. Step down, never jump down."},
+  es:{ej:"Salto al cajón",vida:"Rebote",dosis:"4 × 5, pausa completa",equipo:"Cajón de 50–60 cm",musc:["Gemelos","Cuádriceps","Glúteos"],
+      puente:"Braceo rápido, tobillo, rodilla y cadera extendiéndose juntos, caída suave: <b>un rebote en tres pasos</b>.",clave:"Caé en silencio. Bajá caminando, nunca saltando."}},
+ {id:"pase",coach:"leo",img:["fitness/img/leo-flexion.jpg","fitness/img/leo-pase.jpg"],cat:"deporte",dep:"basketball",em:"🏀",ex:"muerto",vi:"muerto",nivel:{en:"Beginner",es:"Principiante"},
+  en:{ej:"Push-up",vida:"Chest pass",dosis:"3 × 10–15",equipo:"None",musc:["Chest","Triceps","Core"],
+      puente:"Both are a straight push away from your chest with a braced body. <b>Stronger push-ups, crisper passes</b>.",clave:"One straight line from head to heels."},
+  es:{ej:"Flexión de brazos",vida:"Pase de pecho",dosis:"3 × 10–15",equipo:"Ninguno",musc:["Pecho","Tríceps","Core"],
+      puente:"Las dos son un empuje recto desde el pecho con el cuerpo firme. <b>Flexiones más fuertes, pases más precisos</b>.",clave:"Una sola línea recta de la cabeza a los talones."}},
+ {id:"golf",coach:"leo",img:["fitness/img/leo-lenador.jpg","fitness/img/leo-golf.jpg"],cat:"deporte",dep:"golf",em:"⛳",ex:"lenador",vi:"swing",nivel:{en:"Beginner",es:"Principiante"},
+  en:{ej:"Cable woodchop",vida:"Golf swing",dosis:"3 × 10 per side",equipo:"Cable machine or band",musc:["Obliques","Core","Lats"],
+      puente:"High-to-low rotation over stable legs. <b>It's the path of the downswing</b>.",clave:"Hips stay quiet, the chest turns."},
+  es:{ej:"Leñador en polea",vida:"Swing de golf",dosis:"3 × 10 por lado",equipo:"Polea o banda elástica",musc:["Oblicuos","Core","Dorsales"],
+      puente:"Rotación de arriba hacia abajo con las piernas firmes. <b>Es el camino del downswing</b>.",clave:"La cadera quieta, gira el pecho."}},
+ {id:"oficina",coach:"pia",img:["fitness/img/pia-torax.jpg","fitness/img/pia-oficina.jpg"],cat:"diario",dep:"office",em:"💼",ex:"torax",vi:"escritorio",nivel:{en:"Anyone",es:"Para todos"},
+  en:{ej:"Seated thoracic extension",vida:"8 hours at a screen",dosis:"2 × 10, every 1–2 h",equipo:"Your office chair",musc:["Upper back","Neck","Chest"],
+      puente:"Screens pull the head forward and round the upper back. <b>This undoes it without leaving your desk</b>.",clave:"Move from the upper back, not the lower back."},
+  es:{ej:"Extensión torácica sentado",vida:"8 horas frente a la pantalla",dosis:"2 × 10, cada 1–2 h",equipo:"Tu silla de oficina",musc:["Espalda alta","Cuello","Pecho"],
+      puente:"La pantalla tira la cabeza hacia adelante y redondea la espalda. <b>Esto lo deshace sin moverte del escritorio</b>.",clave:"Movés la espalda alta, no la zona lumbar."}},
+ {id:"casa",coach:"leo",img:["fitness/img/leo-pesarusa.jpg","fitness/img/leo-caja.jpg"],cat:"diario",dep:"home",em:"🏠",ex:"muerto",vi:"caja",nivel:{en:"Beginner",es:"Principiante"},
+  en:{ej:"Kettlebell deadlift",vida:"Lifting a box off the floor",dosis:"3 × 10",equipo:"12–20 kg kettlebell",musc:["Glutes","Hamstrings","Lower back"],
+      puente:"Hips back, flat back, push through the heels. <b>It's how to lift anything without hurting your back</b>.",clave:"The load stays close to your legs."},
+  es:{ej:"Peso muerto con pesa rusa",vida:"Levantar una caja del piso",dosis:"3 × 10",equipo:"Pesa rusa de 12–20 kg",musc:["Glúteos","Isquiotibiales","Zona lumbar"],
+      puente:"Cadera atrás, espalda recta, empujá con los talones. <b>Así se levanta cualquier cosa sin lastimarte la espalda</b>.",clave:"El peso pegado a las piernas."}},
+ {id:"silla",coach:"pia",img:["fitness/img/pia-silla.jpg","fitness/img/pia-levantarse.jpg"],cat:"diario",dep:"50+",em:"🪑",ex:"silla",vi:"levantarse",nivel:{en:"Anyone",es:"Para todos"},
+  en:{ej:"Squat to chair",vida:"Getting up from a chair",dosis:"3 × 10, slow down",equipo:"A sturdy chair",musc:["Quads","Glutes","Core"],
+      puente:"Standing up without using your hands is one of the best markers of independence as we age. <b>Train it on purpose</b>.",clave:"Three seconds down, touch, stand."},
+  es:{ej:"Sentadilla a la silla",vida:"Levantarse de la silla",dosis:"3 × 10, bajada lenta",equipo:"Una silla firme",musc:["Cuádriceps","Glúteos","Core"],
+      puente:"Pararse sin usar las manos es de las mejores señales de autonomía con los años. <b>Entrenalo a propósito</b>.",clave:"Tres segundos para bajar, tocás y subís."}}
+];
+const COACHES = {
+ pia:{n:"Pía Ríos",img:"fitness/img/pia-avatar.jpg",
+   en:{rol:"31 · Montevideo, Uruguay · former field hockey player",bio:"I train the legs that brake, jump and change direction, and I help desk workers move like athletes again.",esp:["Lower-body strength","Jumps & cuts","Office mobility"]},
+   es:{rol:"31 · Montevideo, Uruguay · ex jugadora de hockey sobre césped",bio:"Entreno las piernas que frenan, saltan y cambian de dirección, y ayudo a la gente de oficina a moverse como deportistas.",esp:["Fuerza de piernas","Saltos y cambios de dirección","Movilidad para la oficina"]}},
+ leo:{n:"Leo Castillo",img:"fitness/img/leo-avatar.jpg",
+   en:{rol:"30 · Mexico City · former boxer",bio:"Every punch starts in the hips. I teach you to throw, swing and lift with your whole body.",esp:["Power & rotation","Upper body","Safe lifting"]},
+   es:{rol:"30 · Ciudad de México · ex boxeador",bio:"Cada golpe nace en la cadera. Te enseño a lanzar, girar y levantar con todo el cuerpo.",esp:["Potencia y rotación","Tren superior","Levantar sin lastimarse"]}}
+};
+const DEPS = {deporte:[["all","🏟️",{en:"All",es:"Todos"}],["football","⚽",{en:"Football",es:"Fútbol"}],["tennis","🎾",{en:"Tennis",es:"Tenis"}],["basketball","🏀",{en:"Basketball",es:"Básquet"}],["golf","⛳",{en:"Golf",es:"Golf"}]],
+              diario:[["all","✨",{en:"All",es:"Todos"}],["office","💼",{en:"Office",es:"Oficina"}],["home","🏠",{en:"Home",es:"Casa"}],["50+","🪑",{en:"50+",es:"50+"}]]};
+const DEPNOM = {football:{en:"Football",es:"Fútbol"},tennis:{en:"Tennis",es:"Tenis"},basketball:{en:"Basketball",es:"Básquet"},golf:{en:"Golf",es:"Golf"},office:{en:"Office",es:"Oficina"},home:{en:"Home",es:"Casa"},"50+":{en:"50+",es:"50+"}};
+
+const PROGS = [
+ {em:"🎾",premium:true,en:{n:"Padel & tennis preseason",d:"Rotation, first step and shoulders that last the whole season."},es:{n:"Pretemporada de pádel y tenis",d:"Rotación, primer paso y hombros que aguanten toda la temporada."},sem:6,ses:3,
+  w:{en:["Rotational throws + split squats","Lateral bounds + woodchops","Box jumps + rotational throws","Deload"],es:["Lanzamientos rotacionales + búlgaras","Saltos laterales + leñadores","Cajón + lanzamientos rotacionales","Descarga"]}},
+ {em:"💼",premium:false,en:{n:"Office without back pain",d:"Five minutes, twice a day, no gym and no change of clothes."},es:{n:"Oficina sin dolor de espalda",d:"Cinco minutos, dos veces al día, sin gimnasio y sin cambiarte de ropa."},sem:4,ses:10,
+  w:{en:["Thoracic extension + chin tucks","Squat to chair + hip openers","Add standing breaks every hour","Full routine, morning and afternoon"],es:["Extensión torácica + retracción de mentón","Sentadilla a la silla + apertura de cadera","Sumar pausas de pie cada hora","Rutina completa, mañana y tarde"]}},
+ {em:"⚽",premium:true,en:{n:"Football: faster changes of direction",d:"Single-leg strength first, then speed on the field."},es:{n:"Fútbol: cambios de dirección más rápidos",d:"Primero fuerza en una pierna, después velocidad en la cancha."},sem:8,ses:2,
+  w:{en:["Split squats + deadlifts","Split squats + lateral lunges","Box jumps + deceleration drills","Cutting drills at full speed"],es:["Búlgaras + peso muerto","Búlgaras + estocadas laterales","Cajón + ejercicios de frenado","Cambios de dirección a máxima velocidad"]}}
+];
+
+/* ───────── dibujo ───────── */
+let C = {};
+function leerColores(){const s=getComputedStyle(document.documentElement);const g=n=>s.getPropertyValue(n).trim();
+  C={ink:g('--tinta'),ink2:g('--tinta3'),ac:g('--verde'),az:g('--azul'),line:g('--linea'),panel:g('--panel')};}
+const midp=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2];
+function seg(c,a,b){c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}
+function figura(c,p){
+  c.lineCap='round';c.lineJoin='round';
+  c.strokeStyle=C.ink;c.globalAlpha=.45;c.lineWidth=6;
+  seg(c,p.hip,p.kR);seg(c,p.kR,p.fR);seg(c,p.neck,p.eR);seg(c,p.eR,p.hR);
+  c.globalAlpha=1;
+  c.lineWidth=8;seg(c,p.neck,p.hip);
+  c.lineWidth=6;seg(c,p.hip,p.kL);seg(c,p.kL,p.fL);seg(c,p.neck,p.eL);seg(c,p.eL,p.hL);
+  c.fillStyle=C.ink;c.beginPath();c.arc(p.head[0],p.head[1],11,0,7);c.fill();
+}
+function suelo(c){c.strokeStyle=C.ink2;c.globalAlpha=.5;c.lineWidth=2;seg(c,[8,184],[212,184]);c.globalAlpha=1}
+function bench(c,C,x,y,w){c.fillStyle=C.ink2;c.globalAlpha=.55;c.fillRect(x,y,w,8);c.fillRect(x+4,y+8,5,184-y-8);c.fillRect(x+w-9,y+8,5,184-y-8);c.globalAlpha=1}
+function dumb(c,C,h){c.fillStyle=C.ac;c.fillRect(h[0]-9,h[1]-3,18,6);c.fillRect(h[0]-10,h[1]-7,5,14);c.fillRect(h[0]+5,h[1]-7,5,14)}
+function ball(c,C,b,r,tipo){if(!b)return;c.fillStyle=tipo==='futbol'?C.panel:tipo==='tenis'?'#C9E43A':tipo==='basket'?'#E07A2E':tipo==='golf'?C.panel:C.ac;
+  c.beginPath();c.arc(b[0],b[1],r,0,7);c.fill();c.strokeStyle=C.ink;c.lineWidth=1.5;c.stroke();}
+function wall(c,C,x){c.fillStyle=C.ink2;c.globalAlpha=.3;c.fillRect(x,30,6,154);c.globalAlpha=1}
+function racket(c,C,h,t){c.strokeStyle=C.az;c.lineWidth=3;seg(c,h,t);const a=Math.atan2(t[1]-h[1],t[0]-h[0]);
+  c.save();c.translate(t[0],t[1]);c.rotate(a);c.beginPath();c.ellipse(10,0,13,9,0,0,7);c.stroke();c.restore()}
+function box(c,C,x,y,w,h){c.fillStyle=C.ac;c.globalAlpha=.85;c.fillRect(x,y,w,h+2);c.globalAlpha=1}
+function rim(c,C){c.strokeStyle=C.ink2;c.lineWidth=3;seg(c,[198,4],[198,40]);c.strokeStyle='#E07A2E';seg(c,[136,30],[166,30]);
+  c.strokeStyle=C.ink2;c.lineWidth=1;for(let i=0;i<4;i++)seg(c,[138+i*9,30],[142+i*6,46])}
+function cable(c,C,h){c.fillStyle=C.ink2;c.fillRect(186,14,14,170);c.strokeStyle=C.ac;c.lineWidth=2;seg(c,[188,22],h);
+  c.fillStyle=C.ac;c.beginPath();c.arc(188,22,4,0,7);c.fill()}
+function club(c,C,h,t){c.strokeStyle=C.az;c.lineWidth=3;seg(c,h,t);c.lineWidth=5;const d=[t[0]-h[0],t[1]-h[1]],L=Math.hypot(...d)||1;seg(c,t,[t[0]+d[1]/L*8*-1+d[0]/L*2,t[1]+d[0]/L*8])}
+function chair(c,C,sinRespaldo){c.fillStyle=C.ink2;c.globalAlpha=.6;c.fillRect(70,134,46,6);c.fillRect(74,140,4,44);c.fillRect(108,140,4,44);
+  if(!sinRespaldo){c.fillRect(70,88,5,48)}else{c.fillRect(70,104,5,32)}c.globalAlpha=1}
+function desk(c,C){c.fillStyle=C.ink2;c.globalAlpha=.6;c.fillRect(134,116,78,5);c.fillRect(204,121,4,63);c.globalAlpha=1;
+  c.fillStyle=C.az;c.fillRect(170,74,34,24);c.fillRect(185,98,4,18)}
+function kb(c,C,h){c.fillStyle=C.ac;c.beginPath();c.arc(h[0],h[1]+14,11,0,7);c.fill();c.strokeStyle=C.ac;c.lineWidth=3;c.beginPath();c.arc(h[0],h[1]+2,6,Math.PI,0);c.stroke()}
+function crate(c,C,h){c.fillStyle='#C99A5B';c.fillRect(h[0]-17,h[1]-4,34,26);c.strokeStyle=C.ink;c.lineWidth=1.5;c.strokeRect(h[0]-17,h[1]-4,34,26);seg(c,[h[0]-17,h[1]+5],[h[0]+17,h[1]+5])}
+function cup(c,C,h){c.fillStyle=C.az;c.fillRect(h[0]-1,h[1]-12,9,12)}
+
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+function pose(a,t){const fr=a.frames,n=fr.length,seg=a.dur+a.hold,total=seg*n,x=t%total,i=Math.floor(x/seg),r=x-i*seg;
+  const A=fr[i],B=fr[(i+1)%n];if(r<a.hold)return A;const e=ease((r-a.hold)/a.dur),o={};
+  for(const k in A){const b=B[k]||A[k];o[k]=[A[k][0]+(b[0]-A[k][0])*e,A[k][1]+(b[1]-A[k][1])*e]}return o}
+
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const lienzos=[];
+function montar(cv,nombre){const a=ANIM[nombre];const o={cv,a,vis:true};lienzos.push(o);dibujar(o,reduce?(a.dur+a.hold)+a.hold:0)}
+function dibujar(o,t){const cv=o.cv,r=cv.getBoundingClientRect(),d=devicePixelRatio||1;
+  const W=Math.max(1,Math.round(r.width*d)),H=Math.max(1,Math.round(r.height*d));if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H}
+  const c=cv.getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,W,H);const s=Math.min(W/220,H/200);
+  c.setTransform(s,0,0,s,(W-220*s)/2,(H-200*s)/2);const p=pose(o.a,t);suelo(c);o.a.draw(c,p,C);figura(c,p);}
+const io=new IntersectionObserver(es=>es.forEach(e=>{const o=lienzos.find(l=>l.cv===e.target);if(o)o.vis=e.isIntersecting}));
+function bucle(t){for(const o of lienzos)if(o.vis&&o.cv.isConnected)dibujar(o,t);requestAnimationFrame(bucle)}
+
+/* ───────── estado y render ───────── */
+let L='en',TAB='deporte',FIL='all';
+try{const g=localStorage.getItem('fp-lang');if(g==='es'||g==='en')L=g;else if(((navigator.languages&&navigator.languages[0])||navigator.language||'').toLowerCase().indexOf('es')===0)L='es'}catch(e){}
+
+function textos(){document.querySelectorAll('[data-t]').forEach(el=>{const v=T[L][el.dataset.t];if(v!=null)el.textContent=v});
+  document.documentElement.lang=L;document.getElementById('lang-en').setAttribute('aria-pressed',L==='en');document.getElementById('lang-es').setAttribute('aria-pressed',L==='es')}
+
+function render(){
+  textos();
+  const vT=document.getElementById('vista-tarjetas'),vTr=document.getElementById('vista-trainers'),vP=document.getElementById('vista-programas');
+  vT.hidden=!(TAB==='deporte'||TAB==='diario');vTr.hidden=TAB!=='trainers';vP.hidden=TAB!=='programas';
+  document.querySelectorAll('.tabs [role=tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===TAB));
+  lienzos.length=0;io.disconnect();
+  if(!vT.hidden){
+    const f=document.getElementById('filtros');
+    f.innerHTML=DEPS[TAB].map(([k,em,n])=>`<button class="chip" data-f="${k}" aria-pressed="${k===FIL}">${em} ${n[L]}</button>`).join('');
+    const lista=CARDS.filter(c=>c.cat===TAB&&(FIL==='all'||c.dep===FIL));
+    document.getElementById('feed').innerHTML=lista.map(c=>{const x=c[L];return `
+    <article class="card">
+      <div class="card-top"><span class="dep"><i>${c.em}</i>${DEPNOM[c.dep][L]}</span><span class="nivel">${c.nivel[L]}</span></div>
+      <div class="par">
+        <div class="lado ej"><span class="etq">${T[L].ejercicio}</span>
+          <div class="lienzo">${c.img?`<img src="${c.img[0]}" alt="${x.ej}" loading="lazy">`:`<canvas data-a="${c.ex}" role="img" aria-label="${x.ej}"></canvas>`}<span class="rep">${x.dosis}</span></div>
+          <h3>${x.ej}</h3>
+          <div class="datos"><span><b>${T[L].equipo}:</b> ${x.equipo}</span></div>
+          <div class="musc">${x.musc.map(m=>`<span>${m}</span>`).join('')}</div>
+        </div>
+        <div class="igual" aria-hidden="true"><span>=</span></div>
+        <div class="lado vida"><span class="etq">${T[L].vida}</span>
+          <div class="lienzo">${c.img?`<img src="${c.img[1]}" alt="${x.vida}" loading="lazy">`:`<canvas data-a="${c.vi}" role="img" aria-label="${x.vida}"></canvas>`}</div>
+          <h3>${x.vida}</h3>
+        </div>
+      </div>
+      <p class="puente">${x.puente}</p>
+      <div class="card-pie"><span class="clave"><b>${T[L].clave}:</b> ${x.clave}</span>
+        <span class="autor"><img class="av" src="${COACHES[c.coach].img}" alt=""><span>Coach <b>${COACHES[c.coach].n.split(" ")[0]}</b></span></span></div>
+    </article>`}).join('');
+    document.querySelectorAll('#feed canvas').forEach(cv=>{montar(cv,cv.dataset.a);io.observe(cv)});
+  }
+  if(!vTr.hidden){
+    document.getElementById('coaches').innerHTML=Object.values(COACHES).map(k=>`<article class="caja coach"><img src="${k.img}" alt="${k.n}"><div>
+      <span class="personaje">${L==='en'?'FirstPlace coach · character':'Coach de FirstPlace · personaje'}</span><h2>${k.n}</h2><p class="rol">${k[L].rol}</p><p style="margin:0">${k[L].bio}</p>
+      <div class="esp">${k[L].esp.map(e=>`<span>${e}</span>`).join('')}</div></div></article>`).join('');
+  }
+  if(!vP.hidden){
+    document.getElementById('progs').innerHTML=PROGS.map(p=>`<article class="caja prog">
+      <div class="meta"><span>${p.em}</span><span>${p.sem} ${T[L].semanas}</span><span>${p.ses} ${T[L].sesiones}</span>${p.premium?'<span class="premium">Passport</span>':''}</div>
+      <h2>${p[L].n}</h2><p>${p[L].d}</p>
+      <div class="sem">${p.w[L].map((w,i)=>`<div><span>${T[L].sem} ${(()=>{const st=p.sem/p.w[L].length,a=Math.round(i*st)+1,b=Math.round((i+1)*st);return a===b?a:a+'–'+b})()}</span><span>${w}</span></div>`).join('')}</div>
+    </article>`).join('');
+  }
+}
+
+document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(!b)return;TAB=b.dataset.tab;FIL='all';render()});
+document.getElementById('filtros').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(!b)return;FIL=b.dataset.f;render()});
+['en','es'].forEach(l=>document.getElementById('lang-'+l).addEventListener('click',()=>{L=l;try{localStorage.setItem('fp-lang',l)}catch(e){}render()}));
+document.getElementById('form-trainer').addEventListener('submit',e=>{e.preventDefault();document.getElementById('f-aviso').hidden=false});
+const mq=matchMedia('(prefers-color-scheme: dark)');(mq.addEventListener?mq.addEventListener('change',()=>{leerColores();redib()}):0);
+new MutationObserver(()=>{leerColores();redib()}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+function redib(){if(reduce)lienzos.forEach(o=>dibujar(o,o.a.dur+2*o.a.hold))}
+addEventListener('resize',redib);
+
+leerColores();render();
+if(!reduce)requestAnimationFrame(bucle);
+})();
+</script>
+</body>
+</html>
