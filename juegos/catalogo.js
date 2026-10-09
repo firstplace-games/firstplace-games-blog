@@ -71,6 +71,9 @@ window.FP_JUEGOS = [
     nm:{es:'Primero', en:'Primero'}, url:'juegos/primero.html' },
   { id:'pool', tipo:'mundo', anim:'emoji', c:'#0E7A45', em:'🎱', tag:{es:'Nuevo · 3D', en:'New · 3D'},
     nm:{es:'Pool 3D', en:'Pool 3D'}, url:'juegos/pool.html' },
+  /* Mundialito 3D: futbol 11 contra 11 por selecciones, nombres parodicos (09/10) */
+  { id:'mundialito', tipo:'mundo', anim:'emoji', c:'#2F8A3B', em:'⚽', tag:{es:'Nuevo · 3D', en:'New · 3D'},
+    nm:{es:'Mundialito 3D', en:'Mundialito 3D'}, url:'juegos/mundialito.html' },
   { id:'puzzle', tipo:'mundo', anim:'jigsaw', c:'#7B5BE6', em:'🧩',
     nm:{es:'Rompecabezas', en:'Jigsaw'}, abre:'puzzle' },
   { id:'vr', tipo:'mundo', anim:'kart', c:'#F4551D', em:'🏎️',
@@ -92,6 +95,7 @@ window.FP_PORTADAS = {
   'fierljeppen':'juegos/portadas/fierljeppen.jpg',
   'petanca':   'juegos/portadas/petanca.jpg',
   'pool':      'juegos/portadas/pool-3d.jpg',
+  'mundialito':'juegos/portadas/mundialito.jpg',
   'puzzle':    'juegos/portadas/rompecabezas.jpg',
   'primero':   'juegos/portadas/primero.jpg',
   'villa':     'juegos/portadas/villa.jpg',
