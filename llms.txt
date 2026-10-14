@@ -1,0 +1,34 @@
+# FirstPlace.games
+
+> The world map of sport. Pick a country, see what it plays. FirstPlace.games covers 50 sports with live calendars, a world map of what each country plays, and free browser sports games. Every date sourced.
+
+FirstPlace.games is free, in English first, and needs no sign-up to play. Content is factual: no betting, no club crests or logos. Each data point is checked against its source and dated.
+
+## Main pages
+- [Home: world map of sport](https://firstplace.games/): pick a country on the map and see its most popular sports, upcoming events and games
+- [Games room](https://firstplace.games/juegos): every free sports game on the site, daily puzzles, arcade and traditional sports
+- [Gym to Game](https://firstplace.games/fitness): gym exercises shown next to the sport movement they build
+- [Blog](https://firstplace.games/blog/): guides to daily sports games, football trivia and traditional sports
+
+## Countries
+- [Sports in Mexico](https://firstplace.games/country/mexico/)
+- [Sports in Italy](https://firstplace.games/country/italy/)
+- [Sports in Japan](https://firstplace.games/country/japan/)
+
+## Games
+- [Primero](https://firstplace.games/juegos/primero): daily sports puzzle
+- [La Cancha](https://firstplace.games/juegos/cancha): pitch puzzle with a sports fact per level
+- [Mundialito](https://firstplace.games/juegos/mundialito): 3D football game with national teams
+- [Ulama](https://firstplace.games/juegos/ulama): the Mesoamerican ballgame, playable in 3D
+- [Pool](https://firstplace.games/juegos/pool): 3D pool
+- [Fierljeppen](https://firstplace.games/juegos/fierljeppen): Dutch canal pole vaulting
+- [Ruzzola](https://firstplace.games/juegos/ruzzola), [Petanque](https://firstplace.games/juegos/petanca), [Frontón](https://firstplace.games/juegos/fronton), [Cheese rolling](https://firstplace.games/juegos/queso): traditional sports
+- [Vuelta Rápida](https://firstplace.games/juegos/vuelta-rapida): karting
+- [Cinco](https://firstplace.games/juegos/cinco), [Maze](https://firstplace.games/juegos/maze), [Stack](https://firstplace.games/juegos/stack): word, arcade maze and falling-blocks games with a version per country
+
+## Blog posts
+- [12 best daily sports games](https://firstplace.games/blog/01-12-best-daily-sports-games)
+- [Football trivia guide](https://firstplace.games/blog/02-football-trivia)
+- [Traditional sports of the world](https://firstplace.games/blog/03-traditional-sports)
+- [Immaculate Grid guide](https://firstplace.games/blog/04-immaculate-grid)
+- [Sports by country](https://firstplace.games/blog/05-sports-by-country)
