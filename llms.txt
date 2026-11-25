@@ -11,9 +11,10 @@ FirstPlace.games is free, in English first, and needs no sign-up to play. Conten
 - [Blog](https://firstplace.games/blog/): guides to daily sports games, football trivia and traditional sports
 
 ## Countries
-- [Sports in Mexico](https://firstplace.games/country/mexico/)
-- [Sports in Italy](https://firstplace.games/country/italy/)
-- [Sports in Japan](https://firstplace.games/country/japan/)
+- [Most popular sports by country](https://firstplace.games/country/): index of country pages
+- [Sports in Mexico](https://firstplace.games/country/mexico/): football first (56%), then boxing, baseball and Formula 1
+- [Sports in Italy](https://firstplace.games/country/italy/): football first (54%), then tennis, volleyball, swimming and athletics
+- [Sports in Japan](https://firstplace.games/country/japan/): baseball first (47.5%), then football, sumo, golf and basketball
 
 ## Games
 - [Primero](https://firstplace.games/juegos/primero): daily sports puzzle
