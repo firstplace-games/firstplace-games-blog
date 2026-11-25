@@ -15,6 +15,9 @@ FirstPlace.games is free, in English first, and needs no sign-up to play. Conten
 - [Sports in Mexico](https://firstplace.games/country/mexico/): football first (56%), then boxing, baseball and Formula 1
 - [Sports in Italy](https://firstplace.games/country/italy/): football first (54%), then tennis, volleyball, swimming and athletics
 - [Sports in Japan](https://firstplace.games/country/japan/): baseball first (47.5%), then football, sumo, golf and basketball
+- [Sports in the United States](https://firstplace.games/country/united-states/): American football is the favourite sport to watch (31%, Gallup 2026), then basketball, baseball and soccer
+- [Sports in Spain](https://firstplace.games/country/spain/): football first (59.8% watched it in the past year), then tennis, basketball and motor racing; 2026 world champions
+- [Sports in Argentina](https://firstplace.games/country/argentina/): football is the most played sport (41.3% of people who do sport regularly), then swimming, volleyball and basketball; pato is the national sport
 
 ## Games
 - [Primero](https://firstplace.games/juegos/primero): daily sports puzzle

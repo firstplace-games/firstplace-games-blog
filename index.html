@@ -2524,9 +2524,13 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:none;border-ra
       <h3>Countries</h3>
       <p>The map covers 177 countries. These have a page of their own, with the
       sports they follow and the games that came out of them:
+      <a href="country/united-states/">Sports in the United States</a>,
       <a href="country/mexico/">Sports in Mexico</a>,
+      <a href="country/argentina/">Sports in Argentina</a>,
+      <a href="country/spain/">Sports in Spain</a>,
       <a href="country/italy/">Sports in Italy</a> and
-      <a href="country/japan/">Sports in Japan</a>. More are on the way.</p>
+      <a href="country/japan/">Sports in Japan</a>. See them all in
+      <a href="country/">the most popular sports by country</a>. More are on the way.</p>
 
       <h3>Games you can play right now</h3>
       <div class="doc-cols">
@@ -11697,7 +11701,7 @@ function wmNom(p){
   return (STATE.lang==="en" && PAIS_EN[p.iso]) ? PAIS_EN[p.iso] : p.nombre;
 }
 /* Página fija en inglés, para Google (la genera build-country.js). En inglés el globo lleva ahí; en español, a pais/?iso=. */
-const COUNTRY_URL={MX:"country/mexico/",IT:"country/italy/",JP:"country/japan/"};
+const COUNTRY_URL={MX:"country/mexico/",IT:"country/italy/",JP:"country/japan/",US:"country/united-states/",ES:"country/spain/",AR:"country/argentina/"};
 function wmJuegos(p){
   const con=[], sin=[];
   GAMES.forEach(j=>(wmPropio(j,p)?con:sin).push(j));
